@@ -114,3 +114,12 @@ language, target-language tracks: 100 %   (32 of 32)   <- still near-tautologica
 genre: 49.2 % of 653 artists (unchanged, best-effort)
 ```
 Only 32 liked songs share artists/tracks with the four mapped playlists, so target-language coverage stays small. More mappings (e.g. other language playlists) will raise it.
+
+---
+## Addendum 2 — language tiers and measured signal precision (visibility phase)
+- Language tiers are now playlist > script > **hint** (MusicBrainz artist tags + mono-lingual artist country) > `country_default` (only when `enrichment.english_default: true`, default now **false**). Each resolved
+  language carries its source tier and a confidence (prior per tier; measured precision is reported separately in `logs/signal-precision.json`).
+- Only signals with >= 90 % measured precision (>= 10 predictions) may drive rules; `playlist` and `script` are trusted by design. Qualification on this library: see `phase-8a.md` §2 (hint qualifies for japanese and, at exactly 10 samples, hindi;
+  country_default qualifies for english; script never fires for hindi/malayalam because Spotify titles are romanised).
+- Coverage on the legacy library with the default (english_default off): whole-library language 17.1 % (playlist 32, hint 93, script 7, none 641), genre 49.2 % — informational only (decision 12); the meaningful evidence is the backtest.
+- Counts-only reports: `logs/enrichment-coverage.json`, `logs/signal-precision.json`, `logs/backtest.json` (no names). Details with names stay in git-ignored `logs/backtest-detail.*`.

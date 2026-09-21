@@ -573,8 +573,8 @@ def test_service_worker_and_offline_reload(make_page, site):
     page.reload()  # now controlled by the SW
     page.wait_for_function("navigator.serviceWorker.controller !== null")
     keys = page.evaluate("caches.keys()")
-    assert keys == ["spotisort-shell-v4"]
-    cached = page.evaluate("caches.open('spotisort-shell-v4').then(c => c.keys()).then(ks => ks.map(k => k.url))")
+    assert keys == ["spotisort-shell-v5"]
+    cached = page.evaluate("caches.open('spotisort-shell-v5').then(c => c.keys()).then(ks => ks.map(k => k.url))")
     for needed in ("builder/", "builder/app.js", "builder/languages.js", "builder/validate.js", "builder/builder.css",
                    "vendor/js-yaml.min.js", "manifest.webmanifest", "icons/icon-192.png", "style.css"):
         assert site + needed in cached, needed

@@ -63,3 +63,7 @@ logs/runs.json
 logs/backtest-detail.*
 logs/screens/
 logs/local/
+
+# atomic-write temp files
+logs/.tmp-*
+.cache/.enrichment-*.tmp

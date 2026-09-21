@@ -6,7 +6,7 @@ Order of operations for a plan (one run):
   3. re-read each target playlist (short poll, read-after-write lag) => ``confirmed`` = songs really there
   4. write the journal (callback must succeed) BEFORE any removal
   5. remove only ``confirmed`` songs from Liked Songs (per-batch results)
-  6. verify with /me/library/contains and re-read Liked Songs; reconcile by ID sets:
+  6. verify with /me/library/contains and re-read Liked Songs and the target playlists; reconcile by ID sets:
        lost        = (liked_before - removed) - liked_after     must be empty (a song vanished)
        resurrected = removed & liked_after                       must be empty (removal did not stick)
      any lost song is re-added via PUT /me/library and the run ends non-zero.
@@ -29,6 +29,7 @@ EXIT_FAILED = 6  # partial failure, nothing lost
 EXIT_TOO_MANY = 4
 EXIT_MISMATCH = 5  # reconcile mismatch (a song vanished or a removal did not stick)
 DEFAULT_MAX_MOVES = 50
+HARD_MAX_MOVES = 500  # --max-moves may not be raised above this
 POLL_TRIES = 5
 POLL_INTERVAL = 1.0
 
@@ -124,6 +125,30 @@ def apply_moves(
                 res.errors.append(f"add to playlist failed: {o.error}")
                 failed_playlists.add(batch.playlist_id)
 
+    try:
+        return _confirm_journal_remove_reconcile(client, res, live, wanted, liked_uris_before, write_journal, sleep)
+    except SpotifyError as exc:
+        # A read failed mid-run. Whatever was written is on disk (journal first); report instead of crashing.
+        removed_something = any(b["kind"] == "remove_from_liked" for b in res.batches)
+        res.errors.append(f"run interrupted by an API error ({type(exc).__name__}): {exc}")
+        res.aborted = "interrupted; verify Liked Songs and use the journal/restore command if needed"
+        res.exit_code = EXIT_MISMATCH if removed_something else EXIT_FAILED
+        if removed_something:
+            res.reconcile = {"ok": False, "error": "reconcile could not complete", "liked_before": res.liked_before}
+        if res.liked_after is None:
+            res.liked_after = res.liked_before if not removed_something else None
+        return res
+
+
+def _confirm_journal_remove_reconcile(
+    client: Any,
+    res: ApplyResult,
+    live: Sequence[Mapping[str, Any]],
+    wanted: dict[str, set[str]],
+    liked_uris_before: set[str],
+    write_journal: Callable[[list[dict[str, Any]]], None],
+    sleep: Callable[[float], None],
+) -> ApplyResult:
     # 3. confirm by re-reading the targets
     confirmed: set[str] = set()
     for pid, uris in wanted.items():
@@ -158,8 +183,16 @@ def apply_moves(
         res.liked_after = res.liked_before
         return res
 
+    # fresh baseline right before removal: the user may have liked/unliked songs while the run was preparing
+    baseline = {t.uri for t in client.iter_saved_tracks()}
+    to_remove = sorted(confirmed & baseline)
+    if len(to_remove) != len(confirmed):
+        res.warnings.append("a confirmed song was no longer in Liked Songs at removal time; left alone")
+    if not to_remove:
+        res.liked_after = len(baseline)
+        return res
+
     # 5. remove only confirmed songs from Liked Songs
-    to_remove = sorted(confirmed)
     outcomes = client.remove_saved_tracks_batched(to_remove)
     res.batches += _batch_rows("remove_from_liked", "liked", outcomes)
     for o in outcomes:
@@ -167,43 +200,44 @@ def apply_moves(
             res.errors.append(f"remove from Liked Songs failed: {o.error}")
 
     # 6. verify + reconcile by ID sets
-    def contains() -> dict[str, bool]:
-        return client.contains_saved(to_remove)
-
-    flags = _poll(contains, lambda f: not any(f.values()), sleep)
-    removed = {u for u, liked in flags.items() if not liked}
-    res.still_liked = sorted(set(to_remove) - removed)
-
-    def liked_now() -> set[str]:
-        return {t.uri for t in client.iter_saved_tracks()}
-
     targets = set(to_remove)
-    after = _poll(liked_now, lambda a: not (targets & a), sleep)
-    if targets - after != removed:
+    flags = _poll(lambda: client.contains_saved(to_remove), lambda f: not any(f.values()), sleep)
+    after = _poll(lambda: {t.uri for t in client.iter_saved_tracks()}, lambda a: not (targets & a), sleep)
+    if targets - after != {u for u, liked in flags.items() if not liked}:
         res.warnings.append("contains() and the Liked Songs list disagreed after removal (read-after-write lag); the list was used")
     removed = targets - after  # authoritative: what is really gone from Liked Songs
-    lost = (liked_uris_before - targets) - after  # a song we did NOT remove has vanished
+    lost = (baseline - targets) - after  # a song we did NOT remove has vanished
     resurrected = targets & after  # a removal that did not stick (song is safe: in playlist and still liked)
-    newly = after - liked_uris_before
+    newly = after - baseline
+
+    # every song we removed from Liked Songs must still be in its target playlist (re-read after the removal)
+    gone_from_target: set[str] = set()
+    for pid, uris in wanted.items():
+        mine = uris & removed
+        if mine:
+            present = _poll(lambda pid=pid: {t.uri for t in client.iter_playlist_items(pid)}, lambda p, m=mine: m <= p, sleep)
+            gone_from_target |= mine - present
     res.removed = sorted(removed)
-    res.still_liked = sorted(set(to_remove) - removed)
+    res.still_liked = sorted(resurrected)
     res.liked_after = len(after)
     res.reconcile = {
         "liked_before": res.liked_before,
         "removed": len(removed),
-        "expected_after": res.liked_before - len(removed) + len(newly),
+        "expected_after": len(baseline) - len(removed) + len(newly),
         "actual_after": len(after),
         "new_likes_during_run": len(newly),
         "lost": len(lost),
         "resurrected": len(resurrected),
-        "ok": not lost and not resurrected,
+        "gone_from_target": len(gone_from_target),
+        "ok": not lost and not resurrected and not gone_from_target,
     }
-    if lost:
+    rescue = sorted(lost | gone_from_target)
+    if rescue:
         res.exit_code = EXIT_MISMATCH
-        res.aborted = "reconcile mismatch: liked song(s) vanished; re-adding them"
+        res.aborted = "reconcile mismatch: song(s) vanished from Liked Songs or their playlist; re-adding to Liked Songs"
         res.errors.append(res.aborted)
         try:
-            outcomes = client.save_tracks_batched(sorted(lost))  # they are not liked, so this does not reset any date
+            outcomes = client.save_tracks_batched(rescue)  # skips songs that are already liked (no date reset)
             res.batches += _batch_rows("re_add_lost", "liked", outcomes)
             if any(not o.ok for o in outcomes):
                 res.errors.append("could not re-add every lost song; see journal / restore")
@@ -228,6 +262,8 @@ def load_journal(path: str | Path) -> list[dict[str, Any]]:
     journal = data.get("journal") if isinstance(data, dict) else None
     if not isinstance(journal, list):
         raise ValueError(f"{path} has no journal")
+    if data.get("mode") != "apply" or data.get("dry_run") is not False:
+        raise ValueError(f"{path} is not the log of an apply run (dry-run journals list songs that were never moved)")
     for e in journal:
         if not isinstance(e, dict) or "uri" not in e:
             raise ValueError("journal entry without a uri")

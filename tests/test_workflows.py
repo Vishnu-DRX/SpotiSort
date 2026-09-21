@@ -57,11 +57,15 @@ def test_sync_never_interpolates_inputs_into_shell(sync):
         assert "${{" not in step.get("run", ""), step.get("name")
 
 
-def test_sync_apply_requires_selector_or_explicit_unselected():
+def test_sync_live_run_requires_newest_selector_and_cap():
     run = next(s["run"] for s in load("sync.yml")["jobs"]["sync"]["steps"] if s.get("name") == "Sync")
-    assert "--apply" in run and "--newest" in run and "--allow-unselected" in run
-    assert "--max-moves" in run
-    assert run.index("--newest") < run.index("--allow-unselected")
+    assert "--apply" in run and "--newest" in run and "--max-moves" in run
+    assert "--allow-unselected" not in run  # no unselected live run from the manual dispatch (decision 12)
+    assert "exit 2" in run  # a live run without 'newest' is refused before python starts
+
+
+def test_sync_has_no_unselected_input(sync):
+    assert "unselected" not in sync["on"]["workflow_dispatch"]["inputs"]
 
 
 def test_sync_caches_enrichment_and_does_not_commit_it(sync):

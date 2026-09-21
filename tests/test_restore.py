@@ -21,7 +21,7 @@ def entry(n, pid="P1"):
 
 def write_log(tmp_path, journal, name="log.json"):
     p = tmp_path / name
-    p.write_text(json.dumps({"journal": journal}), encoding="utf-8")
+    p.write_text(json.dumps({"mode": "apply", "dry_run": False, "journal": journal}), encoding="utf-8")
     return p
 
 
@@ -253,7 +253,7 @@ def test_remove_from_targets_keeps_songs_that_were_in_the_playlist_before_the_ru
     res = apply_moves(fs, [make_move(t[0], "P1", already=True), make_move(t[1], "P1")],
                       liked_uris_before=set(fs.liked), write_journal=j, sleep=nosleep)
     log = tmp_path / "log.json"
-    log.write_text(json.dumps({"journal": res.journal}), encoding="utf-8")
+    log.write_text(json.dumps({"mode": "apply", "dry_run": False, "journal": res.journal}), encoding="utf-8")
     restore(fs, log, remove_from_targets=True)
     assert uri(1) in fs.playlist_uris("P1")
 
@@ -277,7 +277,7 @@ def _apply_to_log(fs, moves, tmp_path):
     j = JournalRecorder(fs)
     res = apply_moves(fs, moves, liked_uris_before=set(fs.liked), write_journal=j, sleep=nosleep)
     p = tmp_path / "run.json"
-    p.write_text(json.dumps({"journal": res.journal}), encoding="utf-8")
+    p.write_text(json.dumps({"mode": "apply", "dry_run": False, "journal": res.journal}), encoding="utf-8")
     return res, p
 
 
@@ -303,3 +303,14 @@ def test_round_trip_only_touches_journaled_songs(tmp_path):
     _, log = _apply_to_log(fs, [make_move(x, "P1") for x in t[:2]], tmp_path)
     restore(fs, log, remove_from_targets=True)
     assert set(fs.put_uris) == {uri(1), uri(2)}
+
+
+def test_load_journal_refuses_a_dry_run_log(tmp_path):
+    p = tmp_path / "dry.json"
+    p.write_text(json.dumps({"mode": "dry_run", "dry_run": True,
+                             "journal": [{"uri": uri(1), "target_playlist_id": "P1"}]}), encoding="utf-8")
+    with pytest.raises(ValueError, match="not the log of an apply run"):
+        load_journal(p)
+    p.write_text(json.dumps({"journal": [{"uri": uri(1), "target_playlist_id": "P1"}]}), encoding="utf-8")
+    with pytest.raises(ValueError):
+        load_journal(p)

@@ -10,13 +10,9 @@ on:
         type: boolean
         default: true
       newest:
-        description: "Only touch the N newest liked songs (required for a live run unless 'unselected' is ticked)"
+        description: "Only touch the N newest liked songs (REQUIRED for a live run)"
         type: string
         default: ""
-      unselected:
-        description: "Live run without a selector (scheduled-style; still capped by max_moves)"
-        type: boolean
-        default: false
       max_moves:
         description: "Abort if the plan has more moves than this"
         type: string
@@ -38,7 +34,6 @@ jobs:
       SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
       DRY_RUN: ${{ inputs.dry_run }}
       NEWEST: ${{ inputs.newest }}
-      UNSELECTED: ${{ inputs.unselected }}
       MAX_MOVES: ${{ inputs.max_moves }}
     steps:
       - uses: actions/checkout@v4
@@ -71,11 +66,8 @@ jobs:
           args=(--config config.yaml --max-moves "${MAX_MOVES:-50}")
           if [ "${DRY_RUN:-true}" != "true" ]; then
             args+=(--apply)
-            if [ -n "${NEWEST:-}" ]; then
-              args+=(--newest "$NEWEST")
-            elif [ "${UNSELECTED:-false}" = "true" ]; then
-              args+=(--allow-unselected)
-            fi
+            [ -n "${NEWEST:-}" ] || { echo "A live run needs the 'newest' input (it never touches your whole library)."; exit 2; }
+            args+=(--newest "$NEWEST")
           fi
           python -m src.sync "${args[@]}"
 

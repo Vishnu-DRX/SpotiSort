@@ -28,7 +28,7 @@ from dataclasses import replace
 from . import artifacts
 from .planner import Plan, build_plan, targets_needed
 from .signals import gate, load_precision
-from .apply import DEFAULT_MAX_MOVES, EXIT_TOO_MANY, TooManyMoves, apply_moves, load_journal, restore_from_log
+from .apply import DEFAULT_MAX_MOVES, HARD_MAX_MOVES, EXIT_TOO_MANY, TooManyMoves, apply_moves, load_journal, restore_from_log
 from .spotify_client import SpotifyClient, SpotifyError, load_env, validate_track_uris
 
 SAVE_EVERY = 25
@@ -97,6 +97,24 @@ def build_log(plan: Plan, dry_run: bool, audit: dict[str, int], now: datetime, r
     }
 
 
+def log_path(logs_dir: Path, now: datetime, mode: str) -> Path:
+    """logs/YYYY-MM-DD.json; an apply log is never overwritten (later runs get -2, -3...) and a dry run never
+    overwrites an apply log (it goes to -dryrun), because the apply log holds the restore journal."""
+    base = logs_dir / f"{now.date().isoformat()}.json"
+    if mode == "apply":
+        cand, n = base, 1
+        while cand.exists():
+            n += 1
+            cand = logs_dir / f"{now.date().isoformat()}-{n}.json"
+        return cand
+    try:
+        if base.exists() and json.loads(base.read_text(encoding="utf-8")).get("mode") == "apply":
+            return logs_dir / f"{now.date().isoformat()}-dryrun.json"
+    except (OSError, ValueError):
+        pass
+    return base
+
+
 def select_tracks(tracks: list, newest: int | None, only_uris: set[str] | None) -> list:
     """Restrict the songs a run may touch (master decision 12): the N newest liked and/or an explicit URI set."""
     out = list(tracks)
@@ -125,8 +143,8 @@ def check_apply_guards(args: argparse.Namespace) -> str | None:
     if not (args.newest or args.only_uris or args.allow_unselected or args.restore):
         return ("--apply needs a selector: --only-uris, --newest N, or (scheduled runs only) --allow-unselected. "
                 "It will never touch the whole library by default.")
-    if args.max_moves < 1:
-        return "--max-moves must be >= 1"
+    if args.max_moves < 1 or args.max_moves > HARD_MAX_MOVES:
+        return f"--max-moves must be between 1 and {HARD_MAX_MOVES}"
     if args.newest is not None and args.newest < 1:
         return "--newest must be >= 1"
     return None
@@ -199,7 +217,7 @@ def run(args: argparse.Namespace) -> int:
     )
     rule_counts = {r["name"]: r["wins"] for r in snapshot["rules"]}
     logs_dir.mkdir(parents=True, exist_ok=True)
-    out = logs_dir / f"{now.date().isoformat()}.json"
+    out = log_path(logs_dir, now, mode)
 
     def base_log(duration: float, dry: bool) -> dict[str, Any]:
         log = build_log(plan, dry, session.audit, now, duration)

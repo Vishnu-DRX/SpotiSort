@@ -65,7 +65,7 @@ def test_happy_path_reconcile_dict():
     res, _ = run(fs, mv(t[:3]))
     assert res.reconcile == {
         "liked_before": 4, "removed": 3, "expected_after": 1, "actual_after": 1,
-        "new_likes_during_run": 0, "lost": 0, "resurrected": 0, "ok": True,
+        "new_likes_during_run": 0, "lost": 0, "resurrected": 0, "gone_from_target": 0, "ok": True,
     }
 
 
@@ -260,8 +260,8 @@ def test_full_call_order():
     fs, t = build_world(2)
     run(fs, mv(t))
     order = [n for n in fs.names() if n != "contains_saved"]
-    assert order == ["add_playlist_items_batched", "iter_playlist_items", "note:journal",
-                     "remove_saved_tracks_batched", "iter_saved_tracks"]
+    assert order == ["add_playlist_items_batched", "iter_playlist_items", "note:journal", "iter_saved_tracks",
+                     "remove_saved_tracks_batched", "iter_saved_tracks", "iter_playlist_items"]
     assert fs.first("remove_saved_tracks_batched") < fs.first("contains_saved")
 
 
@@ -524,15 +524,16 @@ def test_new_like_during_adds_is_not_a_mismatch():
     fs, t = build_world(3)
     fs.like_after("add_playlist_items_batched", make_track(51))
     res, _ = run(fs, mv(t))
-    assert res.ok and res.reconcile["new_likes_during_run"] == 1 and fs.liked == [uri(51)]
+    # the baseline is re-read right before removal, so a like that arrived during the adds is simply part of it
+    assert res.ok and res.reconcile["new_likes_during_run"] == 0 and fs.liked == [uri(51)]
 
 
 def test_contains_raising_after_removal_propagates_but_nothing_is_lost():
     fs, t = build_world(3)
     fs.raise_on["contains_saved"] = SpotifyError("boom")
     j = JournalRecorder(fs)
-    with pytest.raises(SpotifyError):
-        run(fs, mv(t), journal=j)
+    res = run(fs, mv(t), journal=j)[0]  # a read error after removal is reported, not raised
+    assert res.exit_code == EXIT_MISMATCH and res.errors and res.reconcile["ok"] is False
     assert len(j.calls) == 1 and all(safe(fs, u, "P1") for u in uris_of(t))
 
 
@@ -540,8 +541,8 @@ def test_playlist_read_failing_means_no_removal_and_no_journal():
     fs, t = build_world(3)
     fs.raise_on["iter_playlist_items"] = SpotifyError("500")
     j = JournalRecorder(fs)
-    with pytest.raises(SpotifyError):
-        run(fs, mv(t), journal=j)
+    res = run(fs, mv(t), journal=j)[0]
+    assert res.exit_code == EXIT_FAILED and res.errors
     assert fs.count("remove_saved_tracks_batched") == 0 and j.calls == [] and len(fs.liked) == 3
 
 

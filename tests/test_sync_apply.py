@@ -439,7 +439,7 @@ def test_restore_bad_log_exits_1_without_client(env, monkeypatch, missing):
 def test_restore_needs_no_config_and_no_selector(tmp_path, monkeypatch):
     fs, log = make_fs(3), None
     log = tmp_path / "j.json"
-    log.write_text(json.dumps({"journal": [{"uri": uri(9), "name": "x", "artists": "y",
+    log.write_text(json.dumps({"mode": "apply", "dry_run": False, "journal": [{"uri": uri(9), "name": "x", "artists": "y",
                                             "original_added_at": None, "target_playlist_id": "chill1"}]}), encoding="utf-8")
     monkeypatch.setattr(sync, "load_env", lambda *a, **k: False)
     monkeypatch.setattr(sync, "SpotifyClient", client_factory(fs))
@@ -456,3 +456,25 @@ def test_restore_failure_exit_6_and_verdict_error(env, monkeypatch):
     rl = read_log(tmp, f"{TODAY}-restore.json")
     assert rl["verdict"] == "error" and rl["errors"]
     assert len(fs.playlist_uris("chill1")) == 3  # the playlist copy is intact
+
+
+def test_apply_log_is_never_overwritten_and_dry_run_does_not_clobber_it(tmp_path):
+    from datetime import datetime, timezone
+
+    now = datetime(2026, 9, 21, 12, 0, tzinfo=timezone.utc)
+    logs = tmp_path
+    first = sync.log_path(logs, now, "apply")
+    first.write_text(json.dumps({"mode": "apply"}), encoding="utf-8")
+    second = sync.log_path(logs, now, "apply")
+    assert second != first and second.name == "2026-09-21-2.json"
+    dry = sync.log_path(logs, now, "dry_run")
+    assert dry.name == "2026-09-21-dryrun.json"  # would otherwise clobber the apply journal
+    first.write_text(json.dumps({"mode": "dry_run"}), encoding="utf-8")
+    assert sync.log_path(logs, now, "dry_run") == first
+
+
+def test_max_moves_hard_ceiling(env, monkeypatch, capsys):
+    tmp, cfg = env
+    use(monkeypatch, make_fs(3))
+    assert go(tmp, cfg, "--apply", "--newest", "3", "--max-moves", "501") == 2
+    assert "between 1 and 500" in capsys.readouterr().err
