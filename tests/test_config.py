@@ -405,3 +405,16 @@ def test_language_in_unknown_language_rejected():
 
     with pytest.raises(ConfigError, match="unknown language"):
         _cfg(rules=[{"name": "r", "target_playlist": "p", "match": {"language_in": ["elvish"]}}])
+
+
+def test_enrichment_english_default_flag():
+    assert _cfg().english_default is True
+    assert _cfg(enrichment={"english_default": False}).english_default is False
+
+
+def test_enrichment_english_default_must_be_bool():
+    import pytest
+    from src.config import ConfigError
+
+    with pytest.raises(ConfigError, match="english_default"):
+        _cfg(enrichment={"english_default": "no"})

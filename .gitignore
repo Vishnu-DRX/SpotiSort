@@ -55,3 +55,4 @@ config.local.yaml
 
 # Local dry-run/real run logs (dated); the Phase 4 workflow commits them with git add -f
 logs/2*.json
+config.draft.yaml

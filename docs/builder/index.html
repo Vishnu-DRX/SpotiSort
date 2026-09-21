@@ -56,6 +56,11 @@
               <label for="g-mb">Look up genre and language on MusicBrainz</label>
               <p class="hint" id="g-mb-hint"><code>enrichment.musicbrainz</code>: free, limited to 1 request per second.</p>
             </div>
+            <div class="field check">
+              <input id="g-en" type="checkbox" checked aria-describedby="g-en-hint" />
+              <label for="g-en">Assume English for Latin-script songs by US/GB/AU/CA/IE/NZ artists (weak default)</label>
+              <p class="hint" id="g-en-hint"><code>enrichment.english_default</code>: a weak guess used only when no better language signal is found, so it can be wrong.</p>
+            </div>
           </fieldset>
 
           <fieldset class="card" id="langpl">

@@ -70,6 +70,7 @@ class Config:
     rules: tuple[Rule, ...] = ()
     language_playlists: dict[str, str] = field(default_factory=dict)  # playlist name -> canonical language
     musicbrainz: bool = True  # enrichment.musicbrainz
+    english_default: bool = True  # enrichment.english_default
 
 
 @dataclass(frozen=True)

@@ -84,3 +84,22 @@ No new gh commands this phase. Pushes to `main` succeeded; `tests` and `e2e` wor
 2. Run the Phase 3 live dry-run (`python -m src.sync`) and review its log (code already written and unit-tested).
 3. Phase 5 analyze mode (needs the same enrichment); Phase 4 remains behind gate G2 (user tasks).
 Blockers: master answer to §5.1 and the user's language-playlist mapping.
+
+---
+## Addendum — master gate decisions applied (Phase 2 review)
+1. **Gate changed:** the report now gives language coverage over the whole library AND over "target-language tracks" (tracks whose artist or the track itself appears in a
+   user-mapped language playlist); the 85 % whole-library criterion is dropped, genre 49 % accepted as best-effort (`gates` block removed from `logs/enrichment-coverage.json`).
+2. **Weak English default added:** Latin-script title/album + primary artist MusicBrainz country in US/GB/AU/CA/IE/NZ => `english`, source `country_default`
+   (reported separately). Off-switch `enrichment.english_default` (default true) added to config schema, `Config.english_default`, the Pages builder (validator, form, YAML, tests; SW cache v2) and `config.example.yaml`.
+   Note: uses the *artist's* MusicBrainz country (from the cache), not the ISRC country. Order: playlist > script > country_default > none.
+3. MusicBrainz work/release language: skipped, as decided. 4. Cache stays git-ignored; `actions/cache` wiring is part of the Phase 4 `sync.yml` rewrite (currently a stub that fails at 0 s, decision 10).
+5. `logs/enrichment-coverage.json` is now counts only (no artist names).
+6. **BLOCKED / interim:** the user's real language mapping was not in the review message (the `<paste here>` placeholder was left in). Numbers below use my GUESSED mapping (git-ignored `config.local.yaml`), so treat them as interim:
+```
+tracks 773 | unique primary artists 653 | genre coverage 49.2 % of artists (best-effort, accepted)
+language coverage, whole library:            53.6 %   (playlist 17, script 7, country_default 390, none 359)
+language coverage, target-language tracks:  100.0 %   (17 of 17 tracks whose artists are in a mapped language playlist)
+```
+The whole-library figure is dominated by the weak English default (390 tracks); the target-language figure is trivially 100 % until the real mapping (which should cover far more of the library) is supplied. Please paste the mapping and I will re-run `python -m src.enrich --report`.
+Tests: 707 default (+75 e2e), all green.
+7. Reviewer caveats to note: (a) "target-language coverage" is near-tautological (the same playlist signal defines the denominator and resolves the language), so it says little about `language_in` reliability; a meaningful check needs held-out labelled songs. (b) The English default can mislabel non-English Latin-script songs by US/GB/... artists; the `english_default` switch exists for that. (c) The earlier commit of `logs/enrichment-coverage.json` with top-10 artist names is still in git history (counts-only from now on); say if you want history rewritten (I have not, no force-push).

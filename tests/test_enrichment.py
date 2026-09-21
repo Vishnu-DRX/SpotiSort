@@ -423,3 +423,48 @@ def test_lowercase_isrc_is_uppercased_for_musicbrainz():
     mb, _ = make_mb(lambda u, p: Resp(200, ISRC_HIT))
     mb.artists_for_isrc("tcadp1828007")
     assert mb._session.calls[0][0].endswith("/isrc/TCADP1828007")
+
+
+# ---- weak English country default (master decision 2, Phase 2 review)
+
+
+def _english_enricher(tmp_path, country, **kw):
+    c = EnrichmentCache(tmp_path / "c.json")
+    c.put_artist("sp1", {"genres": [], "country": country})
+    return Enricher(c, None, LanguageMap(), **kw)
+
+
+@pytest.mark.parametrize("country", ["US", "GB", "AU", "CA", "IE", "NZ"])
+def test_english_default_for_english_speaking_countries(tmp_path, country):
+    r = _english_enricher(tmp_path, country).resolve(track(name="Plain Song"))
+    assert r.language == "english" and r.sources == ("country_default",)
+
+
+@pytest.mark.parametrize("country", ["IN", "JP", "DE", None])
+def test_no_english_default_for_other_countries(tmp_path, country):
+    assert _english_enricher(tmp_path, country).resolve(track(name="Plain Song")).language is None
+
+
+def test_english_default_can_be_switched_off(tmp_path):
+    assert _english_enricher(tmp_path, "US", english_default=False).resolve(track()).language is None
+
+
+def test_english_default_never_overrides_playlist_or_script(tmp_path):
+    e = _english_enricher(tmp_path, "US")
+    assert e.resolve(track(name="केसरिया")).language == "hindi"
+    e.language_map.add(track(tid="a", artist_id="sp1"), "tamil")
+    assert e.resolve(track(tid="b")).language == "tamil"
+
+
+def test_english_default_needs_latin_letters_only(tmp_path):
+    e = _english_enricher(tmp_path, "US")
+    assert e.resolve(track(name="123", album="456")).language is None
+    assert e.resolve(track(name="Song 夜に駆ける")).language == "japanese"  # script wins, not the default
+
+
+def test_language_map_has_votes(tmp_path):
+    m = LanguageMap()
+    m.add(track(tid="a", artist_id="x"), "hindi")
+    m.add(track(tid="b", artist_id="x"), "tamil")  # split vote: no winner, but a target-language artist
+    assert m.has_votes(track(tid="new", artist_id="x")) and m.artist_language("x") is None
+    assert not m.has_votes(track(tid="q", artist_id="other"))

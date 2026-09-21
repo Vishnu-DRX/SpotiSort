@@ -4,7 +4,7 @@
   'use strict';
 
   var TOP_LEVEL_KEYS = ['default_days_threshold', 'fallback_playlist', 'rules', 'language_playlists', 'enrichment'];
-  var ENRICHMENT_KEYS = ['musicbrainz'];
+  var ENRICHMENT_KEYS = ['musicbrainz', 'english_default'];
   var RULE_KEYS = ['name', 'enabled', 'match', 'target_playlist', 'days_threshold', 'create_missing_playlists'];
   var LIST_MATCH_KEYS = ['artist_in', 'genre_contains', 'language_in'];
   var INT_MATCH_KEYS = ['release_year_before', 'release_year_after'];
@@ -142,6 +142,9 @@
       });
       if ('musicbrainz' in enrich && typeof enrich.musicbrainz !== 'boolean') {
         top('enrichment.musicbrainz', "'enrichment.musicbrainz' must be true or false");
+      }
+      if ('english_default' in enrich && typeof enrich.english_default !== 'boolean') {
+        top('enrichment.english_default', "'enrichment.english_default' must be true or false");
       }
     }
 

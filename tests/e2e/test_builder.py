@@ -134,6 +134,7 @@ def test_full_build_with_globals_and_all_keys(builder):
     builder.get_by_label("Default days threshold").fill("21")
     builder.get_by_label("Fallback playlist").fill("Inbox Overflow")
     builder.get_by_label("Look up genre and language on MusicBrainz").uncheck()
+    builder.get_by_label("Assume English for Latin-script songs", exact=False).uncheck()
     builder.get_by_role("button", name="Add language playlist").click()
     builder.locator("#lp-list li").first.get_by_label("Playlist name", exact=True).fill("Chill Hindi")
     lang = builder.locator("#lp-list li").first.get_by_label("Language", exact=True)
@@ -161,6 +162,7 @@ def test_full_build_with_globals_and_all_keys(builder):
     assert cfg.default_days_threshold == 21
     assert cfg.fallback_playlist == "Inbox Overflow"
     assert cfg.musicbrainz is False
+    assert cfg.english_default is False
     assert dict(cfg.language_playlists) == {"Chill Hindi": "hindi"}
     (got,) = cfg.rules
     assert got.enabled is False and got.create_missing_playlists is True and got.days_threshold == 3
@@ -377,7 +379,9 @@ PARITY = [
     None, {}, [], "x", {"bogus": 1}, {"default_days_threshold": -1}, {"default_days_threshold": True},
     {"default_days_threshold": "7"}, {"fallback_playlist": ""}, {"fallback_playlist": 5},
     {"language_playlists": []}, {"language_playlists": {"": "hindi", "A": "nope", "B": "ml"}},
-    {"enrichment": []}, {"enrichment": {"musicbrainz": "yes", "other": 1}}, {"rules": {}},
+    {"enrichment": []}, {"enrichment": {"musicbrainz": "yes", "other": 1}},
+    {"enrichment": {"english_default": "yes"}}, {"enrichment": {"english_default": 1, "musicbrainz": None}},
+    {"enrichment": {"english_default": False, "musicbrainz": True}}, {"rules": {}},
     {"rules": ["x", {}, {"name": "a"}]},
     {"rules": [{"name": "O'Brien", "target_playlist": "p", "match": {}, "extra": 1}]},
     {"rules": [{"name": "r", "target_playlist": "p", "match": {"nope": 1, "artist_in": [], "genre_contains": ["a", ""],
@@ -389,7 +393,7 @@ PARITY = [
     {"rules": [{"name": "Same", "target_playlist": "p", "match": {"explicit": True}},
                {"name": "same", "target_playlist": "p", "match": {"explicit": False}}]},
     {"rules": [{"name": "ok", "target_playlist": "p", "match": {"language_in": ["hindi", "ml"], "release_year_after": 9999},
-                "days_threshold": 0}], "language_playlists": {"X": "tamil"}, "enrichment": {"musicbrainz": False},
+                "days_threshold": 0}], "language_playlists": {"X": "tamil"}, "enrichment": {"musicbrainz": False, "english_default": False},
      "fallback_playlist": "F", "default_days_threshold": 0},
 ]
 
@@ -403,6 +407,37 @@ def test_js_validator_matches_python_messages(builder, doc):
     except ConfigError as exc:
         py = exc.errors
     assert js == py
+
+
+# ------------------------------------------------------------------ english_default
+def test_english_default_toggle_changes_yaml(builder):
+    box = builder.get_by_label("Assume English for Latin-script songs", exact=False)
+    assert box.is_checked()
+    assert preview_data(builder)["enrichment"] == {"musicbrainz": True, "english_default": True}
+    box.uncheck()
+    assert preview_data(builder)["enrichment"] == {"musicbrainz": True, "english_default": False}
+    assert validated(download_text(builder)).english_default is False
+    box.check()
+    assert preview_data(builder)["enrichment"]["english_default"] is True
+
+
+@pytest.mark.parametrize("value", [True, False])
+def test_english_default_import_roundtrip(builder, value):
+    text = f"enrichment:\n  musicbrainz: true\n  english_default: {str(value).lower()}\n"
+    builder.locator("#import summary").click()
+    builder.get_by_label("Or paste YAML").fill(text)
+    builder.get_by_role("button", name="Load into form").click()
+    assert builder.get_by_label("Assume English for Latin-script songs", exact=False).is_checked() is value
+    assert f"english_default: {str(value).lower()}" in download_text(builder)
+    assert validated(download_text(builder)).english_default is value
+
+
+def test_english_default_invalid_flags_field(builder):
+    builder.locator("#import summary").click()
+    builder.get_by_label("Or paste YAML").fill("enrichment:\n  english_default: maybe\n")
+    builder.get_by_role("button", name="Load into form").click()
+    assert "'enrichment.english_default' must be true or false" in builder.locator("#import-status").text_content()
+    assert builder.get_by_label("Assume English for Latin-script songs", exact=False).is_checked()  # falls back to default
 
 
 # ------------------------------------------------------------------ import
@@ -512,8 +547,8 @@ def test_service_worker_and_offline_reload(make_page, site):
     page.reload()  # now controlled by the SW
     page.wait_for_function("navigator.serviceWorker.controller !== null")
     keys = page.evaluate("caches.keys()")
-    assert keys == ["spotisort-shell-v1"]
-    cached = page.evaluate("caches.open('spotisort-shell-v1').then(c => c.keys()).then(ks => ks.map(k => k.url))")
+    assert keys == ["spotisort-shell-v2"]
+    cached = page.evaluate("caches.open('spotisort-shell-v2').then(c => c.keys()).then(ks => ks.map(k => k.url))")
     for needed in ("builder/", "builder/app.js", "builder/languages.js", "builder/validate.js", "builder/builder.css",
                    "vendor/js-yaml.min.js", "manifest.webmanifest", "icons/icon-192.png", "style.css"):
         assert site + needed in cached, needed

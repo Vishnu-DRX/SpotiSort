@@ -17,7 +17,7 @@ TOP_LEVEL_KEYS = {
     "language_playlists",
     "enrichment",
 }
-ENRICHMENT_KEYS = {"musicbrainz"}
+ENRICHMENT_KEYS = {"musicbrainz", "english_default"}
 RULE_KEYS = {
     "name",
     "enabled",
@@ -164,6 +164,7 @@ def parse_config(data: Any) -> Config:
                 lang_playlists[name] = canon
 
     musicbrainz = True
+    english_default = True
     raw_enrich = data.get("enrichment", {})
     if raw_enrich is None:
         raw_enrich = {}
@@ -178,6 +179,11 @@ def parse_config(data: Any) -> Config:
                 errors.append("'enrichment.musicbrainz' must be true or false")
             else:
                 musicbrainz = raw_enrich["musicbrainz"]
+        if "english_default" in raw_enrich:
+            if not isinstance(raw_enrich["english_default"], bool):
+                errors.append("'enrichment.english_default' must be true or false")
+            else:
+                english_default = raw_enrich["english_default"]
 
     raw_rules = data.get("rules", [])
     rules: list[Rule] = []
@@ -203,6 +209,7 @@ def parse_config(data: Any) -> Config:
         rules=tuple(rules),
         language_playlists=lang_playlists,
         musicbrainz=musicbrainz,
+        english_default=english_default,
     )
 
 

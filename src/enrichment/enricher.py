@@ -1,7 +1,7 @@
 """Combine providers behind ``Enricher.resolve(track) -> Enrichment``.
 
-Language order: playlist-learned > script detection > (MusicBrainz work/release language: not implemented,
-see the Phase 2 report) > None. Genres come from the primary artist via MusicBrainz tags.
+Language order: playlist-learned > script detection > weak English country default > None
+(MusicBrainz work/release language is intentionally not used). Genres come from the primary artist via MusicBrainz tags.
 """
 
 from __future__ import annotations
@@ -12,7 +12,9 @@ from ..models import Enrichment, Track
 from .cache import EnrichmentCache
 from .musicbrainz import ArtistInfo, MusicBrainz, MusicBrainzError
 from .playlist_language import LanguageMap
-from .script_detect import detect_script_language
+from .script_detect import detect_script_language, dominant_script
+
+ENGLISH_COUNTRIES = frozenset({"US", "GB", "AU", "CA", "IE", "NZ"})
 
 
 def _fold(s: str) -> str:
@@ -25,10 +27,12 @@ class Enricher:
         cache: EnrichmentCache,
         musicbrainz: MusicBrainz | None = None,
         language_map: LanguageMap | None = None,
+        english_default: bool = True,
     ):
         self.cache = cache
         self.mb = musicbrainz
         self.language_map = language_map
+        self.english_default = english_default
         self.errors = 0
 
     def _artist_entry(self, track: Track) -> dict[str, Any] | None:
@@ -71,6 +75,17 @@ class Enricher:
             self.errors += 1
             return False, None
 
+    @staticmethod
+    def _english_by_country(track: Track, entry: dict[str, Any] | None) -> bool:
+        """WEAK default: Latin-script title/album and the primary artist's MusicBrainz country is English-speaking."""
+        text = f"{track.name}{track.album_name}"
+        return (
+            bool(entry)
+            and entry.get("country") in ENGLISH_COUNTRIES
+            and any(ch.isalpha() for ch in text)
+            and dominant_script(track.name, track.album_name) is None
+        )
+
     def resolve(self, track: Track) -> Enrichment:
         sources: list[str] = []
         genres: tuple[str, ...] = ()
@@ -88,4 +103,7 @@ class Enricher:
             language = detect_script_language(track.name, track.album_name, *(a.name for a in track.artists))
             if language:
                 sources.append("script")
+        if language is None and self.english_default and self._english_by_country(track, entry):
+            language = "english"
+            sources.append("country_default")
         return Enrichment(genres=genres, language=language, sources=tuple(sources))

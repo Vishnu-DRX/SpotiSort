@@ -35,6 +35,12 @@ Copy `config.example.yaml` to `config.yaml`, or build it with the form-based **c
 
 Spotify no longer provides genres or language. In Phase 2 these come from MusicBrainz plus heuristics, so expect them to be best-effort.
 
+## Try it (read-only)
+
+- `python -m src.sync` previews what would move (dry-run; writes nothing, logs to `logs/`). `--apply` is not available yet.
+- `python -m src.analyze` drafts `config.draft.yaml` from your existing playlists (all rules disabled; review, then copy into `config.yaml`).
+- `python -m src.enrich --report` measures genre/language coverage of your Liked Songs.
+
 ## Safety guarantees
 
 These are the design, and are fully enforced as the phases land:
@@ -61,7 +67,7 @@ Live tests are skipped unless `SPOTISORT_LIVE=1`.
 - Phase 2: enrichment via MusicBrainz (language, genre)
 - Phase 3: dry-run sync
 - Phase 4: guarded apply + Actions
-- Phase 5: analyze mode
+- Phase 5: analyze mode (done)
 - Phase 6: Pages config builder / PWA
 - Phase 7: GitHub write-back
 - Phase 8: dashboard

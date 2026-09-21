@@ -3,18 +3,19 @@
   "tracks": 773,
   "unique_primary_artists": 653,
   "genre_coverage_pct_of_artists": 49.2,
-  "language_coverage_pct_of_tracks": 3.1,
-  "hypothetical_language_pct_with_weak_country_hint": 62.0,
-  "gates": {
-    "genre_ge_60": false,
-    "language_ge_85": false
-  },
+  "genre_note": "best-effort (master decision: 49% accepted); MusicBrainz tags only",
+  "language_coverage_pct_whole_library": 53.6,
+  "language_coverage_pct_target_language_tracks": 100.0,
+  "target_language_tracks": 17,
+  "target_language_tracks_resolved": 17,
   "language_source_counts": {
     "playlist": 17,
-    "none": 749,
+    "country_default": 390,
+    "none": 359,
     "script": 7
   },
   "language_distribution": {
+    "english": 390,
     "hindi": 14,
     "japanese": 4,
     "greek": 2,
@@ -25,92 +26,8 @@
     "musicbrainz": 321,
     "none": 332
   },
-  "top_unresolved_artists_genre": [
-    {
-      "name": "machineheart",
-      "tracks": 5
-    },
-    {
-      "name": "Saint Mesa",
-      "tracks": 4
-    },
-    {
-      "name": "Lucy Daydream",
-      "tracks": 4
-    },
-    {
-      "name": "The Hour",
-      "tracks": 4
-    },
-    {
-      "name": "WesGhost",
-      "tracks": 3
-    },
-    {
-      "name": "The Chain Gang Of 1974",
-      "tracks": 3
-    },
-    {
-      "name": "Ponette",
-      "tracks": 3
-    },
-    {
-      "name": "Mansionair",
-      "tracks": 3
-    },
-    {
-      "name": "Cinnamon Chasers",
-      "tracks": 3
-    },
-    {
-      "name": "Trapdoor Social",
-      "tracks": 3
-    }
-  ],
-  "top_unresolved_artists_language": [
-    {
-      "name": "Dabin",
-      "tracks": 6
-    },
-    {
-      "name": "machineheart",
-      "tracks": 5
-    },
-    {
-      "name": "SYML",
-      "tracks": 5
-    },
-    {
-      "name": "Saint Mesa",
-      "tracks": 4
-    },
-    {
-      "name": "PVRIS",
-      "tracks": 4
-    },
-    {
-      "name": "TWO LANES",
-      "tracks": 4
-    },
-    {
-      "name": "Anavae",
-      "tracks": 4
-    },
-    {
-      "name": "Lucy Daydream",
-      "tracks": 4
-    },
-    {
-      "name": "Giant Rooks",
-      "tracks": 4
-    },
-    {
-      "name": "Of Monsters and Men",
-      "tracks": 4
-    }
-  ],
   "musicbrainz": {
-    "requests": 20,
+    "requests": 0,
     "retries_after_503_or_429": 0,
     "errors": 0
   }

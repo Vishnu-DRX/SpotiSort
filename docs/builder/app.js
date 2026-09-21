@@ -22,7 +22,7 @@
   var lastRemoved = null;
 
   function blankState() {
-    return { defaultDays: '14', fallback: '', musicbrainz: true, langPlaylists: [], rules: [], revealAll: false };
+    return { defaultDays: '14', fallback: '', musicbrainz: true, englishDefault: true, langPlaylists: [], rules: [], revealAll: false };
   }
   function newRule() {
     return { id: nextId++, pristine: true, name: '', enabled: true, target: '', days: '', create: false, match: [] };
@@ -76,7 +76,7 @@
       lp[row.name] = langOut(row.lang);
     });
     data.language_playlists = lp;
-    data.enrichment = { musicbrainz: state.musicbrainz };
+    data.enrichment = { musicbrainz: state.musicbrainz, english_default: state.englishDefault };
     data.fallback_playlist = state.fallback === '' ? null : state.fallback;
     data.rules = state.rules.map(function (r) {
       var match = {};
@@ -113,7 +113,7 @@
       if (f === 'match') return r.match.length ? null : 'r' + r.id + '-add-cond';
       return fid(r, f);
     }
-    return { default_days_threshold: 'g-days', fallback_playlist: 'g-fallback', 'enrichment.musicbrainz': 'g-mb' }[e.field] || null;
+    return { default_days_threshold: 'g-days', fallback_playlist: 'g-fallback', 'enrichment.musicbrainz': 'g-mb', 'enrichment.english_default': 'g-en' }[e.field] || null;
   }
   function slotIdFor(e) {
     if (e.lpRowId) return 'err-lp' + e.lpRowId;
@@ -457,6 +457,7 @@
     next.defaultDays = raw.default_days_threshold === undefined || raw.default_days_threshold === null ? '' : String(raw.default_days_threshold);
     next.fallback = raw.fallback_playlist === undefined || raw.fallback_playlist === null ? '' : String(raw.fallback_playlist);
     if (raw.enrichment && typeof raw.enrichment === 'object' && typeof raw.enrichment.musicbrainz === 'boolean') next.musicbrainz = raw.enrichment.musicbrainz;
+    if (raw.enrichment && typeof raw.enrichment === 'object' && typeof raw.enrichment.english_default === 'boolean') next.englishDefault = raw.enrichment.english_default;
     var lp = raw.language_playlists;
     if (lp && typeof lp === 'object' && !Array.isArray(lp)) {
       Object.keys(lp).forEach(function (k) {
@@ -498,6 +499,7 @@
     $('g-days').value = state.defaultDays;
     $('g-fallback').value = state.fallback;
     $('g-mb').checked = state.musicbrainz;
+    $('g-en').checked = state.englishDefault;
     renderLp();
     renderRules();
     announceRule('');
@@ -525,6 +527,7 @@
     $('g-days').addEventListener('input', function (e) { state.defaultDays = e.target.value; update(); });
     $('g-fallback').addEventListener('input', function (e) { state.fallback = e.target.value; update(); });
     $('g-mb').addEventListener('change', function (e) { state.musicbrainz = e.target.checked; update(); });
+    $('g-en').addEventListener('change', function (e) { state.englishDefault = e.target.checked; update(); });
     $('lp-add').addEventListener('click', function () {
       var row = newLp();
       state.langPlaylists.push(row);

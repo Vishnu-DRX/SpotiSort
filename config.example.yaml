@@ -8,6 +8,7 @@ language_playlists: {}
 
 enrichment:
   musicbrainz: true        # look up genre/language hints on MusicBrainz (free, 1 request/second)
+  english_default: true    # weak guess: assume English for Latin-script songs by US/GB/AU/CA/IE/NZ artists
 
 fallback_playlist: null   # or a playlist name; null = leave unmatched songs alone
 

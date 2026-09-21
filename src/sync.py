@@ -108,7 +108,7 @@ def run(args: argparse.Namespace) -> int:
 
     cache = EnrichmentCache(args.cache)
     mb = MusicBrainz() if (config.musicbrainz and not args.no_network) else None
-    enricher = Enricher(cache, mb, lmap)
+    enricher = Enricher(cache, mb, lmap, config.english_default)
     enrichments = {}
     saved_at = 0
     for t in tracks:

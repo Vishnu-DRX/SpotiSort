@@ -9,8 +9,8 @@
 
 ## 2. Proof
 ```
-$ python -m pytest tests/e2e -q -m e2e     -> 68 passed (~21 s locally on Edge; CI on Playwright Chromium: success)
-$ python -m pytest -q                       -> 606 passed, 2 skipped, 68 deselected
+$ python -m pytest tests/e2e -q -m e2e     -> 75 passed (~25 s locally on Edge; CI on Playwright Chromium was green on the previous 68-test revision)
+$ python -m pytest -q                       -> 706 passed, 2 skipped, 75 deselected
 $ gh run list  -> completed success  e2e   35611562532 (56s)   completed success  Tests  35611562385 (20s)
 ```
 Live site: https://vishnu-drx.github.io/SpotiSort/builder/ (Pages build success after the push).
@@ -40,3 +40,8 @@ One agent built the PWA + e2e suite (long-running, ~20 min); I reviewed the 1280
 
 ## 8. Next
 Phase 7 (GitHub write-back) is gated behind Phase 4 by the spec. Nothing from Phase 6 blocks Phases 2-5.
+
+## Update (after Phase 2 review)
+Builder gained `enrichment.english_default` (checkbox, validator parity with `src/config.py`, YAML export/import); 7 new e2e tests (75 total, all pass locally);
+service-worker cache bumped to `spotisort-shell-v2`. The 75-test revision has not yet been through CI at the time of writing (see final summary for the run).
+Master review of this report is requested.

@@ -52,6 +52,10 @@ class LanguageMap:
                 votes[lang] += 1
         return self._winner(votes) if votes else None
 
+    def has_votes(self, track: Track) -> bool:
+        """True if the track or any credited artist appears in a mapped language playlist (any vote share)."""
+        return track.id in self._track_votes or any(a.id in self._artist_votes for a in track.artists if a.id)
+
     def __len__(self) -> int:
         return len(self._artist_votes)
 
