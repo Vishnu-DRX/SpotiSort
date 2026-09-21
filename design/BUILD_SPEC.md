@@ -194,6 +194,39 @@ product, not a dev tool. Order: **U1 design system + site shell → U2 Configure
     for the marketing pages) for master review; keyboard-only walkthrough test of the full Configure flow; PWA installable
     (real Lighthouse this time); total transferred JS/CSS budget stated and met (target < 250 KB excluding vendored js-yaml).
 
+## Master decisions 5 — dashboard is the web page only; readability revamp (binding)
+31. **No localhost server in the product.** The dashboard is part of the Pages site. Data sources: **Repo** (default when served
+    from `*.github.io`; reads the fork's committed logs via GitHub raw/API), **Demo** (fixtures, for visitors), and **Open local
+    files** (drag-and-drop or file picker of `logs/*.json`, parsed entirely in the browser, nothing uploaded — the private path for
+    song titles). `python -m src.dashboard` is demoted to a developer-only tool: removed from the README user path, kept only if
+    tests use it. The source switcher remembers the last choice; the page states plainly which source it is showing.
+32. **Titles opt-out for public logs:** new config key `logging.include_track_names` (bool, **default false** = private-by-default for
+    forks; the user's own config sets true). When false, committed run logs/plan snapshots carry URIs and counts only, and the
+    dashboard shows "Title hidden — open local files to see titles" where relevant; local files always carry titles. Surface it in
+    Configure (Basic mode, with a plain-language tooltip) and Setup guide. This is another deliberate schema exception: update
+    `config.py`, `validate.js`, builder, workflow, artifacts, and parity tests.
+33. **Journal durability:** the workflow uploads the run journal as a private Actions artifact (`actions/upload-artifact`,
+    `if: always()`, 90-day retention) in addition to the committed log.
+34. **Dashboard readability revamp (part of U3):**
+    - Every view opens with a one-line **question it answers** and a "What does this mean?" popover; a glossary drawer explains terms
+      (inbox, eligible, shadowed rule, signal tier, precision). No internal identifiers in user-facing text (`will_move`, `P01`, `R03`):
+      use plain labels ("Will move on 30 Sep", "Too new — waits 4 more days", "No rule matched", "Blocked: playlist not writable").
+    - Status is never colour-only (icon + text + colour). Charts follow the `dataviz` skill (accessible palette, direct labels, no
+      chart junk, tabular numbers), including light/dark.
+    - Tables: sticky header, sortable with visible indicators, filter **chips** (decision, rule, playlist, language, source),
+      search, column show/hide, density toggle (comfortable/compact, persisted), sensible truncation with tooltips, keyboard
+      navigation, and a **card layout on phones** instead of horizontal scrolling. CSV export of the current Inbox view.
+    - **Explain drawer as a sentence-first narrative** ("Matched *Hindi → Dil* (rule 2) because the language is Hindi — learned
+      from your playlist *Dil*, high confidence. It was too new for rule 1."), then the technical trace collapsed below.
+    - Overview leads with one **"what happens next" sentence** and 4 KPI cards with deltas; empty/first-run state with a short
+      guided tour; stale-data banner.
+    - "Playlists → moves out" column and the Overview `schedule` field are filled in (workflow writes `schedule` from the cron).
+    - Reuse the U1 components and tokens only; the dashboard gets the same axe/Lighthouse/3-browser gates (decision 30).
+35. **Order of work:** U1 (design system + shell + Home + Setup guide) → U2 (Configure) → U3 (dashboard revamp + decisions 31-34) →
+    **G2a** (user runs `scripts/set_secrets.ps1`; the session triggers **cloud dry-runs only**, so Repo mode gets real logs; the user
+    reviews the dashboard from the public site) → **G2b** (live `SpotiSort Test` protocol, then one real run, then the confirmed
+    cron) → Phase 7 (save to GitHub) → 8b (run-now button, guardian). No writes to Spotify before G2b.
+
 ## Verified write shapes (live-tested 2026-09-21 on `SpotiSort Test`; liked count 773 preserved)
 - Add to playlist: `POST /playlists/{id}/items`, JSON body `{"uris":["spotify:track:..."]}` → **201**
   `{"snapshot_id"}`. Max 100 (101 → 400).
