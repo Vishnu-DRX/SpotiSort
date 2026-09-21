@@ -1,5 +1,23 @@
 # Spotify Liked-Songs Auto-Sorter — Implementation Plan
 
+> ## Revision 2 errata (2026-09-21, from live API verification — these override the text below)
+> - **No genres from Spotify** (`GET /artists/{id}` has no `genres`; album `genres` always empty; batch
+>   endpoints 403). Genre + **language** come from MusicBrainz (via ISRC, still present on all tracks),
+>   script detection, and language maps learned from the user's own playlists. `genre_cache.py` becomes
+>   `src/enrichment/`. New rule key `language_in`; new config `language_playlists`. Language is the
+>   *primary* differentiator, genre secondary.
+> - **No Client Secret needed**: PKCE login + client_id-only refresh both work. Actions secrets are only
+>   `SPOTIFY_CLIENT_ID` and `SPOTIFY_REFRESH_TOKEN`. Refresh tokens are not rotated.
+> - Limits: `/me/library` add/remove/contains **40** per call (`uris` query param, `spotify:track:` only);
+>   `/me/tracks` 50/page; `/me/playlists` 50/page; `/playlists/{id}/items` 100/page and 100/write; search 10.
+> - Playlists: only **owned** (29) or **collaborative** (3) are usable; **followed** playlists return 403 on
+>   read. Resolve targets by name among owned/collaborative only. Counts live in `items.total`.
+> - `GET /me` has no `product` — Premium cannot be verified in code (document as prerequisite only).
+> - Playlist entries are `{added_at, item}`; `track` is now a boolean. Skip `is_local`/null/episode entries.
+> - Safety: journal-before-remove, verify-after, reconcile totals, `--restore`; see `BUILD_SPEC.md`.
+> - Planning docs live in `design/`; `docs/` is the Pages site. Build order is in `BUILD_SPEC.md`.
+> - Exact write-request shapes: `spotify-api-explore/FINDINGS.md` §6 (pending live write tests).
+
 ## 1. What this is
 
 A rules-based system that treats Spotify **Liked Songs as an inbox**: any liked
