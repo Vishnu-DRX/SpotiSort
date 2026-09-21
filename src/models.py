@@ -68,6 +68,8 @@ class Config:
     default_days_threshold: int = 14
     fallback_playlist: str | None = None
     rules: tuple[Rule, ...] = ()
+    language_playlists: dict[str, str] = field(default_factory=dict)  # playlist name -> canonical language
+    musicbrainz: bool = True  # enrichment.musicbrainz
 
 
 @dataclass(frozen=True)
@@ -77,3 +79,5 @@ class Match:
     rule: Rule
     matched: dict[str, Any] = field(default_factory=dict)
     age_days: float | None = None
+    threshold: int | None = None
+    aged: bool = True  # False: conditions matched but the age gate is not met yet

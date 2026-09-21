@@ -3,8 +3,8 @@
 Semantics
 - Rules are evaluated in file order; the first enabled rule that matches wins.
 - All keys inside one rule's ``match`` are AND-combined.
-- A rule's age gate (``days_threshold``, else the default) is part of its condition:
-  a track younger than the threshold does not match that rule, later rules still apply.
+- The age gate (``days_threshold``, else the default) is checked on the matched rule only: a too-young
+  match leaves the song in Liked Songs and stops evaluation (it never falls through to later rules).
 - A track with no ``added_at`` never satisfies an age gate (conservative: never moved).
 - Genre/language conditions are simply false when enrichment is missing or empty.
 - ``release_year_before`` is strict (year < N); ``release_year_after`` is strict (year > N).
@@ -108,6 +108,31 @@ def _match_keys(
     return matched
 
 
+def first_match(
+    track: Track,
+    enrichment: Enrichment | None,
+    rules: Sequence[Rule],
+    now: datetime,
+    default_days_threshold: int = DEFAULT_DAYS_THRESHOLD,
+) -> Match | None:
+    """First enabled rule whose *conditions* match, with ``aged`` saying whether its age gate is met.
+
+    Conditions are matched first-match-wins; the age gate is checked only on that rule, so a too-young
+    match stops evaluation instead of leaking into a later, broader rule (master decision 2).
+    """
+    age = age_days(track, now)
+    for rule in rules:
+        if not rule.enabled or not rule.match:
+            continue
+        matched = _match_keys(track, enrichment, rule.match)
+        if matched is None:
+            continue
+        threshold = resolve_days_threshold(rule, default_days_threshold)
+        aged = age is not None and age >= threshold
+        return Match(rule=rule, matched=matched, age_days=age, threshold=threshold, aged=aged)
+    return None
+
+
 def evaluate(
     track: Track,
     enrichment: Enrichment | None,
@@ -115,14 +140,6 @@ def evaluate(
     now: datetime,
     default_days_threshold: int = DEFAULT_DAYS_THRESHOLD,
 ) -> Match | None:
-    """First enabled rule that matches ``track`` (age gate included), or None."""
-    age = age_days(track, now)
-    for rule in rules:
-        if not rule.enabled or not rule.match:
-            continue
-        if age is None or age < resolve_days_threshold(rule, default_days_threshold):
-            continue
-        matched = _match_keys(track, enrichment, rule.match)
-        if matched is not None:
-            return Match(rule=rule, matched=matched, age_days=age)
-    return None
+    """The rule to act on now, or None (no match, or matched but not old enough yet)."""
+    match = first_match(track, enrichment, rules, now, default_days_threshold)
+    return match if match is not None and match.aged else None

@@ -348,3 +348,60 @@ def test_config_error_message_contains_every_error():
         parse_config({"a": 1, "b": 2})
     for e in ei.value.errors:
         assert e in str(ei.value)
+
+
+# ---- Phase 2 schema additions: language_playlists, enrichment, language normalisation
+
+def _cfg(**extra):
+    from src.config import parse_config
+
+    return parse_config(extra)
+
+
+def test_language_playlists_normalised():
+    c = _cfg(language_playlists={"Chill Hindi": "hi", "Mallu": "Malayalam", "K": "kor"})
+    assert c.language_playlists == {"Chill Hindi": "hindi", "Mallu": "malayalam", "K": "korean"}
+
+
+def test_language_playlists_unknown_language_rejected():
+    import pytest
+    from src.config import ConfigError
+
+    with pytest.raises(ConfigError, match="unknown language"):
+        _cfg(language_playlists={"X": "klingon"})
+
+
+def test_language_playlists_must_be_mapping():
+    import pytest
+    from src.config import ConfigError
+
+    with pytest.raises(ConfigError):
+        _cfg(language_playlists=["a"])
+
+
+def test_enrichment_musicbrainz_flag():
+    assert _cfg().musicbrainz is True
+    assert _cfg(enrichment={"musicbrainz": False}).musicbrainz is False
+
+
+def test_enrichment_rejects_unknown_key_and_bad_type():
+    import pytest
+    from src.config import ConfigError
+
+    with pytest.raises(ConfigError):
+        _cfg(enrichment={"lastfm": True})
+    with pytest.raises(ConfigError):
+        _cfg(enrichment={"musicbrainz": "yes"})
+
+
+def test_language_in_is_normalised_through_alias_table():
+    c = _cfg(rules=[{"name": "r", "target_playlist": "p", "match": {"language_in": ["hi", "MAL", "தமிழ்"]}}])
+    assert c.rules[0].match["language_in"] == ["hindi", "malayalam", "tamil"]
+
+
+def test_language_in_unknown_language_rejected():
+    import pytest
+    from src.config import ConfigError
+
+    with pytest.raises(ConfigError, match="unknown language"):
+        _cfg(rules=[{"name": "r", "target_playlist": "p", "match": {"language_in": ["elvish"]}}])

@@ -7,9 +7,17 @@ from typing import Any
 
 import yaml
 
+from .enrichment.languages import CANONICAL, normalize_language
 from .models import Config, Rule
 
-TOP_LEVEL_KEYS = {"default_days_threshold", "fallback_playlist", "rules"}
+TOP_LEVEL_KEYS = {
+    "default_days_threshold",
+    "fallback_playlist",
+    "rules",
+    "language_playlists",
+    "enrichment",
+}
+ENRICHMENT_KEYS = {"musicbrainz"}
 RULE_KEYS = {
     "name",
     "enabled",
@@ -56,6 +64,13 @@ def _validate_match(match: Any, where: str, errors: list[str]) -> dict[str, Any]
                 or not all(_nonempty_str(v) for v in value)
             ):
                 errors.append(f"{where}: '{key}' must be a non-empty list of non-empty strings")
+            elif key == "language_in":
+                langs = [normalize_language(v) for v in value]
+                unknown = [v for v, n in zip(value, langs) if n is None]
+                if unknown:
+                    errors.append(f"{where}: unknown language {unknown[0]!r} in 'language_in' (e.g. {', '.join(CANONICAL[:6])}, or an ISO code)")
+                else:
+                    clean[key] = langs
             else:
                 clean[key] = list(value)
         elif key in INT_MATCH_KEYS:
@@ -132,6 +147,38 @@ def parse_config(data: Any) -> Config:
     if fallback is not None and not _nonempty_str(fallback):
         errors.append("'fallback_playlist' must be a playlist name or null")
 
+    lang_playlists: dict[str, str] = {}
+    raw_lp = data.get("language_playlists", {})
+    if raw_lp is None:
+        raw_lp = {}
+    if not isinstance(raw_lp, dict):
+        errors.append("'language_playlists' must be a mapping of playlist name -> language")
+    else:
+        for name, lang in raw_lp.items():
+            canon = normalize_language(lang)
+            if not _nonempty_str(name):
+                errors.append("'language_playlists': playlist names must be non-empty strings")
+            elif canon is None:
+                errors.append(f"'language_playlists' ({name!r}): unknown language {lang!r}")
+            else:
+                lang_playlists[name] = canon
+
+    musicbrainz = True
+    raw_enrich = data.get("enrichment", {})
+    if raw_enrich is None:
+        raw_enrich = {}
+    if not isinstance(raw_enrich, dict):
+        errors.append("'enrichment' must be a mapping")
+    else:
+        for key in raw_enrich:
+            if key not in ENRICHMENT_KEYS:
+                errors.append(f"unknown key 'enrichment.{key}'")
+        if "musicbrainz" in raw_enrich:
+            if not isinstance(raw_enrich["musicbrainz"], bool):
+                errors.append("'enrichment.musicbrainz' must be true or false")
+            else:
+                musicbrainz = raw_enrich["musicbrainz"]
+
     raw_rules = data.get("rules", [])
     rules: list[Rule] = []
     if not isinstance(raw_rules, list):
@@ -154,6 +201,8 @@ def parse_config(data: Any) -> Config:
         default_days_threshold=default_days,
         fallback_playlist=fallback,
         rules=tuple(rules),
+        language_playlists=lang_playlists,
+        musicbrainz=musicbrainz,
     )
 
 

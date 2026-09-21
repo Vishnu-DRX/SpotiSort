@@ -379,11 +379,24 @@ def test_added_at_none_never_matches():
     assert run(make_track(added_at=None), [r]) is None
 
 
-def test_younger_earlier_rule_falls_through_to_later_rule():
+def test_too_young_match_blocks_later_rules_no_fall_through():
     r1 = rule({"explicit": False}, name="slow", days_threshold=30)
     r2 = rule({"explicit": False}, name="fast", days_threshold=7)
-    assert run(make_track(added_at=days_ago(10)), [r1, r2]).rule.name == "fast"
-    assert run(make_track(added_at=days_ago(40)), [r1, r2]).rule.name == "slow"
+    assert run(make_track(added_at=days_ago(10)), [r1, r2]) is None
+
+
+def test_first_match_reports_too_young_match_with_threshold():
+    from src.rules_engine import first_match
+
+    r1 = rule({"explicit": False}, name="slow", days_threshold=30)
+    m = first_match(make_track(added_at=days_ago(10)), None, [r1], NOW)
+    assert m.rule.name == "slow" and m.aged is False and m.threshold == 30
+
+
+def test_first_match_none_when_no_conditions_match():
+    from src.rules_engine import first_match
+
+    assert first_match(make_track(added_at=days_ago(10)), None, [rule({"explicit": True})], NOW) is None
 
 
 def test_age_days_helper_fractional():
