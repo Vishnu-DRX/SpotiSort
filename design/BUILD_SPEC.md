@@ -155,9 +155,10 @@ product, not a dev tool. Order: **U1 design system + site shell → U2 Configure
 26. **GitHub & socials:** header/footer/hero link to the **canonical upstream repo `https://github.com/Vishnu-DRX/SpotiSort`**
     ("Star / Fork on GitHub" with live star count fetched at runtime, failing silently). In Repo mode the site also derives the
     visitor's own fork from `location` (`<owner>.github.io/<repo>` → `github.com/<owner>/<repo>`) and shows an "Your fork"
-    link. Author credit ("Built by <name>") + social icons are read from ONE file, `docs/site.config.json` (keys: name, github,
-    plus optional linkedin, x, instagram, website, youtube, email — omit any that are null). Icons are inline SVG. Forks keep
-    the upstream credit line but may edit that file.
+    link. Author credit ("Built by <name>") + social icons are read from ONE file, `docs/site.config.json`. **For now ONLY
+    GitHub is shown** (`{"name": "Vishnu-DRX", "github": "https://github.com/Vishnu-DRX"}`); the renderer supports optional
+    linkedin/x/instagram/website/youtube keys but renders nothing for missing/null ones, so no empty icons or placeholders
+    appear. Icons are inline SVG. Forks keep the upstream credit line but may edit that file.
 27. **Configure (formerly config builder) UX:**
     - A guided **stepper**: 1 *Basics* (how many days a song waits, fallback playlist) → 2 *Languages* (map your playlists to
       languages) → 3 *Rules* (what goes where) → 4 *Review & save*. Each step has a one-paragraph explanation, what-good-looks-
