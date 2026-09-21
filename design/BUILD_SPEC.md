@@ -16,6 +16,21 @@ Where this spec and the original plan conflict, **this spec wins**.
 - Commit per logical unit; push to `main` at the end of each phase. Never force-push.
 - Never read/print `.env`. Never run `--apply` against the real library except as Phase 4 prescribes.
 
+## Verified write shapes (live-tested 2026-09-21 on `SpotiSort Test`; liked count 773 preserved)
+- Add to playlist: `POST /playlists/{id}/items`, JSON body `{"uris":["spotify:track:..."]}` → **201**
+  `{"snapshot_id"}`. Max 100 (101 → 400).
+- Remove from playlist: `DELETE /playlists/{id}/items`, JSON body `{"items":[{"uri":"..."}]}` (optional
+  `"snapshot_id"`) → **200** `{"snapshot_id"}`.
+- Save/remove liked: `PUT` / `DELETE /me/library?uris=spotify:track:A,spotify:track:B` — URIs in the **query
+  string** (JSON body → 400) → **200**, empty body. Max **40**. `GET /me/library/contains?uris=...` max 40.
+- **Read-after-write lag:** a GET straight after a write can be stale. Use the `snapshot_id` returned by the
+  previous *write* (never one from a fresh GET), and verify with a short poll (e.g. up to 5 tries, 1 s apart)
+  before concluding a write failed.
+- **Re-saving an already-liked track resets its `added_at`.** Therefore never `PUT` tracks that are already
+  liked (skip via `contains` first); `--restore` is the only path that re-saves, and it is expected to reset dates.
+- Not verified: writes to followed playlists (reads already 403, so expect failure — treat any non-2xx as
+  "do not remove from Liked Songs"). 429 `Retry-After` never occurred live; keep the unit-tested handling.
+
 ## Cross-cutting rules (apply to every phase)
 1. **No liked song may be lost.** Before ANY removal from Liked Songs: (a) the track was confirmed present in
    the target playlist by re-reading it; (b) a **journal** entry `{uri, name, artists, original_added_at,
