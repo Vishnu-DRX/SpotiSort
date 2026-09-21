@@ -52,6 +52,37 @@ UI + Playwright while Phase 2/3 code is being written). Stop only for these **ha
 - **G3:** any deviation from a "binding" decision or cross-cutting rule → stop and ask.
 Phases 7–8 follow Phase 4. A phase report is required even when you do not stop.
 
+## Master decisions 2 (product reality) — binding, override earlier text where they conflict
+The user's *current* Liked Songs (773) is a stale archive (last archived to `Vault_drx` in 2023). **The tool is
+designed for a fresh, near-empty Liked Songs inbox.** Therefore:
+12. **Never operate on the existing library.** Reads for analysis/backtests are fine; no `--apply` may ever touch
+    the 773 legacy songs. Hard guards: `--apply` requires an explicit selector (`--only-uris`, `--newest N`) for the
+    first live tests, and a **`--max-moves N` cap (default 50)** that aborts (exit non-zero) if a plan exceeds it. The
+    Actions workflow uses the same cap. Coverage numbers on the legacy library are informational only.
+13. **Backtest instead of judging on the legacy inbox:** `python -m src.backtest` simulates an inbox from the user's
+    owned playlists (each track's true home = the playlist it is in), runs the real planner with the given config, and
+    reports per-playlist precision/recall and top confusions. Repo output is counts-only; detail goes to git-ignored
+    `logs/backtest-detail.md`. This is the master's sign-off evidence for rule quality (replaces "review a real
+    dry-run log"). Per-signal precision (script / hint / country_default) is computed from the same ground truth.
+14. **Insert position (needed for `Vault_drx`, whose existing order must be preserved and newer songs go on top):**
+    new per-rule key **`target_position: top | bottom`** (default `bottom`). `top` sends `position: 0` in the
+    `POST /playlists/{id}/items` body (existing order untouched). Ordering rule: within a run, songs bound for the
+    same playlist are ordered **newest liked first**; for `top`, insert the batches **oldest chunk first** so the
+    newest ends up at index 0 (batches of ≤100; inserting chunks newest-first would invert order). The `position`
+    body field is **unverified live** — verify on `SpotiSort Test` in G2 (add 3 tracks to top, read back, confirm
+    order and that pre-existing items kept their relative order). Extend `config.py`, `docs/builder/validate.js`,
+    the builder UI, sync tests (the JS/Python parity tests must stay green). This is a deliberate exception to the
+    schema freeze.
+15. **G2 test protocol changes:** the user does NOT designate legacy songs. They **like 3 fresh songs** in Spotify right
+    before the test; the session runs `--apply --newest 3` with a test rule (`days_threshold: 0`, target
+    `SpotiSort Test`, `target_position: top`) and verifies add → journal → remove → reconcile, then `--restore`.
+    Existing liked songs are never in scope.
+16. **Optional later phase (do not build yet): "Liked-songs guardian".** Spotify has silently dropped some liked
+    songs for this user. Keep a snapshot of liked ids from each run (private `actions/cache`, not committed); if an id
+    vanishes and the tool did not remove it, warn in the run log (and offer `--restore-vanished`).
+17. One-off **legacy-to-Vault migration** (liked since 2023 → top of `Vault_drx`, ordered newest first) is out of scope
+    now; decision 14 makes it a trivial follow-up run later.
+
 ## Verified write shapes (live-tested 2026-09-21 on `SpotiSort Test`; liked count 773 preserved)
 - Add to playlist: `POST /playlists/{id}/items`, JSON body `{"uris":["spotify:track:..."]}` → **201**
   `{"snapshot_id"}`. Max 100 (101 → 400).
