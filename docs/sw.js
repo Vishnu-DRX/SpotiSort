@@ -1,7 +1,7 @@
 // SpotiSort service worker: cache-first for the app shell so the builder works offline.
 // Bump CACHE_VERSION whenever any cached file changes. All URLs are relative to this file
 // (works under the /SpotiSort/ GitHub Pages base path).
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const CACHE_NAME = 'spotisort-shell-' + CACHE_VERSION;
 const SHELL = [
   './',
@@ -19,6 +19,27 @@ const SHELL = [
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/icon-maskable-512.png',
+  'assets/tokens.css',
+  'dashboard/',
+  'dashboard/index.html',
+  'dashboard/dashboard.css',
+  'dashboard/data.js',
+  'dashboard/views.js',
+  'dashboard/app.js',
+  'dashboard/fixtures/2026-09-14.json',
+  'dashboard/fixtures/2026-09-15.json',
+  'dashboard/fixtures/2026-09-16.json',
+  'dashboard/fixtures/2026-09-17.json',
+  'dashboard/fixtures/2026-09-18.json',
+  'dashboard/fixtures/2026-09-19.json',
+  'dashboard/fixtures/2026-09-20.json',
+  'dashboard/fixtures/2026-09-21.json',
+  'dashboard/fixtures/backtest-detail.json',
+  'dashboard/fixtures/backtest.json',
+  'dashboard/fixtures/enrichment-coverage.json',
+  'dashboard/fixtures/latest-plan.json',
+  'dashboard/fixtures/runs.json',
+  'dashboard/fixtures/signal-precision.json',
 ];
 
 self.addEventListener('install', (event) => {

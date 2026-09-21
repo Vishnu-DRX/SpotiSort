@@ -99,6 +99,8 @@
  "errors": [],
  "warnings": [
   "warning 1: target playlist 'Fake Jazz Vault' not found",
+  "warning 2: target playlist 'Fake Jazz Vault' not found",
+  "warning 3: target playlist 'Fake Jazz Vault' not found",
   "liked count did not reconcile: expected 42, found 43; run aborted and songs re-added"
  ],
  "journal": [

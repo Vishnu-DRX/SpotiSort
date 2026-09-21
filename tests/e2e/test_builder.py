@@ -473,7 +473,7 @@ def test_import_example_config_roundtrips(builder):
     builder.get_by_label("Or paste YAML").fill(original)
     builder.get_by_role("button", name="Load into form").click()
     assert "Loaded 6 rules" in builder.locator("#import-status").text_content()
-    assert builder.locator("#rules > li").count() == 5
+    assert builder.locator("#rules > li").count() == 6
     assert rule(builder, 0).get_by_label("Rule name").input_value() == "Jazz to Jazz Vault"
     assert rule(builder, 0).get_by_label("Days threshold override").input_value() == "7"
     assert builder.get_by_label("Default days threshold").input_value() == "14"
@@ -573,8 +573,8 @@ def test_service_worker_and_offline_reload(make_page, site):
     page.reload()  # now controlled by the SW
     page.wait_for_function("navigator.serviceWorker.controller !== null")
     keys = page.evaluate("caches.keys()")
-    assert keys == ["spotisort-shell-v3"]
-    cached = page.evaluate("caches.open('spotisort-shell-v3').then(c => c.keys()).then(ks => ks.map(k => k.url))")
+    assert keys == ["spotisort-shell-v4"]
+    cached = page.evaluate("caches.open('spotisort-shell-v4').then(c => c.keys()).then(ks => ks.map(k => k.url))")
     for needed in ("builder/", "builder/app.js", "builder/languages.js", "builder/validate.js", "builder/builder.css",
                    "vendor/js-yaml.min.js", "manifest.webmanifest", "icons/icon-192.png", "style.css"):
         assert site + needed in cached, needed
@@ -599,7 +599,7 @@ def _populate_sample(page):
     page.get_by_label("Or paste YAML").fill(original)
     page.get_by_role("button", name="Load into form").click()
     page.locator("#import summary").click()  # collapse again
-    page.wait_for_function("document.querySelectorAll('#rules > li').length === 5")
+    page.wait_for_function("document.querySelectorAll('#rules > li').length === 6")
 
 
 @pytest.mark.parametrize("width,height,name", [(375, 812, "builder-375.png"), (1280, 900, "builder-1280.png")])
@@ -616,7 +616,7 @@ def test_layout_screenshots_and_no_horizontal_overflow(make_page, site, width, h
     assert overflow <= 0, f"horizontal overflow of {overflow}px at {width}px"
     assert page.evaluate("document.body.scrollWidth") <= width
     # drop the stress rule again so the screenshot shows the tidy example
-    r.get_by_role("button", name="Remove rule 6").click()
+    r.get_by_role("button", name="Remove rule 7").click()
     page.evaluate("() => { document.getElementById('rule-notice').className = 'notice'; document.activeElement.blur(); window.scrollTo(0, 0); }")
     SHOTS.mkdir(parents=True, exist_ok=True)
     page.screenshot(path=str(SHOTS / name), full_page=True)

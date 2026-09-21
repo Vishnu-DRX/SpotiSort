@@ -454,3 +454,133 @@ def test_naive_datetimes_are_treated_as_utc():
     track = make_track(added_at=datetime(2026, 9, 1))  # naive
     assert age_days(track, NOW) == pytest.approx(20)
     assert age_days(make_track(added_at=days_ago(3)), datetime(2026, 9, 21)) == pytest.approx(3)
+
+
+# ---------------------------------------------------------------- explain()
+
+from src.rules_engine import explain  # noqa: E402
+
+
+def ex(track, rules, enrichment=None, default=14):
+    return explain(track, enrichment, rules, NOW, default)
+
+
+def results(tr):
+    return [e["result"] for e in tr["trace"]]
+
+
+BON = {"artist_in": ["Bonobo"]}
+TYC = {"artist_in": ["Tycho"]}
+
+
+def test_explain_matched():
+    tr = ex(make_track(added_at=days_ago(30)), [rule(BON, "a")])
+    assert results(tr) == ["matched"] and tr["decided_by"] == "a"
+
+
+def test_explain_matched_too_young():
+    tr = ex(make_track(added_at=days_ago(3)), [rule(BON, "a")])
+    assert results(tr) == ["matched_too_young"] and tr["decided_by"] == "a"
+
+
+def test_explain_age_boundary_exact_threshold_is_matched():
+    assert results(ex(make_track(added_at=days_ago(14)), [rule(BON)])) == ["matched"]
+    assert results(ex(make_track(added_at=days_ago(13.9)), [rule(BON)])) == ["matched_too_young"]
+
+
+def test_explain_no_added_at_is_too_young_and_age_none():
+    tr = ex(make_track(added_at=None), [rule(BON)])
+    assert results(tr) == ["matched_too_young"] and tr["age_days"] is None
+
+
+def test_explain_failed_and_decided_by_none():
+    tr = ex(make_track(), [rule(TYC, "a")])
+    assert results(tr) == ["failed"] and tr["decided_by"] is None
+
+
+def test_explain_not_reached_variants():
+    rules = [rule(BON, "a"), rule(BON, "b"), rule(TYC, "c")]
+    tr = ex(make_track(), rules)
+    assert results(tr) == ["matched", "not_reached_but_would_match", "not_reached"]
+
+
+def test_explain_too_young_still_shadows_later_rules():
+    tr = ex(make_track(added_at=days_ago(1)), [rule(BON, "a"), rule(BON, "b")])
+    assert results(tr) == ["matched_too_young", "not_reached_but_would_match"]
+
+
+def test_explain_skipped_disabled_and_empty():
+    rules = [rule(BON, "off", enabled=False), rule({}, "empty"), rule(BON, "on")]
+    tr = ex(make_track(), rules)
+    assert results(tr) == ["skipped_disabled", "skipped_empty", "matched"]
+    assert tr["trace"][0]["conditions"] == [] and tr["trace"][1]["conditions"] == []
+    assert tr["trace"][0]["enabled"] is False and tr["decided_by"] == "on"
+
+
+def test_explain_disabled_with_empty_match_is_disabled():
+    assert results(ex(make_track(), [rule({}, enabled=False)])) == ["skipped_disabled"]
+
+
+def test_explain_skipped_rules_after_decision_stay_skipped():
+    tr = ex(make_track(), [rule(BON, "a"), rule(BON, "b", enabled=False), rule({}, "c")])
+    assert results(tr) == ["matched", "skipped_disabled", "skipped_empty"]
+
+
+def test_explain_per_condition_passed_and_actual():
+    t = make_track(release_date="2005-06-01")
+    tr = ex(t, [rule({"artist_in": ["Bonobo"], "release_year_before": 2000, "explicit": False}, "a")])
+    conds = {c["key"]: c for c in tr["trace"][0]["conditions"]}
+    assert conds["artist_in"] == {"key": "artist_in", "wanted": ["Bonobo"], "actual": ["Bonobo"], "passed": True}
+    assert conds["release_year_before"]["passed"] is False and conds["release_year_before"]["actual"] == 2005
+    assert conds["explicit"]["passed"] is True and conds["explicit"]["actual"] is False
+    assert results(tr) == ["failed"]
+
+
+def test_explain_evaluates_all_conditions_after_first_failure():
+    tr = ex(make_track(), [rule({"artist_in": ["Nobody"], "explicit": False})])
+    assert [c["passed"] for c in tr["trace"][0]["conditions"]] == [False, True]
+
+
+def test_explain_genre_and_language_actuals():
+    e = Enrichment(genres=("Trip Hop", "jazz"), language="english")
+    tr = ex(make_track(), [rule({"genre_contains": ["hop"], "language_in": ["ENGLISH"]})], e)
+    c = tr["trace"][0]["conditions"]
+    assert c[0]["actual"] == ["Trip Hop", "jazz"] and c[0]["passed"]
+    assert c[1]["actual"] == "english" and c[1]["passed"]
+
+
+def test_explain_missing_enrichment_conditions_fail():
+    tr = ex(make_track(), [rule({"language_in": ["english"]})], None)
+    c = tr["trace"][0]["conditions"][0]
+    assert c["actual"] is None and c["passed"] is False
+
+
+def test_explain_unknown_key_fails():
+    tr = ex(make_track(), [rule({"bogus": 1})])
+    assert results(tr) == ["failed"] and tr["trace"][0]["conditions"][0]["passed"] is False
+
+
+def test_explain_thresholds_per_rule_and_default():
+    tr = ex(make_track(added_at=days_ago(10)), [rule(TYC, "a", days_threshold=3), rule(BON, "b"), rule(BON, "c", days_threshold=5)], default=30)
+    assert [e["threshold_days"] for e in tr["trace"]] == [3, 30, 5]
+    assert results(tr) == ["failed", "matched_too_young", "not_reached_but_would_match"]
+
+
+def test_explain_per_rule_threshold_overrides_default():
+    assert results(ex(make_track(added_at=days_ago(10)), [rule(BON, days_threshold=5)], default=30)) == ["matched"]
+
+
+def test_explain_age_days_value_and_naive_now():
+    tr = ex(make_track(added_at=days_ago(2.5)), [rule(BON)])
+    assert tr["age_days"] == pytest.approx(2.5)
+
+
+def test_explain_no_rules():
+    assert ex(make_track(), []) == {"trace": [], "decided_by": None, "age_days": pytest.approx(30)}
+
+
+def test_explain_agrees_with_first_match():
+    from src.rules_engine import first_match
+    rules = [rule(TYC, "a"), rule(BON, "b"), rule(BON, "c")]
+    tr = ex(make_track(), rules)
+    assert tr["decided_by"] == first_match(make_track(), None, rules, NOW).rule.name

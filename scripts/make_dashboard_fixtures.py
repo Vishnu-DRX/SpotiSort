@@ -200,7 +200,7 @@ RUN_SPECS = [
     dict(date="2026-09-16", mode="dry_run", what_if=False, plan=dict(will_move=3, too_young=6, no_match=17, blocked=1, target_problem=0),
          moved=0, errors=0, warnings=1, before=46, after=46, secs=39.0, rc={"Lo-fi study": 1, "Spanish nights": 2}),
     dict(date="2026-09-17", mode="apply", what_if=False, plan=dict(will_move=4, too_young=5, no_match=17, blocked=1, target_problem=1),
-         moved=4, errors=0, warnings=1, before=46, after=43, secs=95.7, rc={"Spanish nights": 2, "Lo-fi study": 1, "Rock legends": 1}),
+         moved=4, errors=0, warnings=3, before=46, after=43, secs=95.7, rc={"Spanish nights": 2, "Lo-fi study": 1, "Rock legends": 1}),
     dict(date="2026-09-18", mode="dry_run", what_if=False, plan=dict(will_move=0, too_young=0, no_match=0, blocked=0, target_problem=0),
          moved=0, errors=1, warnings=0, before=43, after=43, secs=12.3, rc={}),
     dict(date="2026-09-19", mode="dry_run", what_if=False, plan=dict(will_move=5, too_young=7, no_match=25, blocked=2, target_problem=2),
@@ -216,7 +216,7 @@ def build_runs(out: Path, plan: dict) -> dict:
     if runs_path.exists():
         runs_path.unlink()
     latest_spec = dict(date="2026-09-21", mode="dry_run", what_if=False, plan=plan["counts"], moved=0, errors=0,
-                       warnings=len(plan_warnings(plan)), before=plan["liked_total"], after=plan["liked_total"], secs=42.5,
+                       warnings=min(plan["counts"]["target_problem"], 2), before=plan["liked_total"], after=plan["liked_total"], secs=42.5,
                        rc={r["name"]: r["wins"] for r in plan["rules"] if r["wins"]})
     index = None
     for spec in RUN_SPECS + [latest_spec]:
@@ -231,20 +231,6 @@ def build_runs(out: Path, plan: dict) -> dict:
         atomic_write_json(out / log_file, _run_log(spec, entry, plan))
         index = update_runs_index(runs_path, entry, when)
     return index
-
-
-def plan_warnings(plan: dict) -> list[str]:
-    out = []
-    seen = set()
-    for r in plan["rules"]:
-        if r["target_status"] != "resolved" and r["enabled"] and r["target_status"] not in seen:
-            seen.add(r["target_status"])
-    for s in plan["songs"]:
-        if s["decision"] == "target_problem":
-            msg = f"{s['target_playlist']!r}: {s['target_status']}"
-            if msg not in out:
-                out.append(msg)
-    return out
 
 
 def _run_log(spec: dict, entry: dict, plan: dict) -> dict:

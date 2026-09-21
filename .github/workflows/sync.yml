@@ -1,23 +1,99 @@
-name: Daily Sync
+name: Sync
 
+# Manual only until the owner has reviewed the dashboard and confirmed the schedule (Phase 4, gate G2).
+# To schedule later, add:   schedule: [{cron: "0 3 * * *"}]   and set the repository variable SPOTISORT_SCHEDULED_APPLY=true.
 on:
-  schedule:
-    - cron: "0 3 * * *"   # TODO: confirm final time with user
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (no writes). Untick only after reviewing the dashboard."
+        type: boolean
+        default: true
+      newest:
+        description: "Only touch the N newest liked songs (required for a live run unless 'unselected' is ticked)"
+        type: string
+        default: ""
+      unselected:
+        description: "Live run without a selector (scheduled-style; still capped by max_moves)"
+        type: boolean
+        default: false
+      max_moves:
+        description: "Abort if the plan has more moves than this"
+        type: string
+        default: "50"
+
+concurrency:
+  group: spotisort-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: write
 
 jobs:
   sync:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+      SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
+      DRY_RUN: ${{ inputs.dry_run }}
+      NEWEST: ${{ inputs.newest }}
+      UNSELECTED: ${{ inputs.unselected }}
+      MAX_MOVES: ${{ inputs.max_moves }}
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install -r requirements.txt
-      - name: Run sync
-        env:
-          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
-          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
-          SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
-        run: echo "TODO: python src/sync.py --apply (pending finalized API design)"
-      # TODO (later phase): commit logs/ and .cache/ changes back to the repo
+          cache: pip
+
+      - run: python -m pip install -r requirements.txt
+
+      # The enrichment cache is NOT committed: it lists your whole library. A unique key per run lets the cache
+      # be updated; restore-keys brings back the newest earlier one.
+      - name: Restore enrichment cache
+        uses: actions/cache@v4
+        with:
+          path: .cache/enrichment.json
+          key: enrichment-v1-${{ github.run_id }}
+          restore-keys: |
+            enrichment-v1-
+
+      - name: Check configuration exists
+        run: |
+          test -f config.yaml || { echo "config.yaml is missing. Create it with the Configure page and commit it."; exit 1; }
+          python -c "from src.config import load_config; load_config('config.yaml'); print('config.yaml is valid')"
+
+      - name: Sync
+        run: |
+          set -euo pipefail
+          args=(--config config.yaml --max-moves "${MAX_MOVES:-50}")
+          if [ "${DRY_RUN:-true}" != "true" ]; then
+            args+=(--apply)
+            if [ -n "${NEWEST:-}" ]; then
+              args+=(--newest "$NEWEST")
+            elif [ "${UNSELECTED:-false}" = "true" ]; then
+              args+=(--allow-unselected)
+            fi
+          fi
+          python -m src.sync "${args[@]}"
+
+      - name: Commit run logs
+        if: always()
+        run: |
+          set -euo pipefail
+          git config user.name "spotisort-bot"
+          git config user.email "spotisort-bot@users.noreply.github.com"
+          shopt -s nullglob
+          files=(logs/runs.json logs/latest-plan.json logs/20*.json)
+          existing=()
+          for f in "${files[@]}"; do [ -f "$f" ] && existing+=("$f"); done
+          if [ "${#existing[@]}" -gt 0 ]; then git add -f "${existing[@]}"; fi
+          if git diff --cached --quiet; then
+            echo "no log changes"
+          else
+            git commit -m "Update run logs [skip ci]"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi

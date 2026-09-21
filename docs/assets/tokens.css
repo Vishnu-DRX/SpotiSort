@@ -1,0 +1,160 @@
+/* SpotiSort design tokens (Master decision 22). The single source of truth for colour, type, space, radius,
+   shadow and motion. Dark is the default; light follows prefers-color-scheme; [data-theme="dark|light"] on <html>
+   overrides both. Pages consume these variables only, never raw colours.
+   Note on contrast: --color-muted (#7A7A7A) is 4.4:1 on the dark background, so it is for icons, dividers and
+   disabled states only. Any text that carries meaning uses --color-text-secondary or stronger. */
+
+:root,
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #121212;
+  --color-surface: #181818;
+  --color-elevated: #282828;
+  --color-hover: #2a2a2a;
+  --color-border: #333333;
+  --color-text: #ffffff;
+  --color-text-secondary: #b3b3b3;
+  --color-muted: #7a7a7a;
+  --color-accent: #1db954;
+  --color-accent-hover: #1ed760;
+  --color-accent-pressed: #169c46;
+  --color-on-accent: #000000;
+  --color-accent-text: #1db954;   /* green used as text/icon on the page background */
+  --color-focus: #1db954;
+  --color-danger: #e5484d;
+  --color-warning: #f5a623;
+  --color-info: #3e8ede;
+  /* tinted status surfaces + the text colour that is legible on them */
+  --color-success-bg: #10301d;  --color-success-text: #4ade80;
+  --color-danger-bg: #3b1a1c;   --color-danger-text: #ff8a8e;
+  --color-warning-bg: #3a2c0b;  --color-warning-text: #f5b84d;
+  --color-info-bg: #14283f;     --color-info-text: #85bbf2;
+  --color-neutral-bg: #262626;  --color-neutral-text: #d0d0d0;
+  --color-scrim: rgba(0, 0, 0, 0.6);
+  --color-selection: rgba(29, 185, 84, 0.35);
+  --scrollbar-thumb: #1db954;
+  --scrollbar-track: #202020;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.65);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    color-scheme: light;
+    --color-bg: #f6f6f6;
+    --color-surface: #ffffff;
+    --color-elevated: #ffffff;
+    --color-hover: #ececec;
+    --color-border: #d6d6d6;
+    --color-text: #121212;
+    --color-text-secondary: #525252;
+    --color-muted: #6b6b6b;
+    --color-accent: #1db954;
+    --color-accent-hover: #1ed760;
+    --color-accent-pressed: #169c46;
+    --color-on-accent: #000000;
+    --color-accent-text: #0b6b2e;
+    --color-focus: #0b6b2e;
+    --color-danger: #d13438;
+    --color-warning: #d68a00;
+    --color-info: #2b7bd0;
+    --color-success-bg: #e2f5e9;  --color-success-text: #0b6b2e;
+    --color-danger-bg: #fdeaea;   --color-danger-text: #a4262a;
+    --color-warning-bg: #fff2d9;  --color-warning-text: #7a4e00;
+    --color-info-bg: #e5f0fb;     --color-info-text: #1a5192;
+    --color-neutral-bg: #ececec;  --color-neutral-text: #3d3d3d;
+    --color-scrim: rgba(0, 0, 0, 0.4);
+    --color-selection: rgba(29, 185, 84, 0.3);
+    --scrollbar-thumb: #169c46;
+    --scrollbar-track: #e6e6e6;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.12);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.14);
+    --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.22);
+  }
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --color-bg: #f6f6f6;
+  --color-surface: #ffffff;
+  --color-elevated: #ffffff;
+  --color-hover: #ececec;
+  --color-border: #d6d6d6;
+  --color-text: #121212;
+  --color-text-secondary: #525252;
+  --color-muted: #6b6b6b;
+  --color-accent: #1db954;
+  --color-accent-hover: #1ed760;
+  --color-accent-pressed: #169c46;
+  --color-on-accent: #000000;
+  --color-accent-text: #0b6b2e;
+  --color-focus: #0b6b2e;
+  --color-danger: #d13438;
+  --color-warning: #d68a00;
+  --color-info: #2b7bd0;
+  --color-success-bg: #e2f5e9;  --color-success-text: #0b6b2e;
+  --color-danger-bg: #fdeaea;   --color-danger-text: #a4262a;
+  --color-warning-bg: #fff2d9;  --color-warning-text: #7a4e00;
+  --color-info-bg: #e5f0fb;     --color-info-text: #1a5192;
+  --color-neutral-bg: #ececec;  --color-neutral-text: #3d3d3d;
+  --color-scrim: rgba(0, 0, 0, 0.4);
+  --color-selection: rgba(29, 185, 84, 0.3);
+  --scrollbar-thumb: #169c46;
+  --scrollbar-track: #e6e6e6;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.14);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.22);
+}
+
+/* theme-independent scales */
+:root {
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.75rem;
+  --text-3xl: 2.25rem;
+  --leading-tight: 1.25;
+  --leading-body: 1.55;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 700;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-slow: 320ms;
+  --motion-ease: cubic-bezier(0.2, 0, 0, 1);
+  --touch-target: 44px;
+  --content-max: 80rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --motion-fast: 0ms; --motion-base: 0ms; --motion-slow: 0ms; }
+  * { scroll-behavior: auto !important; }
+}
+
+/* native control styling shared by every page */
+html { accent-color: var(--color-accent); -webkit-text-size-adjust: 100%; }
+::selection { background: var(--color-selection); color: var(--color-text); }
+:focus-visible { outline: var(--focus-ring-width) solid var(--color-focus); outline-offset: var(--focus-ring-offset); }
+* { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track); }
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: var(--radius-pill); border: 2px solid var(--scrollbar-track); }

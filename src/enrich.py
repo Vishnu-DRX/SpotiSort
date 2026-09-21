@@ -55,7 +55,7 @@ def coverage(tracks, enrichments, mb: MusicBrainz | None, enricher: Enricher, lm
             artists[key] = artists.get(key, False) or bool(e.genres)
         if e.language:
             languages[e.language] += 1
-            src = "playlist" if "playlist" in e.sources else "script" if "script" in e.sources else "country_default"
+            src = e.language_source or "unknown"
             sources[src] += 1
         else:
             sources["none"] += 1

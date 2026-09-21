@@ -13,7 +13,7 @@ from src import spotify_client as sc
 from src import sync
 from src.models import Artist, Playlist, Track
 
-TODAY = date.today().isoformat()
+TODAY = datetime.now(timezone.utc).date().isoformat()
 FAKE_ACCESS = "AT-fake-access-token-1234567890"
 FAKE_REFRESH = "RT-fake-refresh-token-abcdefghij"
 LOG_KEYS = {
@@ -197,13 +197,13 @@ def test_client_created_in_dry_run_mode(env):
     assert len(FakeClient.instances) == 1 and FakeClient.instances[0].dry_run is True
 
 
-def test_apply_returns_2_and_does_nothing(env, capsys):
+def test_apply_without_selector_returns_2_and_does_nothing(env, capsys):
     tmp, cfg = env
     assert run(tmp, cfg, "--apply") == 2
     assert FakeClient.instances == [] and FakeClient.calls == []
     assert not (tmp / "logs").exists()
     err = capsys.readouterr().err
-    assert "--apply" in err and "not implemented" in err
+    assert "--apply" in err and "selector" in err
 
 
 @pytest.mark.parametrize("content", [

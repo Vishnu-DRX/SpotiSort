@@ -52,7 +52,6 @@ def test_min_samples_boundary(n, ok):
     assert qualifies("tamil", "hint", prec(hint={"tamil": st(n, 1.0)})) is ok
 
 
-@pytest.mark.xfail(strict=True, raises=TypeError, reason="src bug: precision None with predicted>=10 raises TypeError (latent)")
 def test_none_precision_not_qualified():
     # precision may be None when nothing predicted; must not raise
     assert not qualifies("tamil", "hint", prec(hint={"tamil": {"predicted": 20, "precision": None}}))

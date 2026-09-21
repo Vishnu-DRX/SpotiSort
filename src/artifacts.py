@@ -220,12 +220,15 @@ def build_latest_plan(
 def run_entry(
     *, run_id: str, now: datetime, mode: str, plan_counts: Mapping[str, int], moved: int, errors: int, warnings: int,
     liked_before: int, liked_after: int, duration_s: float, rule_counts: Mapping[str, int], log_file: str, what_if: bool = False,
+    reconcile_ok: bool | None = None,
 ) -> dict[str, Any]:
-    if errors:
+    if reconcile_ok is False:
+        verdict = "mismatch"
+    elif errors:
         verdict = "error"
     elif mode == "dry_run":
         verdict = "dry_run"
-    elif liked_before - moved != liked_after:
+    elif reconcile_ok is False or (reconcile_ok is None and liked_before - moved != liked_after):
         verdict = "mismatch"
     else:
         verdict = "ok"

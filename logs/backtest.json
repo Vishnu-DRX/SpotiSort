@@ -1,0 +1,598 @@
+{
+ "version": 1,
+ "generated_at": "2026-09-21T18:38:06+00:00",
+ "config_hash": "543a7144f75b",
+ "all_rules_enabled": true,
+ "inbox": {
+  "tracks": 2625,
+  "playlists": 32
+ },
+ "playlists": [
+  {
+   "id": "P01",
+   "tracks": 66,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P02",
+   "tracks": 28,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P03",
+   "tracks": 28,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P04",
+   "tracks": 18,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P05",
+   "tracks": 28,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P06",
+   "tracks": 5,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P07",
+   "tracks": 20,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P08",
+   "tracks": 144,
+   "predicted": 123,
+   "tp": 102,
+   "precision": 0.8293,
+   "recall": 0.7083,
+   "unrouted": 0
+  },
+  {
+   "id": "P09",
+   "tracks": 216,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P10",
+   "tracks": 12,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P11",
+   "tracks": 236,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P12",
+   "tracks": 14,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P13",
+   "tracks": 57,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P14",
+   "tracks": 11,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P15",
+   "tracks": 63,
+   "predicted": 70,
+   "tp": 40,
+   "precision": 0.5714,
+   "recall": 0.6349,
+   "unrouted": 0
+  },
+  {
+   "id": "P16",
+   "tracks": 101,
+   "predicted": 102,
+   "tp": 83,
+   "precision": 0.8137,
+   "recall": 0.8218,
+   "unrouted": 0
+  },
+  {
+   "id": "P17",
+   "tracks": 73,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P18",
+   "tracks": 26,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P19",
+   "tracks": 1,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P20",
+   "tracks": 30,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P21",
+   "tracks": 9,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P22",
+   "tracks": 12,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P23",
+   "tracks": 470,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 2
+  },
+  {
+   "id": "P24",
+   "tracks": 35,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P25",
+   "tracks": 50,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P26",
+   "tracks": 200,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P27",
+   "tracks": 17,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P28",
+   "tracks": 145,
+   "predicted": 95,
+   "tp": 10,
+   "precision": 0.1053,
+   "recall": 0.069,
+   "unrouted": 0
+  },
+  {
+   "id": "P29",
+   "tracks": 27,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P30",
+   "tracks": 46,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  },
+  {
+   "id": "P31",
+   "tracks": 716,
+   "predicted": 2233,
+   "tp": 682,
+   "precision": 0.3054,
+   "recall": 0.9525,
+   "unrouted": 0
+  },
+  {
+   "id": "P32",
+   "tracks": 16,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 0
+  }
+ ],
+ "confusions": [
+  {
+   "true": "P23",
+   "predicted": "P31",
+   "count": 380
+  },
+  {
+   "true": "P09",
+   "predicted": "P31",
+   "count": 206
+  },
+  {
+   "true": "P11",
+   "predicted": "P31",
+   "count": 206
+  },
+  {
+   "true": "P26",
+   "predicted": "P31",
+   "count": 191
+  },
+  {
+   "true": "P28",
+   "predicted": "P31",
+   "count": 134
+  },
+  {
+   "true": "P13",
+   "predicted": "P31",
+   "count": 52
+  },
+  {
+   "true": "P01",
+   "predicted": "P31",
+   "count": 49
+  },
+  {
+   "true": "P30",
+   "predicted": "P31",
+   "count": 45
+  },
+  {
+   "true": "P17",
+   "predicted": "P31",
+   "count": 40
+  },
+  {
+   "true": "P25",
+   "predicted": "P31",
+   "count": 40
+  },
+  {
+   "true": "P08",
+   "predicted": "P31",
+   "count": 40
+  },
+  {
+   "true": "P31",
+   "predicted": "P28",
+   "count": 29
+  },
+  {
+   "true": "P23",
+   "predicted": "P28",
+   "count": 27
+  },
+  {
+   "true": "P29",
+   "predicted": "P31",
+   "count": 27
+  },
+  {
+   "true": "P05",
+   "predicted": "P31",
+   "count": 25
+  },
+  {
+   "true": "P02",
+   "predicted": "P31",
+   "count": 25
+  },
+  {
+   "true": "P15",
+   "predicted": "P31",
+   "count": 23
+  },
+  {
+   "true": "P07",
+   "predicted": "P31",
+   "count": 20
+  },
+  {
+   "true": "P11",
+   "predicted": "P15",
+   "count": 19
+  },
+  {
+   "true": "P16",
+   "predicted": "P31",
+   "count": 18
+  },
+  {
+   "true": "P27",
+   "predicted": "P31",
+   "count": 16
+  },
+  {
+   "true": "P32",
+   "predicted": "P31",
+   "count": 16
+  },
+  {
+   "true": "P23",
+   "predicted": "P08",
+   "count": 16
+  },
+  {
+   "true": "P24",
+   "predicted": "P31",
+   "count": 15
+  },
+  {
+   "true": "P12",
+   "predicted": "P31",
+   "count": 14
+  },
+  {
+   "true": "P18",
+   "predicted": "P31",
+   "count": 13
+  },
+  {
+   "true": "P04",
+   "predicted": "P31",
+   "count": 13
+  },
+  {
+   "true": "P10",
+   "predicted": "P31",
+   "count": 12
+  },
+  {
+   "true": "P23",
+   "predicted": "P16",
+   "count": 12
+  },
+  {
+   "true": "P03",
+   "predicted": "P31",
+   "count": 11
+  },
+  {
+   "true": "P22",
+   "predicted": "P31",
+   "count": 11
+  },
+  {
+   "true": "P14",
+   "predicted": "P28",
+   "count": 10
+  },
+  {
+   "true": "P01",
+   "predicted": "P28",
+   "count": 8
+  },
+  {
+   "true": "P21",
+   "predicted": "P31",
+   "count": 6
+  },
+  {
+   "true": "P09",
+   "predicted": "P28",
+   "count": 6
+  },
+  {
+   "true": "P26",
+   "predicted": "P28",
+   "count": 5
+  },
+  {
+   "true": "P03",
+   "predicted": "P28",
+   "count": 4
+  },
+  {
+   "true": "P31",
+   "predicted": "P15",
+   "count": 4
+  },
+  {
+   "true": "P11",
+   "predicted": "P28",
+   "count": 4
+  },
+  {
+   "true": "P06",
+   "predicted": "P16",
+   "count": 4
+  },
+  {
+   "true": "P23",
+   "predicted": "P15",
+   "count": 4
+  },
+  {
+   "true": "P18",
+   "predicted": "P28",
+   "count": 3
+  },
+  {
+   "true": "P05",
+   "predicted": "P08",
+   "count": 3
+  },
+  {
+   "true": "P20",
+   "predicted": "P31",
+   "count": 3
+  },
+  {
+   "true": "P17",
+   "predicted": "P28",
+   "count": 2
+  },
+  {
+   "true": "P21",
+   "predicted": "P28",
+   "count": 2
+  },
+  {
+   "true": "P24",
+   "predicted": "P28",
+   "count": 2
+  },
+  {
+   "true": "P09",
+   "predicted": "P15",
+   "count": 2
+  },
+  {
+   "true": "P19",
+   "predicted": "P31",
+   "count": 1
+  },
+  {
+   "true": "P28",
+   "predicted": "P15",
+   "count": 1
+  }
+ ],
+ "totals": {
+  "tracks": 2625,
+  "routed": 2623,
+  "correct": 917,
+  "misrouted": 1706,
+  "unrouted": 2,
+  "precision": 0.3496,
+  "recall": 0.3493
+ },
+ "rules": [
+  {
+   "name_id": "R01",
+   "predicted": 123,
+   "correct": 102,
+   "precision": 0.8293
+  },
+  {
+   "name_id": "R02",
+   "predicted": 102,
+   "correct": 83,
+   "precision": 0.8137
+  },
+  {
+   "name_id": "R03",
+   "predicted": 70,
+   "correct": 40,
+   "precision": 0.5714
+  },
+  {
+   "name_id": "R04",
+   "predicted": 95,
+   "correct": 10,
+   "precision": 0.1053
+  },
+  {
+   "name_id": "R05",
+   "predicted": 2233,
+   "correct": 682,
+   "precision": 0.3054
+  }
+ ],
+ "caveats": [
+  "true home = playlist membership (a song can fit several playlists)",
+  "playlist language signal is leave-one-out",
+  "signal precision is measured only on tracks inside mapped language playlists"
+ ]
+}

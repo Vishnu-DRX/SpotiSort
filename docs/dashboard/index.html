@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="SpotiSort dashboard: see what your sorter will do, what it did, and whether it is safe. Read-only." />
+    <meta name="theme-color" content="#121212" />
+    <title>SpotiSort dashboard</title>
+    <link rel="manifest" href="../manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png" />
+    <link rel="stylesheet" href="../assets/tokens.css" />
+    <link rel="stylesheet" href="dashboard.css" />
+  </head>
+  <body>
+    <a class="skip" href="#view-root">Skip to content</a>
+    <div class="site-head">
+      <div class="wrap head-row">
+        <a class="brand" href="../"><span class="brand-mark" aria-hidden="true"></span>SpotiSort</a>
+        <nav class="site-links" aria-label="Site">
+          <a href="../">Home</a>
+          <a href="../builder/">Configure</a>
+          <a href="./" aria-current="page">Dashboard</a>
+          <a href="https://github.com/Vishnu-DRX/SpotiSort">GitHub</a>
+          <button type="button" class="icon-btn" id="theme-btn" aria-label="Colour theme: auto. Activate to change." title="Colour theme">&#9680;</button>
+        </nav>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="page-title">
+        <h1>Dashboard</h1>
+        <p>Read-only. Nothing here can change your Spotify library.</p>
+      </div>
+
+      <form class="source-bar" id="source-bar" aria-label="Data source" onsubmit="return false">
+        <div class="field">
+          <label for="source-select">Data source</label>
+          <select id="source-select">
+            <option value="local">Local (this computer)</option>
+            <option value="repo">Repo (GitHub)</option>
+            <option value="fixtures">Demo data (fixtures)</option>
+          </select>
+        </div>
+        <div class="field grow" id="repo-field" hidden>
+          <label for="repo-url">Raw GitHub folder URL</label>
+          <input id="repo-url" type="text" inputmode="url" autocomplete="off" spellcheck="false" aria-describedby="repo-hint" />
+        </div>
+        <button type="button" class="btn secondary small" id="repo-save" hidden>Save URL</button>
+        <button type="button" class="btn secondary small" id="reload-btn">Reload data</button>
+        <p class="source-note" id="repo-hint" role="status"></p>
+      </form>
+
+      <nav class="tabs" aria-label="Dashboard views"><ul id="tabs"></ul></nav>
+
+      <main id="view-root" tabindex="-1"></main>
+    </div>
+
+    <div id="drawer-root"></div>
+
+    <footer class="site-foot">
+      <div class="wrap"><p>SpotiSort is an independent open-source project, not affiliated with or endorsed by Spotify.</p></div>
+    </footer>
+
+    <script src="data.js"></script>
+    <script src="views.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

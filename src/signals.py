@@ -38,7 +38,7 @@ def qualifies(language: str | None, source: str | None, precision: dict[str, Any
     stats = ((precision or {}).get("by_signal", {}).get(source, {}) or {}).get(language)
     if not stats:
         return False
-    return stats.get("predicted", 0) >= MIN_SAMPLES and stats.get("precision", 0.0) >= MIN_PRECISION
+    return (stats.get("predicted") or 0) >= MIN_SAMPLES and (stats.get("precision") or 0.0) >= MIN_PRECISION
 
 
 def qualified_map(precision: dict[str, Any] | None) -> dict[str, list[str]]:
