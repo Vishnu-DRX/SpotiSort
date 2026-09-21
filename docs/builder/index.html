@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Build and validate a SpotiSort config.yaml with a form. Works offline; nothing leaves your browser." />
+    <meta name="theme-color" content="#157a3c" />
+    <title>SpotiSort config builder</title>
+    <link rel="manifest" href="../manifest.webmanifest" />
+    <link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="../icons/icon-192.png" />
+    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="builder.css" />
+  </head>
+  <body>
+    <div class="wrap wide">
+      <header class="top">
+        <p class="crumb"><a href="../">&larr; SpotiSort</a></p>
+        <h1>Config builder</h1>
+        <p class="tagline">Build your <code>config.yaml</code> with a form. It is checked against the same rules as the sorter, and nothing leaves your browser.</p>
+      </header>
+
+      <div class="layout">
+        <main id="main" class="editor">
+          <details class="card import" id="import">
+            <summary>Import an existing config.yaml</summary>
+            <p class="hint">Loading replaces everything in the form.</p>
+            <div class="field">
+              <label for="import-file">Choose a file</label>
+              <input id="import-file" type="file" accept=".yaml,.yml,text/yaml,text/plain" />
+            </div>
+            <div class="field">
+              <label for="import-text">Or paste YAML</label>
+              <textarea id="import-text" rows="6" spellcheck="false" autocomplete="off"></textarea>
+            </div>
+            <button type="button" class="btn" id="import-btn">Load into form</button>
+            <div id="import-status" class="notice" role="status" aria-live="polite"></div>
+          </details>
+
+          <fieldset class="card" id="global">
+            <legend>Global settings</legend>
+            <div class="field">
+              <label for="g-days">Default days threshold</label>
+              <input id="g-days" type="text" inputmode="numeric" autocomplete="off" aria-describedby="g-days-hint err-g-days" />
+              <p class="hint" id="g-days-hint">Whole days a song stays in Liked Songs before rules apply. Leave blank for 14.</p>
+              <p class="err" id="err-g-days"></p>
+            </div>
+            <div class="field">
+              <label for="g-fallback">Fallback playlist</label>
+              <input id="g-fallback" type="text" autocomplete="off" aria-describedby="g-fallback-hint err-g-fallback" />
+              <p class="hint" id="g-fallback-hint">Name of an existing playlist for unmatched songs. Blank leaves them alone (null).</p>
+              <p class="err" id="err-g-fallback"></p>
+            </div>
+            <div class="field check">
+              <input id="g-mb" type="checkbox" checked aria-describedby="g-mb-hint" />
+              <label for="g-mb">Look up genre and language on MusicBrainz</label>
+              <p class="hint" id="g-mb-hint"><code>enrichment.musicbrainz</code>: free, limited to 1 request per second.</p>
+            </div>
+          </fieldset>
+
+          <fieldset class="card" id="langpl">
+            <legend>Language playlists</legend>
+            <p class="hint">Tell SpotiSort which of your playlists hold one language (playlist name to language). Names, ISO codes and native names all work and are stored as the English name.</p>
+            <ul class="rows" id="lp-list"></ul>
+            <button type="button" class="btn secondary" id="lp-add">Add language playlist</button>
+          </fieldset>
+
+          <section class="rules-section" aria-labelledby="rules-h">
+            <div class="section-head">
+              <h2 id="rules-h">Rules</h2>
+              <button type="button" class="btn" id="rule-add">Add rule</button>
+            </div>
+            <p class="hint">Rules run top to bottom and the first match wins, so put specific rules above broad ones. All conditions within a rule must match.</p>
+            <div id="rule-notice" class="notice" role="status" aria-live="polite"></div>
+            <p id="rules-empty" class="empty">No rules yet. Add one to get started.</p>
+            <ol id="rules" class="rules"></ol>
+          </section>
+        </main>
+
+        <aside class="output" aria-labelledby="out-h">
+          <div class="card sticky">
+            <h2 id="out-h">config.yaml</h2>
+            <div id="error-summary" class="summary" tabindex="-1" hidden></div>
+            <p id="status" class="status" role="status" aria-live="polite"></p>
+            <pre id="yaml-out" class="yaml" tabindex="0" aria-label="YAML preview"><code></code></pre>
+            <div class="actions">
+              <button type="button" class="btn" id="copy-btn">Copy</button>
+              <button type="button" class="btn" id="download-btn">Download config.yaml</button>
+            </div>
+            <p id="action-status" class="status" role="status" aria-live="polite"></p>
+            <p class="hint">Save the file as <code>config.yaml</code> in the root of your fork and commit it.</p>
+          </div>
+        </aside>
+      </div>
+
+      <footer>
+        <p>Runs entirely in your browser and works offline once loaded.</p>
+      </footer>
+    </div>
+
+    <datalist id="lang-options"></datalist>
+    <script src="../vendor/js-yaml.min.js"></script>
+    <script src="languages.js"></script>
+    <script src="validate.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

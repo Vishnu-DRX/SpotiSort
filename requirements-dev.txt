@@ -1,2 +1,5 @@
 -r requirements.txt
 pytest>=8
+# Browser tests for the Pages config builder (tests/e2e). Optional: they auto-skip without these.
+playwright>=1.40
+pytest-playwright>=0.5

@@ -37,3 +37,5 @@ a { color: var(--accent); }
 .button:hover { filter: brightness(1.08); }
 a:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 footer { margin: 48px 0 40px; color: var(--muted); font-size: 0.9rem; }
+.button.secondary { background: transparent; color: var(--text); border: 1px solid var(--muted); margin-left: 8px; }
+code { font: 0.9em ui-monospace, Consolas, monospace; }

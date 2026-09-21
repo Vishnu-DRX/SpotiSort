@@ -24,7 +24,7 @@ A rules-based, fork-and-run tool that treats Spotify **Liked Songs as an inbox**
 
 ## Config
 
-Copy `config.example.yaml` to `config.yaml`. Supported match keys:
+Copy `config.example.yaml` to `config.yaml`, or build it with the form-based **config builder** at `docs/builder/` (on GitHub Pages: `https://<your-user>.github.io/SpotiSort/builder/`). It validates with the same rules as the sorter, previews the YAML live, imports an existing file, works offline and can be installed as an app; nothing leaves your browser. Supported match keys:
 
 `artist_in`, `genre_contains`, `language_in`, `release_year_before`, `release_year_after`, `explicit`, `track_name_contains`, `album_name_contains`
 

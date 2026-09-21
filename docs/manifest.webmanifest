@@ -1,0 +1,16 @@
+{
+  "name": "SpotiSort config builder",
+  "short_name": "SpotiSort",
+  "description": "Build and validate a SpotiSort config.yaml. Works offline.",
+  "id": "./builder/",
+  "start_url": "./builder/",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fbfaf7",
+  "theme_color": "#157a3c",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

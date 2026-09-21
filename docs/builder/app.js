@@ -1,0 +1,591 @@
+// SpotiSort config builder: form state -> config object -> validation + YAML preview.
+// Vanilla JS. Depends on jsyaml (vendored), SpotiLang (generated) and SpotiValidate (port of src/config.py).
+(function () {
+  'use strict';
+
+  var Lang = window.SpotiLang;
+  var V = window.SpotiValidate;
+
+  var COND = {
+    artist_in: { label: 'Artist is one of', kind: 'list', hint: 'Any credited artist, case-insensitive. Press Enter or Add after each name.' },
+    genre_contains: { label: 'Genre contains any of', kind: 'list', hint: 'Substring match against the artist’s genres. Press Enter or Add after each entry.' },
+    language_in: { label: 'Language is one of', kind: 'list', hint: 'Names, ISO codes or native names; stored as the English name (hi becomes hindi).' },
+    release_year_before: { label: 'Released before year', kind: 'year', hint: 'A year from 1 to 9999.' },
+    release_year_after: { label: 'Released after year', kind: 'year', hint: 'A year from 1 to 9999.' },
+    explicit: { label: 'Explicit flag', kind: 'bool', hint: 'true = explicit songs only, false = clean songs only. Remove the condition to ignore it.' },
+    track_name_contains: { label: 'Track name contains', kind: 'text', hint: 'Case-insensitive substring.' },
+    album_name_contains: { label: 'Album name contains', kind: 'text', hint: 'Case-insensitive substring.' }
+  };
+
+  var nextId = 1;
+  var state = blankState();
+  var lastRemoved = null;
+
+  function blankState() {
+    return { defaultDays: '14', fallback: '', musicbrainz: true, langPlaylists: [], rules: [], revealAll: false };
+  }
+  function newRule() {
+    return { id: nextId++, pristine: true, name: '', enabled: true, target: '', days: '', create: false, match: [] };
+  }
+  function newLp() { return { id: nextId++, name: '', lang: '' }; }
+
+  // ---------------------------------------------------------------- DOM helpers
+  function $(id) { return document.getElementById(id); }
+  function h(tag, attrs) {
+    var el = document.createElement(tag);
+    attrs = attrs || {};
+    Object.keys(attrs).forEach(function (k) {
+      var v = attrs[k];
+      if (v === false || v === null || v === undefined) return;
+      if (k === 'class') el.className = v;
+      else if (k === 'text') el.textContent = v;
+      else if (k.slice(0, 2) === 'on') el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? '' : v);
+    });
+    (function add(list) {
+      list.forEach(function (c) {
+        if (c === null || c === undefined || c === false) return;
+        if (Array.isArray(c)) add(c);
+        else el.appendChild(typeof c === 'string' ? document.createTextNode(c) : c);
+      });
+    })(Array.prototype.slice.call(arguments, 2));
+    return el;
+  }
+  function fid(rule, field) { return 'r' + rule.id + '-' + field.replace('.', '-'); }
+  function announceRule(msg) { var n = $('rule-notice'); n.textContent = msg; n.className = 'notice' + (msg ? ' show' : ''); return n; }
+
+  // ---------------------------------------------------------------- state -> config object
+  function toInt(text) {
+    var t = String(text).trim();
+    return /^-?\d+$/.test(t) ? Number(t) : text;
+  }
+  function langOut(v) { var n = Lang.normalize(v); return n === null ? v : n; }
+
+  function toData() {
+    var extra = [];
+    var data = {};
+    if (state.defaultDays.trim() !== '') data.default_days_threshold = toInt(state.defaultDays);
+
+    var lp = {};
+    state.langPlaylists.forEach(function (row) {
+      if (row.name === '' && row.lang === '') return;
+      if (Object.prototype.hasOwnProperty.call(lp, row.name)) {
+        extra.push({ msg: "'language_playlists': duplicate playlist name " + JSON.stringify(row.name), short: 'duplicate playlist name', rule: null, field: 'language_playlists', lpRow: row.id });
+        return;
+      }
+      lp[row.name] = langOut(row.lang);
+    });
+    data.language_playlists = lp;
+    data.enrichment = { musicbrainz: state.musicbrainz };
+    data.fallback_playlist = state.fallback === '' ? null : state.fallback;
+    data.rules = state.rules.map(function (r) {
+      var match = {};
+      r.match.forEach(function (c) {
+        var def = COND[c.key];
+        if (def.kind === 'list') match[c.key] = c.value.map(c.key === 'language_in' ? langOut : String);
+        else if (def.kind === 'year') match[c.key] = toInt(c.value);
+        else if (def.kind === 'bool') match[c.key] = c.value === 'true';
+        else match[c.key] = c.value;
+      });
+      var out = { name: r.name, enabled: r.enabled, match: match, target_playlist: r.target };
+      if (r.days.trim() !== '') out.days_threshold = toInt(r.days);
+      out.create_missing_playlists = r.create;
+      return out;
+    });
+    return { data: data, extra: extra };
+  }
+
+  function dumpYaml(data) {
+    var body = window.jsyaml.dump(data, { lineWidth: -1, flowLevel: 4, quotingType: '"', noRefs: true });
+    return '# SpotiSort config - generated by the config builder\n' + body;
+  }
+
+  // ---------------------------------------------------------------- derived output
+  var current = { errors: [], visible: [], yaml: '' };
+
+  function targetIdFor(e) {
+    if (e.lpRowId) return 'lp' + e.lpRowId + '-name';
+    if (e.rule !== null && e.rule !== undefined) {
+      var r = state.rules[e.rule];
+      if (!r) return null;
+      var f = e.field;
+      if (!f) return null;
+      if (f === 'match') return r.match.length ? null : 'r' + r.id + '-add-cond';
+      return fid(r, f);
+    }
+    return { default_days_threshold: 'g-days', fallback_playlist: 'g-fallback', 'enrichment.musicbrainz': 'g-mb' }[e.field] || null;
+  }
+  function slotIdFor(e) {
+    if (e.lpRowId) return 'err-lp' + e.lpRowId;
+    if (e.rule !== null && e.rule !== undefined) {
+      var r = state.rules[e.rule];
+      if (!r || !e.field) return null;
+      return 'err-' + fid(r, e.field);
+    }
+    return { default_days_threshold: 'err-g-days', fallback_playlist: 'err-g-fallback' }[e.field] || null;
+  }
+
+  function update() {
+    var built = toData();
+    var errors = V.validateConfig(built.data).errors.concat(built.extra);
+    // route language_playlists errors to their rows
+    errors.forEach(function (e) {
+      if (e.field === 'language_playlists') {
+        if (e.lpRow) e.lpRowId = e.lpRow;
+        else if (e.lpName !== undefined) {
+          var row = state.langPlaylists.filter(function (x) { return x.name === e.lpName; })[0];
+          if (row) e.lpRowId = row.id;
+        }
+      }
+    });
+    var visible = errors.filter(function (e) {
+      if (state.revealAll) return true;
+      if (e.rule !== null && e.rule !== undefined && state.rules[e.rule] && state.rules[e.rule].pristine) return false;
+      return true;
+    });
+
+    document.querySelectorAll('.err').forEach(function (n) { n.textContent = ''; });
+    document.querySelectorAll('[aria-invalid]').forEach(function (n) { n.removeAttribute('aria-invalid'); });
+    var slots = {};
+    visible.forEach(function (e) {
+      var slot = slotIdFor(e);
+      if (!slot) return;
+      (slots[slot] = slots[slot] || []).push(e.short);
+      var input = $(slot.replace(/^err-/, ''));
+      if (input) input.setAttribute('aria-invalid', 'true');
+      if (e.lpRowId) { var ln = $('lp' + e.lpRowId + '-lang'); if (ln && /language/.test(e.short)) ln.setAttribute('aria-invalid', 'true'); }
+    });
+    Object.keys(slots).forEach(function (id) { var n = $(id); if (n) n.textContent = slots[id].join(' '); });
+
+    current.errors = errors;
+    current.visible = visible;
+    current.yaml = dumpYaml(built.data);
+
+    var out = $('yaml-out');
+    out.querySelector('code').textContent = current.yaml;
+    out.classList.toggle('stale', errors.length > 0);
+
+    var summary = $('error-summary');
+    summary.innerHTML = '';
+    if (visible.length) {
+      summary.hidden = false;
+      summary.appendChild(h('h3', { text: visible.length + (visible.length === 1 ? ' problem' : ' problems') + ' to fix' }));
+      var ul = h('ul');
+      visible.forEach(function (e) {
+        var target = targetIdFor(e);
+        var li = h('li');
+        if (target) {
+          li.appendChild(h('a', { href: '#' + target, text: e.msg, onclick: function (ev) {
+            ev.preventDefault();
+            var t = $(target);
+            if (t) { t.focus(); if (t.scrollIntoView) t.scrollIntoView({ block: 'center' }); }
+          } }));
+        } else li.textContent = e.msg;
+        ul.appendChild(li);
+      });
+      summary.appendChild(ul);
+    } else summary.hidden = true;
+
+    var status = $('status');
+    if (errors.length === 0) {
+      status.textContent = 'Valid. The YAML below matches what the sorter accepts.';
+      status.className = 'status ok';
+    } else {
+      status.textContent = errors.length + (errors.length === 1 ? ' problem' : ' problems') + ' to fix before you can copy or download.';
+      status.className = 'status bad';
+    }
+    ['copy-btn', 'download-btn'].forEach(function (id) {
+      if (errors.length) $(id).setAttribute('aria-disabled', 'true'); else $(id).removeAttribute('aria-disabled');
+    });
+  }
+
+  function blocked(action) {
+    if (current.errors.length === 0) return false;
+    state.revealAll = true;
+    update();
+    var n = current.errors.length;
+    $('action-status').textContent = 'Cannot ' + action + ': ' + n + (n === 1 ? ' problem' : ' problems') + ' to fix.';
+    var s = $('error-summary');
+    s.hidden = false;
+    s.focus();
+    return true;
+  }
+
+  // ---------------------------------------------------------------- rendering: language playlists
+  function renderLp() {
+    var list = $('lp-list');
+    list.innerHTML = '';
+    state.langPlaylists.forEach(function (row, i) {
+      var n = i + 1;
+      var name = h('input', { id: 'lp' + row.id + '-name', type: 'text', autocomplete: 'off', value: row.name, 'aria-describedby': 'err-lp' + row.id });
+      name.value = row.name;
+      name.addEventListener('input', function () { row.name = name.value; update(); });
+      var lang = h('input', { id: 'lp' + row.id + '-lang', type: 'text', list: 'lang-options', autocomplete: 'off', 'aria-describedby': 'err-lp' + row.id });
+      lang.value = row.lang;
+      lang.addEventListener('input', function () { row.lang = lang.value; update(); });
+      lang.addEventListener('change', function () {
+        var c = Lang.normalize(lang.value);
+        if (c) { lang.value = c; row.lang = c; update(); }
+      });
+      list.appendChild(h('li', { class: 'row' },
+        h('div', { class: 'field' }, h('label', { for: name.id, text: 'Playlist name' }), name),
+        h('div', { class: 'field' }, h('label', { for: lang.id, text: 'Language' }), lang),
+        h('button', { type: 'button', class: 'btn ghost', 'aria-label': 'Remove playlist mapping ' + n, onclick: function () {
+          state.langPlaylists.splice(i, 1);
+          renderLp();
+          update();
+          $('lp-add').focus();
+        }, text: 'Remove' }),
+        h('p', { class: 'err', id: 'err-lp' + row.id })
+      ));
+    });
+  }
+
+  // ---------------------------------------------------------------- rendering: rules
+  function chipList(rule, cond) {
+    var ul = h('ul', { class: 'chips', 'aria-label': COND[cond.key].label + ' (entries)' });
+    cond.value.forEach(function (val, i) {
+      var bad = cond.key === 'language_in' && Lang.normalize(val) === null;
+      ul.appendChild(h('li', { class: 'chip' + (bad ? ' bad' : '') },
+        h('span', { text: val }),
+        h('button', { type: 'button', class: 'chip-x', 'aria-label': 'Remove ' + val, onclick: function () {
+          cond.value.splice(i, 1);
+          rule.pristine = false;
+          var fresh = chipList(rule, cond);
+          ul.replaceWith(fresh);
+          update();
+          $(fid(rule, 'match.' + cond.key)).focus();
+        }, text: '×' })
+      ));
+    });
+    return ul;
+  }
+
+  function condRow(rule, cond) {
+    var def = COND[cond.key];
+    var id = fid(rule, 'match.' + cond.key);
+    var errId = 'err-' + id;
+    var hintId = id + '-hint';
+    var label = h('label', { for: id }, def.label + ' ', h('code', { text: cond.key }));
+    var body;
+    if (def.kind === 'list') {
+      var input = h('input', { id: id, type: 'text', autocomplete: 'off', 'aria-describedby': hintId + ' ' + errId });
+      if (cond.key === 'language_in') input.setAttribute('list', 'lang-options');
+      var ul = chipList(rule, cond);
+      var commit = function () {
+        var text = input.value.trim();
+        if (!text) return;
+        var val = cond.key === 'language_in' ? langOut(text) : text;
+        var dup = cond.value.some(function (x) { return x.toLowerCase() === val.toLowerCase(); });
+        if (!dup) cond.value.push(val);
+        input.value = '';
+        rule.pristine = false;
+        var fresh = chipList(rule, cond);
+        ul.replaceWith(fresh);
+        ul = fresh;
+        update();
+        input.focus();
+      };
+      input.addEventListener('keydown', function (ev) { if (ev.key === 'Enter') { ev.preventDefault(); commit(); } });
+      body = h('div', { class: 'chip-entry' }, ul, h('div', { class: 'chip-add' }, input,
+        h('button', { type: 'button', class: 'btn secondary', onclick: commit, 'aria-label': 'Add to ' + def.label, text: 'Add' })));
+    } else if (def.kind === 'bool') {
+      var sel = h('select', { id: id, 'aria-describedby': hintId + ' ' + errId },
+        h('option', { value: 'true', text: 'true (explicit only)' }), h('option', { value: 'false', text: 'false (clean only)' }));
+      sel.value = cond.value;
+      sel.addEventListener('change', function () { cond.value = sel.value; rule.pristine = false; update(); });
+      body = sel;
+    } else {
+      var inp = h('input', { id: id, type: 'text', autocomplete: 'off', 'aria-describedby': hintId + ' ' + errId });
+      if (def.kind === 'year') inp.setAttribute('inputmode', 'numeric');
+      inp.value = cond.value;
+      inp.addEventListener('input', function () { cond.value = inp.value; rule.pristine = false; update(); });
+      body = inp;
+    }
+    return h('div', { class: 'cond' },
+      h('div', { class: 'cond-head' }, label,
+        h('button', { type: 'button', class: 'btn ghost small', 'aria-label': 'Remove condition ' + def.label, onclick: function () {
+          rule.match = rule.match.filter(function (c) { return c !== cond; });
+          rule.pristine = false;
+          renderRules();
+          update();
+          $(fid(rule, 'add-cond')).focus();
+        }, text: 'Remove' })),
+      body,
+      h('p', { class: 'hint', id: hintId, text: def.hint }),
+      h('p', { class: 'err', id: errId }));
+  }
+
+  function textField(rule, field, label, prop, hint, extraAttrs) {
+    var id = fid(rule, field);
+    var attrs = { id: id, type: 'text', autocomplete: 'off', 'aria-describedby': (hint ? id + '-hint ' : '') + 'err-' + id };
+    if (extraAttrs) Object.keys(extraAttrs).forEach(function (k) { attrs[k] = extraAttrs[k]; });
+    var input = h('input', attrs);
+    input.value = rule[prop];
+    input.addEventListener('input', function () {
+      rule[prop] = input.value;
+      rule.pristine = false;
+      if (prop === 'name') {
+        var t = $('rule-' + rule.id + '-title');
+        if (t) t.textContent = input.value.trim() || 'Untitled rule';
+      }
+      update();
+    });
+    return h('div', { class: 'field' }, h('label', { for: id, text: label }), input,
+      hint ? h('p', { class: 'hint', id: id + '-hint', text: hint }) : null,
+      h('p', { class: 'err', id: 'err-' + id }));
+  }
+
+  function checkField(rule, prop, label, hint) {
+    var id = fid(rule, prop);
+    var cb = h('input', { id: id, type: 'checkbox', 'aria-describedby': id + '-hint' });
+    cb.checked = rule[prop];
+    cb.addEventListener('change', function () { rule[prop] = cb.checked; rule.pristine = false; update(); });
+    return h('div', { class: 'field check' }, cb, h('label', { for: id, text: label }), h('p', { class: 'hint', id: id + '-hint', text: hint }));
+  }
+
+  function move(index, delta, which) {
+    var to = index + delta;
+    if (to < 0 || to >= state.rules.length) return;
+    var r = state.rules.splice(index, 1)[0];
+    state.rules.splice(to, 0, r);
+    renderRules();
+    update();
+    var btn = document.querySelector('#rule-' + r.id + ' .' + which);
+    if (btn.disabled) btn = document.querySelector('#rule-' + r.id + ' .' + (which === 'up' ? 'down' : 'up'));
+    btn.focus();
+    announceRule('Moved rule ' + (r.name.trim() ? '“' + r.name.trim() + '”' : 'Untitled') + ' to position ' + (to + 1) + ' of ' + state.rules.length + '.');
+  }
+
+  function renderRule(rule, index, total) {
+    var title = rule.name.trim() || 'Untitled rule';
+    var used = rule.match.map(function (c) { return c.key; });
+    var sel = h('select', { id: fid(rule, 'add-cond') },
+      h('option', { value: '', text: 'Choose a condition…' }));
+    V.MATCH_KEYS.forEach(function (k) {
+      if (used.indexOf(k) === -1) sel.appendChild(h('option', { value: k, text: COND[k].label + ' (' + k + ')' }));
+    });
+    var addCond = function () {
+      if (!sel.value) { sel.focus(); return; }
+      var def = COND[sel.value];
+      var cond = { key: sel.value, value: def.kind === 'list' ? [] : def.kind === 'bool' ? 'true' : '' };
+      rule.match.push(cond);
+      rule.pristine = false;
+      renderRules();
+      update();
+      var f = $(fid(rule, 'match.' + cond.key));
+      if (f) f.focus();
+    };
+    var addRow = used.length >= V.MATCH_KEYS.length ? null :
+      h('div', { class: 'add-cond' },
+        h('label', { for: sel.id, text: 'Add a condition' }), sel,
+        h('button', { type: 'button', class: 'btn secondary', onclick: addCond, text: 'Add condition' }));
+
+    var li = h('li', { class: 'rule card', id: 'rule-' + rule.id },
+      h('div', { class: 'rule-head' },
+        h('h3', { id: 'rule-' + rule.id + '-h' }, 'Rule ' + (index + 1) + ': ', h('span', { id: 'rule-' + rule.id + '-title', text: title })),
+        h('div', { class: 'rule-tools', role: 'group', 'aria-label': 'Rule ' + (index + 1) + ' actions' },
+          h('button', { type: 'button', class: 'btn secondary small up', disabled: index === 0, 'aria-label': 'Move rule ' + (index + 1) + ' up', onclick: function () { move(index, -1, 'up'); }, text: 'Up' }),
+          h('button', { type: 'button', class: 'btn secondary small down', disabled: index === total - 1, 'aria-label': 'Move rule ' + (index + 1) + ' down', onclick: function () { move(index, 1, 'down'); }, text: 'Down' }),
+          h('button', { type: 'button', class: 'btn danger small remove', 'aria-label': 'Remove rule ' + (index + 1), onclick: function () { removeRule(index); }, text: 'Remove' }))),
+      textField(rule, 'name', 'Rule name', 'name', 'Unique, case-insensitive.'),
+      textField(rule, 'target_playlist', 'Target playlist', 'target', 'Name of an existing playlist you own.'),
+      h('div', { class: 'checks' },
+        checkField(rule, 'enabled', 'Enabled', 'Disabled rules are skipped.'),
+        checkField(rule, 'create', 'Create playlist if missing', 'create_missing_playlists. Off means the rule only uses playlists that already exist.')),
+      textField(rule, 'days_threshold', 'Days threshold override', 'days', 'Optional. Blank uses the global default.', { inputmode: 'numeric' }),
+      h('fieldset', { class: 'conds' },
+        h('legend', { text: 'Match conditions (all must match)' }),
+        rule.match.length ? null : h('p', { class: 'hint', text: 'No conditions yet. A rule needs at least one.' }),
+        rule.match.map(function (c) { return condRow(rule, c); }),
+        h('p', { class: 'err', id: 'err-' + fid(rule, 'match') }),
+        addRow));
+    return li;
+  }
+
+  function renderRules() {
+    var ol = $('rules');
+    ol.innerHTML = '';
+    state.rules.forEach(function (r, i) {
+      var li = renderRule(r, i, state.rules.length);
+      ol.appendChild(li);
+    });
+    $('rules-empty').hidden = state.rules.length > 0;
+  }
+
+  function removeRule(index) {
+    var r = state.rules.splice(index, 1)[0];
+    lastRemoved = { rule: r, index: index };
+    renderRules();
+    update();
+    var n = announceRule('Removed rule ' + (r.name.trim() ? '“' + r.name.trim() + '”' : 'Untitled') + '. ');
+    n.appendChild(h('button', { type: 'button', class: 'btn secondary small', id: 'undo-remove', onclick: function () {
+      if (!lastRemoved) return;
+      state.rules.splice(Math.min(lastRemoved.index, state.rules.length), 0, lastRemoved.rule);
+      var restored = lastRemoved.rule;
+      lastRemoved = null;
+      renderRules();
+      update();
+      announceRule('Restored rule.');
+      var f = $(fid(restored, 'name'));
+      if (f) f.focus();
+    }, text: 'Undo' }));
+    var next = state.rules[Math.min(index, state.rules.length - 1)];
+    var target = next ? $(fid(next, 'name')) : $('rule-add');
+    if (target) target.focus();
+  }
+
+  // ---------------------------------------------------------------- import
+  function loadYamlText(text) {
+    var status = $('import-status');
+    var raw;
+    try {
+      raw = window.jsyaml.load(text);
+    } catch (e) {
+      status.className = 'notice show bad';
+      status.textContent = 'Not valid YAML: ' + String(e.message).split('\n')[0];
+      return false;
+    }
+    if (raw === null || raw === undefined) raw = {};
+    if (typeof raw !== 'object' || Array.isArray(raw)) {
+      status.className = 'notice show bad';
+      status.textContent = 'Import failed: top level must be a mapping';
+      return false;
+    }
+    var problems = V.validateConfig(raw).errors.map(function (e) { return e.msg; });
+    var next = blankState();
+    next.defaultDays = raw.default_days_threshold === undefined || raw.default_days_threshold === null ? '' : String(raw.default_days_threshold);
+    next.fallback = raw.fallback_playlist === undefined || raw.fallback_playlist === null ? '' : String(raw.fallback_playlist);
+    if (raw.enrichment && typeof raw.enrichment === 'object' && typeof raw.enrichment.musicbrainz === 'boolean') next.musicbrainz = raw.enrichment.musicbrainz;
+    var lp = raw.language_playlists;
+    if (lp && typeof lp === 'object' && !Array.isArray(lp)) {
+      Object.keys(lp).forEach(function (k) {
+        var row = newLp();
+        row.name = k;
+        row.lang = lp[k] === null || lp[k] === undefined ? '' : (Lang.normalize(String(lp[k])) || String(lp[k]));
+        next.langPlaylists.push(row);
+      });
+    }
+    var rules = Array.isArray(raw.rules) ? raw.rules : [];
+    rules.forEach(function (rr) {
+      if (rr === null || typeof rr !== 'object' || Array.isArray(rr)) return;
+      var rule = newRule();
+      rule.pristine = false;
+      rule.name = rr.name === undefined || rr.name === null ? '' : String(rr.name);
+      rule.enabled = rr.enabled === false ? false : true;
+      rule.target = rr.target_playlist === undefined || rr.target_playlist === null ? '' : String(rr.target_playlist);
+      rule.days = rr.days_threshold === undefined || rr.days_threshold === null ? '' : String(rr.days_threshold);
+      rule.create = rr.create_missing_playlists === true;
+      var m = rr.match;
+      if (m && typeof m === 'object' && !Array.isArray(m)) {
+        Object.keys(m).forEach(function (k) {
+          var def = COND[k];
+          if (!def) return;
+          var v = m[k];
+          var value;
+          if (def.kind === 'list') {
+            value = Array.isArray(v) ? v.map(function (x) { var s = String(x); return k === 'language_in' ? langOut(s) : s; }) : [];
+          } else if (def.kind === 'bool') value = v === false ? 'false' : 'true';
+          else value = v === undefined || v === null ? '' : String(v);
+          rule.match.push({ key: k, value: value });
+        });
+      }
+      next.rules.push(rule);
+    });
+    next.revealAll = true;
+    state = next;
+    lastRemoved = null;
+    $('g-days').value = state.defaultDays;
+    $('g-fallback').value = state.fallback;
+    $('g-mb').checked = state.musicbrainz;
+    renderLp();
+    renderRules();
+    announceRule('');
+    update();
+    status.textContent = '';
+    status.className = 'notice show' + (problems.length ? ' warn' : ' ok');
+    status.appendChild(h('p', { text: 'Loaded ' + state.rules.length + (state.rules.length === 1 ? ' rule' : ' rules') + ' into the form.' + (problems.length ? ' The file has problems; unknown keys were left out, and other values are marked in the form:' : '') }));
+    if (problems.length) status.appendChild(h('ul', null, problems.map(function (p) { return h('li', { text: p }); })));
+    return true;
+  }
+
+  // ---------------------------------------------------------------- copy / download
+  function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
+    return new Promise(function (resolve, reject) {
+      var ta = h('textarea', { 'aria-hidden': 'true', class: 'sr-only' });
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy') ? resolve() : reject(new Error('copy failed')); } catch (e) { reject(e); } finally { ta.remove(); }
+    });
+  }
+
+  function wire() {
+    $('g-days').addEventListener('input', function (e) { state.defaultDays = e.target.value; update(); });
+    $('g-fallback').addEventListener('input', function (e) { state.fallback = e.target.value; update(); });
+    $('g-mb').addEventListener('change', function (e) { state.musicbrainz = e.target.checked; update(); });
+    $('lp-add').addEventListener('click', function () {
+      var row = newLp();
+      state.langPlaylists.push(row);
+      renderLp();
+      update();
+      $('lp' + row.id + '-name').focus();
+    });
+    $('rule-add').addEventListener('click', function () {
+      var r = newRule();
+      state.rules.push(r);
+      renderRules();
+      update();
+      announceRule('Added rule ' + state.rules.length + '.');
+      $(fid(r, 'name')).focus();
+    });
+    $('import-btn').addEventListener('click', function () {
+      var text = $('import-text').value;
+      $('import-status').innerHTML = '';
+      if (!text.trim()) { $('import-status').className = 'notice show bad'; $('import-status').textContent = 'Paste some YAML or choose a file first.'; return; }
+      loadYamlText(text);
+    });
+    $('import-file').addEventListener('change', function (e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      $('import-status').innerHTML = '';
+      file.text().then(function (text) { $('import-text').value = text; loadYamlText(text); });
+    });
+    $('copy-btn').addEventListener('click', function () {
+      if (blocked('copy')) return;
+      copyText(current.yaml).then(function () {
+        $('action-status').textContent = 'Copied config.yaml to the clipboard.';
+      }, function () {
+        $('action-status').textContent = 'Copy failed. Select the text in the preview and copy it manually.';
+      });
+    });
+    $('download-btn').addEventListener('click', function () {
+      if (blocked('download')) return;
+      var blob = new Blob([current.yaml], { type: 'text/yaml;charset=utf-8' });
+      var url = URL.createObjectURL(blob);
+      var a = h('a', { href: url, download: 'config.yaml' });
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+      $('action-status').textContent = 'Downloaded config.yaml.';
+    });
+  }
+
+  function init() {
+    var dl = $('lang-options');
+    Lang.CANONICAL.forEach(function (n) { dl.appendChild(h('option', { value: n })); });
+    $('g-days').value = state.defaultDays;
+    wire();
+    renderLp();
+    renderRules();
+    update();
+    window.__spotiBuilder = { ready: true };
+    if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+      navigator.serviceWorker.register('../sw.js').catch(function () { /* offline support is optional */ });
+    }
+  }
+
+  init();
+})();
