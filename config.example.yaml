@@ -1,0 +1,32 @@
+default_days_threshold: 14
+
+fallback_playlist: null   # or a playlist name; null = leave unmatched songs alone
+
+rules:
+  - name: "Jazz to Jazz Vault"
+    enabled: true
+    match:
+      genre_contains: ["jazz"]
+    target_playlist: "Jazz Vault"
+    days_threshold: 7          # optional override of the global default
+
+  - name: "Favorite chill artists"
+    enabled: true
+    match:
+      artist_in: ["Bonobo", "Tycho"]
+    target_playlist: "Chillhop Favorites"
+
+  - name: "Old hip-hop"
+    enabled: true
+    match:
+      genre_contains: ["hip hop", "rap"]
+      release_year_before: 2010
+    target_playlist: "Old School Hip-Hop"
+
+  - name: "Explicit filter example"
+    enabled: true
+    match:
+      explicit: false
+      track_name_contains: "acoustic"
+    target_playlist: "Acoustic"
+    create_missing_playlists: false   # default; only attach to existing

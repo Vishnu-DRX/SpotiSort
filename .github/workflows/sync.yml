@@ -1,0 +1,23 @@
+name: Daily Sync
+
+on:
+  schedule:
+    - cron: "0 3 * * *"   # TODO: confirm final time with user
+  workflow_dispatch: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run sync
+        env:
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
+        run: echo "TODO: python src/sync.py --apply (pending finalized API design)"
+      # TODO (later phase): commit logs/ and .cache/ changes back to the repo
