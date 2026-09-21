@@ -2,8 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(python -m pytest:*)",
-      "Bash(python src/sync.py)",
-      "Bash(python src/analyze.py:*)",
+      "Bash(python -m src.sync)",
+      "Bash(python -m src.analyze:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",
@@ -19,7 +19,9 @@
       "Bash(git push --force:*)",
       "Bash(git push -f:*)",
       "Bash(python src/sync.py --apply:*)",
-      "PowerShell(python src/sync.py --apply:*)"
+      "Bash(python -m src.sync --apply:*)",
+      "PowerShell(python src/sync.py --apply:*)",
+      "PowerShell(python -m src.sync --apply:*)"
     ]
   }
 }

@@ -16,6 +16,42 @@ Where this spec and the original plan conflict, **this spec wins**.
 - Commit per logical unit; push to `main` at the end of each phase. Never force-push.
 - Never read/print `.env`. Never run `--apply` against the real library except as Phase 4 prescribes.
 
+## Master decisions (after Phase 1 review) — these are binding
+1. **Playlist drift 30 vs 29 is fine** (the `SpotiSort Test` playlist was created after the findings run).
+2. **Age gate blocks, it does not fall through.** Rules are matched on their conditions first-match-wins; if the
+   matched rule's threshold (rule override, else default) is not yet met, the song is **left in Liked Songs and
+   evaluation stops** (a too-young match must not leak into a later, broader rule). Change the engine and its
+   tests (`test_younger_earlier_rule_falls_through_to_later_rule` etc.) accordingly.
+3. Stricter config validation is accepted.
+4. **Config schema gains `language_playlists` (map playlist-name → language) and `enrichment` (`musicbrainz:
+   bool`) as the first Phase 2 task, then the schema is frozen** (Phase 6 builds against it).
+5. **Language values are lowercase English names** (`hindi`, `malayalam`, `tamil`, `telugu`, `kannada`,
+   `bengali`, `punjabi`, `marathi`, `english`, `japanese`, `korean`, `spanish`, …). Provide one alias table in
+   `src/enrichment/languages.py` mapping ISO 639-1/-3 codes and native names to these; `language_in` in config is
+   normalised through it (so `hi` works but is stored as `hindi`).
+6. `genre_cache.py` is to be removed (no shim needed if nothing imports it).
+7. **`--apply` deny rule:** the master has added `python -m src.sync --apply` variants to `.claude/settings.json`
+   and fixed CLAUDE.md. Always invoke as `python -m src.<module>`.
+8. Phase 3 must add a live **read-only** check that `contains` works with percent-encoded `uris` as `requests`
+   sends them (`:` → `%3A`, `,` → `%2C`), so the encoding risk is closed before any write.
+9. Phase 4 writers must return **per-batch results** (which batches committed) and never raise away that
+   information on a mid-way failure; reconciliation must use it.
+10. Investigate the stray `sync.yml` push-run failure ("workflow file issue", 0 s) in Phase 4 when rewriting it.
+11. Add a `.gitattributes` (`* text=auto eol=lf`) in Phase 2 to end the CRLF warnings.
+
+## Autonomy & gates (how to power through)
+Run **Phases 2 → 3 → 5 → 6 back-to-back without waiting** for the master, writing `design/reports/phase-N.md`
+at the end of each, pushing, and starting the next immediately. Use parallel background agents (e.g. Phase 6
+UI + Playwright while Phase 2/3 code is being written). Stop only for these **hard gates**:
+- **G1 (Phase 2 decision gate):** if genre coverage < 60 % of unique artists or language coverage < 85 % of
+  tracks, finish the phase, report, and stop.
+- **G2 (before Phase 4):** needs the **user**: designate 3 test songs, run `scripts/set_secrets.ps1`, confirm cron
+  time, and hand-verify the first `--apply` in Spotify. Phase 4 also needs master sign-off of a real dry-run log.
+  Do everything in Phase 4 that does not touch the real library first (failure-injection tests, workflow
+  rewrite, `--restore`), then stop and ask.
+- **G3:** any deviation from a "binding" decision or cross-cutting rule → stop and ask.
+Phases 7–8 follow Phase 4. A phase report is required even when you do not stop.
+
 ## Verified write shapes (live-tested 2026-09-21 on `SpotiSort Test`; liked count 773 preserved)
 - Add to playlist: `POST /playlists/{id}/items`, JSON body `{"uris":["spotify:track:..."]}` → **201**
   `{"snapshot_id"}`. Max 100 (101 → 400).

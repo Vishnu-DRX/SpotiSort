@@ -12,8 +12,8 @@ each user runs their own GitHub Actions against their own Spotify Developer app.
 ## Commands
 - Install: `python -m pip install -r requirements.txt`
 - Tests: `python -m pytest -q`
-- Dry run (default, no writes): `python src/sync.py`
-- Live run: `python src/sync.py --apply` (only after manual verification, see Safety)
+- Dry run (default, no writes): `python -m src.sync`
+- Live run: `python -m src.sync --apply` (only after manual verification, see Safety)
 
 ## Hard constraints (Spotify API, Feb 2026, verified live)
 - No `popularity`. No `genres` on `GET /artists/{id}` for dev-mode apps. No batch artist lookup.
