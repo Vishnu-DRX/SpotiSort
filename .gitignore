@@ -48,3 +48,10 @@ explore_output.json
 
 # Claude Code local overrides
 .claude/settings.local.json
+
+# Local enrichment cache (contains your library's artist ids); Phase 4 workflow will commit it with git add -f
+.cache/enrichment.json
+config.local.yaml
+
+# Local dry-run/real run logs (dated); the Phase 4 workflow commits them with git add -f
+logs/2*.json

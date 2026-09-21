@@ -1,0 +1,91 @@
+"""Combine providers behind ``Enricher.resolve(track) -> Enrichment``.
+
+Language order: playlist-learned > script detection > (MusicBrainz work/release language: not implemented,
+see the Phase 2 report) > None. Genres come from the primary artist via MusicBrainz tags.
+"""
+
+from __future__ import annotations
+
+from typing import Any
+
+from ..models import Enrichment, Track
+from .cache import EnrichmentCache
+from .musicbrainz import ArtistInfo, MusicBrainz, MusicBrainzError
+from .playlist_language import LanguageMap
+from .script_detect import detect_script_language
+
+
+def _fold(s: str) -> str:
+    return " ".join(s.casefold().split())
+
+
+class Enricher:
+    def __init__(
+        self,
+        cache: EnrichmentCache,
+        musicbrainz: MusicBrainz | None = None,
+        language_map: LanguageMap | None = None,
+    ):
+        self.cache = cache
+        self.mb = musicbrainz
+        self.language_map = language_map
+        self.errors = 0
+
+    def _artist_entry(self, track: Track) -> dict[str, Any] | None:
+        if not track.artists:
+            return None
+        primary = track.artists[0]
+        key = primary.id or _fold(primary.name)
+        cached = self.cache.get_artist(key)
+        if cached is not None:
+            return cached
+        if self.mb is None:
+            return None
+        found, info = self._lookup(track, primary.name)
+        if not found:  # transient MusicBrainz error: do not cache a false negative
+            return None
+        entry = {
+            "name": primary.name,
+            "mbid": info.mbid if info else None,
+            "genres": info.genres if info else [],
+            "country": info.country if info else None,
+            "via": info.via if info else None,
+        }
+        self.cache.put_artist(key, entry)
+        return entry
+
+    def _lookup(self, track: Track, primary_name: str) -> tuple[bool, ArtistInfo | None]:
+        """(completed, info). completed is False if MusicBrainz errored, so nothing gets cached."""
+        try:
+            if track.isrc:
+                cached = self.cache.get_isrc(track.isrc)
+                if cached is None:
+                    infos = self.mb.artists_for_isrc(track.isrc)
+                    cached = {"hit": infos is not None, "credits": [i.__dict__ for i in infos] if infos else []}
+                    self.cache.put_isrc(track.isrc, cached)
+                for c in cached["credits"]:
+                    if _fold(c.get("name") or "") == _fold(primary_name):
+                        return True, ArtistInfo(**c)
+            return True, self.mb.search_artist(primary_name)
+        except MusicBrainzError:
+            self.errors += 1
+            return False, None
+
+    def resolve(self, track: Track) -> Enrichment:
+        sources: list[str] = []
+        genres: tuple[str, ...] = ()
+        entry = self._artist_entry(track)
+        if entry and entry.get("genres"):
+            genres = tuple(entry["genres"])
+            sources.append("musicbrainz")
+
+        language = None
+        if self.language_map is not None:
+            language = self.language_map.language_for(track)
+            if language:
+                sources.append("playlist")
+        if language is None:
+            language = detect_script_language(track.name, track.album_name, *(a.name for a in track.artists))
+            if language:
+                sources.append("script")
+        return Enrichment(genres=genres, language=language, sources=tuple(sources))
