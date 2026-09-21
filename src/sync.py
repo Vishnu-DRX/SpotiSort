@@ -104,7 +104,7 @@ def run(args: argparse.Namespace) -> int:
 
     tracks = list(client.iter_saved_tracks())
     playlists = list(client.iter_my_playlists())
-    lmap, lang_warnings, _ = build_language_map(client, config)
+    lmap, lang_warnings, _ = build_language_map(client, config, playlists)
 
     cache = EnrichmentCache(args.cache)
     mb = MusicBrainz() if (config.musicbrainz and not args.no_network) else None
@@ -137,7 +137,7 @@ def run(args: argparse.Namespace) -> int:
     log = build_log(plan, True, session.audit, now, time.monotonic() - started)
     logs_dir = Path(args.logs_dir)
     logs_dir.mkdir(parents=True, exist_ok=True)
-    out = logs_dir / f"{date.today().isoformat()}.json"
+    out = logs_dir / f"{now.date().isoformat()}.json"
     out.write_text(json.dumps(log, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     print_summary(plan, out)
     return 0

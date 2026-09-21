@@ -28,12 +28,14 @@ LANGUAGE_GATE = 85.0
 SAVE_EVERY = 25
 
 
-def build_language_map(client: SpotifyClient, config: Config) -> tuple[LanguageMap, list[str], dict[str, int]]:
+def build_language_map(client: SpotifyClient, config: Config, playlists=None) -> tuple[LanguageMap, list[str], dict[str, int]]:
     """Learn artist->language from the configured language playlists (read-only)."""
     lmap = LanguageMap()
     if not config.language_playlists:
         return lmap, [], {}
-    ids, warnings = resolve_language_playlists(config.language_playlists, client.iter_my_playlists())
+    ids, warnings = resolve_language_playlists(
+        config.language_playlists, playlists if playlists is not None else client.iter_my_playlists()
+    )
     sizes: dict[str, int] = {}
     for pid, lang in ids.items():
         tracks = list(client.iter_playlist_items(pid))
