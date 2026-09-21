@@ -1,0 +1,454 @@
+{
+ "href": "h",
+ "items": [
+  {
+   "added_at": "2026-09-23T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "6beUvFUlKliUYJdLOXNj9C",
+       "name": "King Princess",
+       "type": "artist",
+       "uri": "spotify:artist:6beUvFUlKliUYJdLOXNj9C"
+      }
+     ],
+     "id": "x",
+     "name": "1950",
+     "release_date": "2018-02-23",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "6beUvFUlKliUYJdLOXNj9C",
+      "name": "King Princess",
+      "type": "artist",
+      "uri": "spotify:artist:6beUvFUlKliUYJdLOXNj9C"
+     }
+    ],
+    "explicit": true,
+    "external_ids": {
+     "isrc": "USSM11801303"
+    },
+    "id": "0CZ8lquoTX2Dkg7Ak2inwA",
+    "is_local": false,
+    "name": "1950",
+    "type": "track",
+    "uri": "spotify:track:0CZ8lquoTX2Dkg7Ak2inwA"
+   }
+  },
+  {
+   "added_at": "2026-09-24T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "6TIYQ3jFPwQSRmorSezPxX",
+       "name": "mgk",
+       "type": "artist",
+       "uri": "spotify:artist:6TIYQ3jFPwQSRmorSezPxX"
+      }
+     ],
+     "id": "x",
+     "name": "mainstream sellout",
+     "release_date": "2022-03-25",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "6TIYQ3jFPwQSRmorSezPxX",
+      "name": "mgk",
+      "type": "artist",
+      "uri": "spotify:artist:6TIYQ3jFPwQSRmorSezPxX"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USUM72112357"
+    },
+    "id": "4pR5ZEROnKQpJttWNn5er6",
+    "is_local": false,
+    "name": "twin flame",
+    "type": "track",
+    "uri": "spotify:track:4pR5ZEROnKQpJttWNn5er6"
+   }
+  },
+  {
+   "added_at": "2026-09-25T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "1UqvcbBmsHw8rjIZe1WiZl",
+       "name": "ISLAND",
+       "type": "artist",
+       "uri": "spotify:artist:1UqvcbBmsHw8rjIZe1WiZl"
+      }
+     ],
+     "id": "x",
+     "name": "Yesterday Park",
+     "release_date": "2021-06-25",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "1UqvcbBmsHw8rjIZe1WiZl",
+      "name": "ISLAND",
+      "type": "artist",
+      "uri": "spotify:artist:1UqvcbBmsHw8rjIZe1WiZl"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USJMZ2100007"
+    },
+    "id": "0gEl3OkfuBT0GpNbRitxgo",
+    "is_local": false,
+    "name": "By Your Side",
+    "type": "track",
+    "uri": "spotify:track:0gEl3OkfuBT0GpNbRitxgo"
+   }
+  },
+  {
+   "added_at": "2026-09-26T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "0xihfmhEb5MjgyQ9pD7Io7",
+       "name": "Andreas Kübler",
+       "type": "artist",
+       "uri": "spotify:artist:0xihfmhEb5MjgyQ9pD7Io7"
+      }
+     ],
+     "id": "x",
+     "name": "We Could Be Stars",
+     "release_date": "2021-02-26",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "0xihfmhEb5MjgyQ9pD7Io7",
+      "name": "Andreas Kübler",
+      "type": "artist",
+      "uri": "spotify:artist:0xihfmhEb5MjgyQ9pD7Io7"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "CH6542109609"
+    },
+    "id": "1cTuUHhYiLMPOucmU4uqRr",
+    "is_local": false,
+    "name": "We Could Be Stars",
+    "type": "track",
+    "uri": "spotify:track:1cTuUHhYiLMPOucmU4uqRr"
+   }
+  },
+  {
+   "added_at": "2026-09-27T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "6Fk18HpdnXUsKWpN9mPb9R",
+       "name": "The Moth & The Flame",
+       "type": "artist",
+       "uri": "spotify:artist:6Fk18HpdnXUsKWpN9mPb9R"
+      }
+     ],
+     "id": "x",
+     "name": "Ruthless",
+     "release_date": "2019-02-01",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "6Fk18HpdnXUsKWpN9mPb9R",
+      "name": "The Moth & The Flame",
+      "type": "artist",
+      "uri": "spotify:artist:6Fk18HpdnXUsKWpN9mPb9R"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USFLB1800011"
+    },
+    "id": "7ieApPoGVllFe85M77p8cl",
+    "is_local": false,
+    "name": "Only Just Begun",
+    "type": "track",
+    "uri": "spotify:track:7ieApPoGVllFe85M77p8cl"
+   }
+  },
+  {
+   "added_at": "2026-10-01T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "034u8Qcs47NHkRQXaWkLXW",
+       "name": "MORGXN",
+       "type": "artist",
+       "uri": "spotify:artist:034u8Qcs47NHkRQXaWkLXW"
+      }
+     ],
+     "id": "x",
+     "name": "A New Way",
+     "release_date": "2019-05-17",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "034u8Qcs47NHkRQXaWkLXW",
+      "name": "MORGXN",
+      "type": "artist",
+      "uri": "spotify:artist:034u8Qcs47NHkRQXaWkLXW"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USHR11939182"
+    },
+    "id": "0qfFhl3d2x5ttzIxWggvNg",
+    "is_local": false,
+    "name": "A New Way",
+    "type": "track",
+    "uri": "spotify:track:0qfFhl3d2x5ttzIxWggvNg"
+   }
+  },
+  {
+   "added_at": "2026-10-02T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "6aYFM3YVoyI9q7DuTRY9nY",
+       "name": "Roseburg",
+       "type": "artist",
+       "uri": "spotify:artist:6aYFM3YVoyI9q7DuTRY9nY"
+      }
+     ],
+     "id": "x",
+     "name": "Righteous Punk",
+     "release_date": "2020-02-18",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "6aYFM3YVoyI9q7DuTRY9nY",
+      "name": "Roseburg",
+      "type": "artist",
+      "uri": "spotify:artist:6aYFM3YVoyI9q7DuTRY9nY"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QZ4JJ1836579"
+    },
+    "id": "6EvmuaTXilzz4a3nmeBAlo",
+    "is_local": false,
+    "name": "Wave",
+    "type": "track",
+    "uri": "spotify:track:6EvmuaTXilzz4a3nmeBAlo"
+   }
+  },
+  {
+   "added_at": "2026-10-03T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "6AyATGg7mDgBlZ4N5uNog0",
+       "name": "SYML",
+       "type": "artist",
+       "uri": "spotify:artist:6AyATGg7mDgBlZ4N5uNog0"
+      }
+     ],
+     "id": "x",
+     "name": "Symmetry",
+     "release_date": "2019-10-11",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "6AyATGg7mDgBlZ4N5uNog0",
+      "name": "SYML",
+      "type": "artist",
+      "uri": "spotify:artist:6AyATGg7mDgBlZ4N5uNog0"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "CAN111900350"
+    },
+    "id": "2pulQGlFnPe9hk6p0z9XOX",
+    "is_local": false,
+    "name": "Symmetry",
+    "type": "track",
+    "uri": "spotify:track:2pulQGlFnPe9hk6p0z9XOX"
+   }
+  },
+  {
+   "added_at": "2026-10-04T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "1JTRiqIZM2aTYirDud2CoY",
+       "name": "Adrian Walther",
+       "type": "artist",
+       "uri": "spotify:artist:1JTRiqIZM2aTYirDud2CoY"
+      }
+     ],
+     "id": "x",
+     "name": "Bridge To The Other Side - Music From The Motion Picture",
+     "release_date": "2023-09-15",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "1JTRiqIZM2aTYirDud2CoY",
+      "name": "Adrian Walther",
+      "type": "artist",
+      "uri": "spotify:artist:1JTRiqIZM2aTYirDud2CoY"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QZYFZ2350233"
+    },
+    "id": "4VjIdnNAyhoacUBQZupqbN",
+    "is_local": false,
+    "name": "Azure",
+    "type": "track",
+    "uri": "spotify:track:4VjIdnNAyhoacUBQZupqbN"
+   }
+  },
+  {
+   "added_at": "2026-10-05T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "4xnihxcoXWK3UqryOSnbw5",
+       "name": "Sasha Alex Sloan",
+       "type": "artist",
+       "uri": "spotify:artist:4xnihxcoXWK3UqryOSnbw5"
+      }
+     ],
+     "id": "x",
+     "name": "smiling when i die",
+     "release_date": "2019-09-20",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "4xnihxcoXWK3UqryOSnbw5",
+      "name": "Sasha Alex Sloan",
+      "type": "artist",
+      "uri": "spotify:artist:4xnihxcoXWK3UqryOSnbw5"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USRC11902163"
+    },
+    "id": "7yCyhsU75MYdbeqRLhLY51",
+    "is_local": false,
+    "name": "smiling when i die",
+    "type": "track",
+    "uri": "spotify:track:7yCyhsU75MYdbeqRLhLY51"
+   }
+  },
+  {
+   "added_at": "2026-10-06T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "3Qy1IxDSU8SLpUUOfbOpxM",
+       "name": "The Chain Gang Of 1974",
+       "type": "artist",
+       "uri": "spotify:artist:3Qy1IxDSU8SLpUUOfbOpxM"
+      }
+     ],
+     "id": "x",
+     "name": "Daydream Forever",
+     "release_date": "2014-01-28",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "3Qy1IxDSU8SLpUUOfbOpxM",
+      "name": "The Chain Gang Of 1974",
+      "type": "artist",
+      "uri": "spotify:artist:3Qy1IxDSU8SLpUUOfbOpxM"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USWB11302194"
+    },
+    "id": "7rVVBxV1Shckul3R8alUqw",
+    "is_local": false,
+    "name": "Sleepwalking",
+    "type": "track",
+    "uri": "spotify:track:7rVVBxV1Shckul3R8alUqw"
+   }
+  },
+  {
+   "added_at": "2026-05-02T10:00:00Z",
+   "track": {
+    "is_local": true,
+    "type": "track",
+    "uri": "spotify:local:a:b:c:1",
+    "name": "Local",
+    "artists": [
+     {
+      "name": "X"
+     }
+    ],
+    "album": {
+     "name": ""
+    }
+   }
+  },
+  {
+   "added_at": "2026-05-03T10:00:00Z",
+   "track": {
+    "type": "episode",
+    "id": "eeeeeeeeeeeeeeeeeeeeee",
+    "uri": "spotify:episode:eeeeeeeeeeeeeeeeeeeeee",
+    "name": "Podcast"
+   }
+  }
+ ],
+ "limit": 50,
+ "next": null,
+ "offset": 50,
+ "previous": "h",
+ "total": 63
+}

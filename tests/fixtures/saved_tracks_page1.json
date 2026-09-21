@@ -1,0 +1,1984 @@
+{
+ "href": "h",
+ "items": [
+  {
+   "added_at": "2026-01-01T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "3OCijSCs6UVHZibd5nIJWt",
+       "name": "GARDEN",
+       "type": "artist",
+       "uri": "spotify:artist:3OCijSCs6UVHZibd5nIJWt"
+      }
+     ],
+     "id": "x",
+     "name": "Love Me to Death",
+     "release_date": "2020-01-24",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "3OCijSCs6UVHZibd5nIJWt",
+      "name": "GARDEN",
+      "type": "artist",
+      "uri": "spotify:artist:3OCijSCs6UVHZibd5nIJWt"
+     }
+    ],
+    "explicit": true,
+    "external_ids": {
+     "isrc": "NL1AP2006353"
+    },
+    "id": "3u02ZVU19wAK87PVyOIXZC",
+    "is_local": false,
+    "name": "Love Me to Death",
+    "type": "track",
+    "uri": "spotify:track:3u02ZVU19wAK87PVyOIXZC"
+   }
+  },
+  {
+   "added_at": "2026-01-02T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "36Yhe06bTjTT7PL1CCy8u2",
+       "name": "Falkerry",
+       "type": "artist",
+       "uri": "spotify:artist:36Yhe06bTjTT7PL1CCy8u2"
+      }
+     ],
+     "id": "x",
+     "name": "I'm sorry, I'm trying my best",
+     "release_date": "2022-05-15",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "36Yhe06bTjTT7PL1CCy8u2",
+      "name": "Falkerry",
+      "type": "artist",
+      "uri": "spotify:artist:36Yhe06bTjTT7PL1CCy8u2"
+     }
+    ],
+    "explicit": true,
+    "external_ids": {
+     "isrc": "QZHN92236286"
+    },
+    "id": "5MO8ugy3Uc54yumZAHJaEv",
+    "is_local": false,
+    "name": "I'm sorry, I'm trying my best",
+    "type": "track",
+    "uri": "spotify:track:5MO8ugy3Uc54yumZAHJaEv"
+   }
+  },
+  {
+   "added_at": "2026-01-03T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "4N8Ccd33SHnh2cNlojKYBv",
+       "name": "Saltwater Sun",
+       "type": "artist",
+       "uri": "spotify:artist:4N8Ccd33SHnh2cNlojKYBv"
+      }
+     ],
+     "id": "x",
+     "name": "The Wire",
+     "release_date": "2018-03-13",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "4N8Ccd33SHnh2cNlojKYBv",
+      "name": "Saltwater Sun",
+      "type": "artist",
+      "uri": "spotify:artist:4N8Ccd33SHnh2cNlojKYBv"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QMDA61863677"
+    },
+    "id": "1piQSyiRhzNy5u7FRv4M1W",
+    "is_local": false,
+    "name": "The Wire",
+    "type": "track",
+    "uri": "spotify:track:1piQSyiRhzNy5u7FRv4M1W"
+   }
+  },
+  {
+   "added_at": "2026-01-04T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "4WjeQi9wm84lYTIWZ95QoM",
+       "name": "Boston Manor",
+       "type": "artist",
+       "uri": "spotify:artist:4WjeQi9wm84lYTIWZ95QoM"
+      },
+      {
+       "id": "461TaZqofVfcQo2wtMwnQJ",
+       "name": "LeBrock",
+       "type": "artist",
+       "uri": "spotify:artist:461TaZqofVfcQo2wtMwnQJ"
+      }
+     ],
+     "id": "x",
+     "name": "England's Dreaming (Acoustic)",
+     "release_date": "2019-08-19",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "4WjeQi9wm84lYTIWZ95QoM",
+      "name": "Boston Manor",
+      "type": "artist",
+      "uri": "spotify:artist:4WjeQi9wm84lYTIWZ95QoM"
+     },
+     {
+      "id": "461TaZqofVfcQo2wtMwnQJ",
+      "name": "LeBrock",
+      "type": "artist",
+      "uri": "spotify:artist:461TaZqofVfcQo2wtMwnQJ"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USSTT1900161"
+    },
+    "id": "2CNa5QZV3GOCnval0xDMkN",
+    "is_local": false,
+    "name": "Welcome to The Neighbourhood - LeBrock Remix",
+    "type": "track",
+    "uri": "spotify:track:2CNa5QZV3GOCnval0xDMkN"
+   }
+  },
+  {
+   "added_at": "2026-01-05T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "2iXvf9aR7WqOas4CMbvQNY",
+       "name": "Irish Basement",
+       "type": "artist",
+       "uri": "spotify:artist:2iXvf9aR7WqOas4CMbvQNY"
+      }
+     ],
+     "id": "x",
+     "name": "Heaven or Hell",
+     "release_date": "2023-04-11",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "2iXvf9aR7WqOas4CMbvQNY",
+      "name": "Irish Basement",
+      "type": "artist",
+      "uri": "spotify:artist:2iXvf9aR7WqOas4CMbvQNY"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QZES82383707"
+    },
+    "id": "6VMJHZzYlUOJEhavTKI5CZ",
+    "is_local": false,
+    "name": "Waterfalls",
+    "type": "track",
+    "uri": "spotify:track:6VMJHZzYlUOJEhavTKI5CZ"
+   }
+  },
+  {
+   "added_at": "2026-01-06T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "2SmW1lFlBJn4IfBzBZDlSh",
+       "name": "The Warning",
+       "type": "artist",
+       "uri": "spotify:artist:2SmW1lFlBJn4IfBzBZDlSh"
+      }
+     ],
+     "id": "x",
+     "name": "MORE",
+     "release_date": "2023-05-12",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "2SmW1lFlBJn4IfBzBZDlSh",
+      "name": "The Warning",
+      "type": "artist",
+      "uri": "spotify:artist:2SmW1lFlBJn4IfBzBZDlSh"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USUM72306520"
+    },
+    "id": "2uqCJn5VFTf3sZEDJZvvX0",
+    "is_local": false,
+    "name": "MORE",
+    "type": "track",
+    "uri": "spotify:track:2uqCJn5VFTf3sZEDJZvvX0"
+   }
+  },
+  {
+   "added_at": "2026-02-07T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "7rqJQQxuUOCk052MK5kLsH",
+       "name": "Imminence",
+       "type": "artist",
+       "uri": "spotify:artist:7rqJQQxuUOCk052MK5kLsH"
+      }
+     ],
+     "id": "x",
+     "name": "Turn the Light On: Acoustic Reimagination",
+     "release_date": "2020-01-10",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "7rqJQQxuUOCk052MK5kLsH",
+      "name": "Imminence",
+      "type": "artist",
+      "uri": "spotify:artist:7rqJQQxuUOCk052MK5kLsH"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "DED831900997"
+    },
+    "id": "1LrrxLvH9mgYonjOKQ7mEc",
+    "is_local": false,
+    "name": "Saturated Soul - Acoustic",
+    "type": "track",
+    "uri": "spotify:track:1LrrxLvH9mgYonjOKQ7mEc"
+   }
+  },
+  {
+   "added_at": "2026-02-08T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "1FJHPnmVpsqtad5lE89HwN",
+       "name": "Ponette",
+       "type": "artist",
+       "uri": "spotify:artist:1FJHPnmVpsqtad5lE89HwN"
+      }
+     ],
+     "id": "x",
+     "name": "Nude",
+     "release_date": "2021-05-07",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "1FJHPnmVpsqtad5lE89HwN",
+      "name": "Ponette",
+      "type": "artist",
+      "uri": "spotify:artist:1FJHPnmVpsqtad5lE89HwN"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USA2P2110573"
+    },
+    "id": "5A7uLdQqvzSjeIUY7fQ0sr",
+    "is_local": false,
+    "name": "In My Head",
+    "type": "track",
+    "uri": "spotify:track:5A7uLdQqvzSjeIUY7fQ0sr"
+   }
+  },
+  {
+   "added_at": "2026-02-09T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "2N0vFuOoMtAQfBmhsRo24e",
+       "name": "Kalandra",
+       "type": "artist",
+       "uri": "spotify:artist:2N0vFuOoMtAQfBmhsRo24e"
+      }
+     ],
+     "id": "x",
+     "name": "The Line",
+     "release_date": "2020-10-23",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "2N0vFuOoMtAQfBmhsRo24e",
+      "name": "Kalandra",
+      "type": "artist",
+      "uri": "spotify:artist:2N0vFuOoMtAQfBmhsRo24e"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "NONAT1902010"
+    },
+    "id": "2xgirxDSjZDFevMNXvU0vc",
+    "is_local": false,
+    "name": "The Waiting Game",
+    "type": "track",
+    "uri": "spotify:track:2xgirxDSjZDFevMNXvU0vc"
+   }
+  },
+  {
+   "added_at": "2026-02-10T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "5bzrxLDkRjaILjtqXWppAC",
+       "name": "Módl",
+       "type": "artist",
+       "uri": "spotify:artist:5bzrxLDkRjaILjtqXWppAC"
+      }
+     ],
+     "id": "x",
+     "name": "Clementine",
+     "release_date": "2019-08-21",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "5bzrxLDkRjaILjtqXWppAC",
+      "name": "Módl",
+      "type": "artist",
+      "uri": "spotify:artist:5bzrxLDkRjaILjtqXWppAC"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USA2P1940284"
+    },
+    "id": "5J9Sez1GrTtYeOV8T37NoN",
+    "is_local": false,
+    "name": "Clementine",
+    "type": "track",
+    "uri": "spotify:track:5J9Sez1GrTtYeOV8T37NoN"
+   }
+  },
+  {
+   "added_at": "2026-02-11T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "7mnBLXK823vNxN3UWB7Gfz",
+       "name": "The Black Keys",
+       "type": "artist",
+       "uri": "spotify:artist:7mnBLXK823vNxN3UWB7Gfz"
+      }
+     ],
+     "id": "x",
+     "name": "El Camino",
+     "release_date": "2011-12-06",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "7mnBLXK823vNxN3UWB7Gfz",
+      "name": "The Black Keys",
+      "type": "artist",
+      "uri": "spotify:artist:7mnBLXK823vNxN3UWB7Gfz"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USNO11100273"
+    },
+    "id": "5G1sTBGbZT5o4PNRc75RKI",
+    "is_local": false,
+    "name": "Lonely Boy",
+    "type": "track",
+    "uri": "spotify:track:5G1sTBGbZT5o4PNRc75RKI"
+   }
+  },
+  {
+   "added_at": "2026-02-12T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "0UXTxqsApsmzX9C6P8IVTN",
+       "name": "You Drive",
+       "type": "artist",
+       "uri": "spotify:artist:0UXTxqsApsmzX9C6P8IVTN"
+      }
+     ],
+     "id": "x",
+     "name": "You Drive",
+     "release_date": "2018-08-03",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "0UXTxqsApsmzX9C6P8IVTN",
+      "name": "You Drive",
+      "type": "artist",
+      "uri": "spotify:artist:0UXTxqsApsmzX9C6P8IVTN"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QZDA61848198"
+    },
+    "id": "12KFsP17rnqEXVAxOUwyFq",
+    "is_local": false,
+    "name": "Royal Blue",
+    "type": "track",
+    "uri": "spotify:track:12KFsP17rnqEXVAxOUwyFq"
+   }
+  },
+  {
+   "added_at": "2026-03-13T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "4PW6B7ig3nh8xspS9xZCmI",
+       "name": "Phantom Head",
+       "type": "artist",
+       "uri": "spotify:artist:4PW6B7ig3nh8xspS9xZCmI"
+      }
+     ],
+     "id": "x",
+     "name": "Parasite",
+     "release_date": "2021-04-29",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "4PW6B7ig3nh8xspS9xZCmI",
+      "name": "Phantom Head",
+      "type": "artist",
+      "uri": "spotify:artist:4PW6B7ig3nh8xspS9xZCmI"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QZHN32138501"
+    },
+    "id": "1x0Fd2Ew1u6dFZdzWrwMg2",
+    "is_local": false,
+    "name": "Parasite",
+    "type": "track",
+    "uri": "spotify:track:1x0Fd2Ew1u6dFZdzWrwMg2"
+   }
+  },
+  {
+   "added_at": "2026-03-14T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "11iuJcoaqtToPVCJ3DeBev",
+       "name": "Racing Glaciers",
+       "type": "artist",
+       "uri": "spotify:artist:11iuJcoaqtToPVCJ3DeBev"
+      }
+     ],
+     "id": "x",
+     "name": "Caught in the Strange",
+     "release_date": "2016-08-05",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "11iuJcoaqtToPVCJ3DeBev",
+      "name": "Racing Glaciers",
+      "type": "artist",
+      "uri": "spotify:artist:11iuJcoaqtToPVCJ3DeBev"
+     }
+    ],
+    "explicit": true,
+    "external_ids": {
+     "isrc": "QMFMF1544416"
+    },
+    "id": "0TLZbhQcPvCQtC0Y9qFzD5",
+    "is_local": false,
+    "name": "Seems Like a Good Time",
+    "type": "track",
+    "uri": "spotify:track:0TLZbhQcPvCQtC0Y9qFzD5"
+   }
+  },
+  {
+   "added_at": "2026-03-15T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "46QrQRXLvHhE54yH8J1fX7",
+       "name": "Vines",
+       "type": "artist",
+       "uri": "spotify:artist:46QrQRXLvHhE54yH8J1fX7"
+      }
+     ],
+     "id": "x",
+     "name": "All Eyes On Me",
+     "release_date": "2022-10-31",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "46QrQRXLvHhE54yH8J1fX7",
+      "name": "Vines",
+      "type": "artist",
+      "uri": "spotify:artist:46QrQRXLvHhE54yH8J1fX7"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QZRP42225793"
+    },
+    "id": "1eAyj81dR36I9DUbZO5gWc",
+    "is_local": false,
+    "name": "All Eyes On Me",
+    "type": "track",
+    "uri": "spotify:track:1eAyj81dR36I9DUbZO5gWc"
+   }
+  },
+  {
+   "added_at": "2026-03-16T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "43EA0mCA9Iiw33kdPtMa1q",
+       "name": "Jakub Zytecki",
+       "type": "artist",
+       "uri": "spotify:artist:43EA0mCA9Iiw33kdPtMa1q"
+      }
+     ],
+     "id": "x",
+     "name": "Nothing Lasts, Nothing's Lost",
+     "release_date": "2019-10-03",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "43EA0mCA9Iiw33kdPtMa1q",
+      "name": "Jakub Zytecki",
+      "type": "artist",
+      "uri": "spotify:artist:43EA0mCA9Iiw33kdPtMa1q"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "TCAEJ1986270"
+    },
+    "id": "7M7p02tAX11OY4vnU4GjMP",
+    "is_local": false,
+    "name": "Sunflower",
+    "type": "track",
+    "uri": "spotify:track:7M7p02tAX11OY4vnU4GjMP"
+   }
+  },
+  {
+   "added_at": "2026-03-17T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "7mnuMLgvXdCWzyB4sQCG7k",
+       "name": "TWO LANES",
+       "type": "artist",
+       "uri": "spotify:artist:7mnuMLgvXdCWzyB4sQCG7k"
+      }
+     ],
+     "id": "x",
+     "name": "Reflections",
+     "release_date": "2021-06-18",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "7mnuMLgvXdCWzyB4sQCG7k",
+      "name": "TWO LANES",
+      "type": "artist",
+      "uri": "spotify:artist:7mnuMLgvXdCWzyB4sQCG7k"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "NLRD51632637"
+    },
+    "id": "4luihFQ22pn73BCwIGfPlv",
+    "is_local": false,
+    "name": "Transcend",
+    "type": "track",
+    "uri": "spotify:track:4luihFQ22pn73BCwIGfPlv"
+   }
+  },
+  {
+   "added_at": "2026-03-18T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "3f7dRSsRoWyZx3cytuVgAy",
+       "name": "Psycada",
+       "type": "artist",
+       "uri": "spotify:artist:3f7dRSsRoWyZx3cytuVgAy"
+      }
+     ],
+     "id": "x",
+     "name": "Hiking Lung",
+     "release_date": "2022-07-07",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "3f7dRSsRoWyZx3cytuVgAy",
+      "name": "Psycada",
+      "type": "artist",
+      "uri": "spotify:artist:3f7dRSsRoWyZx3cytuVgAy"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QZK6G2218090"
+    },
+    "id": "6MEjZoZJNiQBsWM8DBKSlx",
+    "is_local": false,
+    "name": "Forest",
+    "type": "track",
+    "uri": "spotify:track:6MEjZoZJNiQBsWM8DBKSlx"
+   }
+  },
+  {
+   "added_at": "2026-04-19T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "0GSIvxtGp5aLEJir8LtuUN",
+       "name": "JACSIN",
+       "type": "artist",
+       "uri": "spotify:artist:0GSIvxtGp5aLEJir8LtuUN"
+      },
+      {
+       "id": "6OB7PzOSbC30b8E5uGjRBo",
+       "name": "Aurora Olivas",
+       "type": "artist",
+       "uri": "spotify:artist:6OB7PzOSbC30b8E5uGjRBo"
+      }
+     ],
+     "id": "x",
+     "name": "Jacsin",
+     "release_date": "2020-06-26",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "0GSIvxtGp5aLEJir8LtuUN",
+      "name": "JACSIN",
+      "type": "artist",
+      "uri": "spotify:artist:0GSIvxtGp5aLEJir8LtuUN"
+     },
+     {
+      "id": "6OB7PzOSbC30b8E5uGjRBo",
+      "name": "Aurora Olivas",
+      "type": "artist",
+      "uri": "spotify:artist:6OB7PzOSbC30b8E5uGjRBo"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QZDA61922134"
+    },
+    "id": "5dfyLtVv92oyiyFIsuXufu",
+    "is_local": false,
+    "name": "Hard to Love",
+    "type": "track",
+    "uri": "spotify:track:5dfyLtVv92oyiyFIsuXufu"
+   }
+  },
+  {
+   "added_at": "2026-04-20T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "5aUy7Z5Q1m6f9fNp8or3sD",
+       "name": "FLØRE",
+       "type": "artist",
+       "uri": "spotify:artist:5aUy7Z5Q1m6f9fNp8or3sD"
+      }
+     ],
+     "id": "x",
+     "name": "Tsunami",
+     "release_date": "2020-07-24",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "5aUy7Z5Q1m6f9fNp8or3sD",
+      "name": "FLØRE",
+      "type": "artist",
+      "uri": "spotify:artist:5aUy7Z5Q1m6f9fNp8or3sD"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "FRX202043470"
+    },
+    "id": "2TVLdanpjpu7f6CBhBYTJr",
+    "is_local": false,
+    "name": "Tsunami",
+    "type": "track",
+    "uri": "spotify:track:2TVLdanpjpu7f6CBhBYTJr"
+   }
+  },
+  {
+   "added_at": "2026-04-21T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "7zDSYCgSGUDOaKiXUiZkpi",
+       "name": "Phangs",
+       "type": "artist",
+       "uri": "spotify:artist:7zDSYCgSGUDOaKiXUiZkpi"
+      }
+     ],
+     "id": "x",
+     "name": "_A BREAK",
+     "release_date": "2019-06-14",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "7zDSYCgSGUDOaKiXUiZkpi",
+      "name": "Phangs",
+      "type": "artist",
+      "uri": "spotify:artist:7zDSYCgSGUDOaKiXUiZkpi"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QZGTH1900025"
+    },
+    "id": "4NHdJuI7XGPy2TZOCMFjj1",
+    "is_local": false,
+    "name": "Powerline",
+    "type": "track",
+    "uri": "spotify:track:4NHdJuI7XGPy2TZOCMFjj1"
+   }
+  },
+  {
+   "added_at": "2026-04-22T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "7xmK7SfecrmjqsiIoSa1uf",
+       "name": "LPX",
+       "type": "artist",
+       "uri": "spotify:artist:7xmK7SfecrmjqsiIoSa1uf"
+      }
+     ],
+     "id": "x",
+     "name": "Might Not Make It Home",
+     "release_date": "2018-08-16",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "7xmK7SfecrmjqsiIoSa1uf",
+      "name": "LPX",
+      "type": "artist",
+      "uri": "spotify:artist:7xmK7SfecrmjqsiIoSa1uf"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QM24S1826644"
+    },
+    "id": "5mTQSpQymg9qPKh3Zw6UxC",
+    "is_local": false,
+    "name": "Might Not Make It Home",
+    "type": "track",
+    "uri": "spotify:track:5mTQSpQymg9qPKh3Zw6UxC"
+   }
+  },
+  {
+   "added_at": "2026-04-23T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "0JzoOfn4HXDNscG6Z5jUba",
+       "name": "SMNM",
+       "type": "artist",
+       "uri": "spotify:artist:0JzoOfn4HXDNscG6Z5jUba"
+      }
+     ],
+     "id": "x",
+     "name": "Parental Advisory Explicit Content",
+     "release_date": "2016-11-21",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "0JzoOfn4HXDNscG6Z5jUba",
+      "name": "SMNM",
+      "type": "artist",
+      "uri": "spotify:artist:0JzoOfn4HXDNscG6Z5jUba"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "TCACT1646629"
+    },
+    "id": "4s6rd2QCR3jrO81xtjlbFC",
+    "is_local": false,
+    "name": "Everything",
+    "type": "track",
+    "uri": "spotify:track:4s6rd2QCR3jrO81xtjlbFC"
+   }
+  },
+  {
+   "added_at": "2026-04-24T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "5yvGiZLSWJTPBlZpVbPnEZ",
+       "name": "Julia Wolf",
+       "type": "artist",
+       "uri": "spotify:artist:5yvGiZLSWJTPBlZpVbPnEZ"
+      }
+     ],
+     "id": "x",
+     "name": "Immortale",
+     "release_date": "2019-12-09",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "5yvGiZLSWJTPBlZpVbPnEZ",
+      "name": "Julia Wolf",
+      "type": "artist",
+      "uri": "spotify:artist:5yvGiZLSWJTPBlZpVbPnEZ"
+     }
+    ],
+    "explicit": true,
+    "external_ids": {
+     "isrc": "US23A1501712"
+    },
+    "id": "2oQpW50LWbo3UPNqtzZoY1",
+    "is_local": false,
+    "name": "Immortale",
+    "type": "track",
+    "uri": "spotify:track:2oQpW50LWbo3UPNqtzZoY1"
+   }
+  },
+  {
+   "added_at": "2026-05-25T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "45LfS386EgCNgbexicMcY7",
+       "name": "Stateside",
+       "type": "artist",
+       "uri": "spotify:artist:45LfS386EgCNgbexicMcY7"
+      }
+     ],
+     "id": "x",
+     "name": "Chaos",
+     "release_date": "2020-09-14",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "45LfS386EgCNgbexicMcY7",
+      "name": "Stateside",
+      "type": "artist",
+      "uri": "spotify:artist:45LfS386EgCNgbexicMcY7"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "ushm92050963"
+    },
+    "id": "2Oosu1m7YpuVUC9D0MrEg5",
+    "is_local": false,
+    "name": "Chaos",
+    "type": "track",
+    "uri": "spotify:track:2Oosu1m7YpuVUC9D0MrEg5"
+   }
+  },
+  {
+   "added_at": "2026-05-26T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "1Ffb6ejR6Fe5IamqA5oRUF",
+       "name": "Bring Me The Horizon",
+       "type": "artist",
+       "uri": "spotify:artist:1Ffb6ejR6Fe5IamqA5oRUF"
+      },
+      {
+       "id": "3Wcyta3gkOdQ4TfY0WyZpu",
+       "name": "YONAKA",
+       "type": "artist",
+       "uri": "spotify:artist:3Wcyta3gkOdQ4TfY0WyZpu"
+      }
+     ],
+     "id": "x",
+     "name": "Music to listen to~dance to~blaze to~pray to~feed to~sleep to~talk to~grind to~trip to~breathe to~help to~hurt to~scroll to~roll to~love to~hate to~learn Too~plot to~play to~be to~feel to~breed to~sweat to~dream to~hide to~live to~die to~GO TO",
+     "release_date": "2019-12-27",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "1Ffb6ejR6Fe5IamqA5oRUF",
+      "name": "Bring Me The Horizon",
+      "type": "artist",
+      "uri": "spotify:artist:1Ffb6ejR6Fe5IamqA5oRUF"
+     },
+     {
+      "id": "3Wcyta3gkOdQ4TfY0WyZpu",
+      "name": "YONAKA",
+      "type": "artist",
+      "uri": "spotify:artist:3Wcyta3gkOdQ4TfY0WyZpu"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "GBARL1901446"
+    },
+    "id": "3YN2QLK50um2t62c8p6U0I",
+    "is_local": false,
+    "name": "±ªþ³§ (feat. Yonaka)",
+    "type": "track",
+    "uri": "spotify:track:3YN2QLK50um2t62c8p6U0I"
+   }
+  },
+  {
+   "added_at": "2026-05-27T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "0NTqSkdyIji6DuHVac7ROJ",
+       "name": "Hembree",
+       "type": "artist",
+       "uri": "spotify:artist:0NTqSkdyIji6DuHVac7ROJ"
+      }
+     ],
+     "id": "x",
+     "name": "House on Fire",
+     "release_date": "2019-04-26",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "0NTqSkdyIji6DuHVac7ROJ",
+      "name": "Hembree",
+      "type": "artist",
+      "uri": "spotify:artist:0NTqSkdyIji6DuHVac7ROJ"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QZFBT1900004"
+    },
+    "id": "6KiQIXMfjDvRMLorIthG9w",
+    "is_local": false,
+    "name": "Skyline",
+    "type": "track",
+    "uri": "spotify:track:6KiQIXMfjDvRMLorIthG9w"
+   }
+  },
+  {
+   "added_at": "2026-05-01T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "21SbAgLQ2SteuYiKXTBDns",
+       "name": "Morgan Saint",
+       "type": "artist",
+       "uri": "spotify:artist:21SbAgLQ2SteuYiKXTBDns"
+      }
+     ],
+     "id": "x",
+     "name": "god bless our souls",
+     "release_date": "2019-04-19",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "21SbAgLQ2SteuYiKXTBDns",
+      "name": "Morgan Saint",
+      "type": "artist",
+      "uri": "spotify:artist:21SbAgLQ2SteuYiKXTBDns"
+     }
+    ],
+    "explicit": true,
+    "external_ids": {
+     "isrc": "USSM11902707"
+    },
+    "id": "3MSN840SRFP3Hstw4aN69n",
+    "is_local": false,
+    "name": "god bless our souls",
+    "type": "track",
+    "uri": "spotify:track:3MSN840SRFP3Hstw4aN69n"
+   }
+  },
+  {
+   "added_at": "2026-05-02T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "6YmJPuYzqe1HsJArGYcHBJ",
+       "name": "WesGhost",
+       "type": "artist",
+       "uri": "spotify:artist:6YmJPuYzqe1HsJArGYcHBJ"
+      }
+     ],
+     "id": "x",
+     "name": "DEADBEAT (demo)",
+     "release_date": "2023-12-22",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "6YmJPuYzqe1HsJArGYcHBJ",
+      "name": "WesGhost",
+      "type": "artist",
+      "uri": "spotify:artist:6YmJPuYzqe1HsJArGYcHBJ"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USQX92307121"
+    },
+    "id": "3COVhNcQ71ZyAxHyM1xiK4",
+    "is_local": false,
+    "name": "DEADBEAT - demo",
+    "type": "track",
+    "uri": "spotify:track:3COVhNcQ71ZyAxHyM1xiK4"
+   }
+  },
+  {
+   "added_at": "2026-05-03T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "5eNDu0xRakAeO0Za8pRIuG",
+       "name": "Portair",
+       "type": "artist",
+       "uri": "spotify:artist:5eNDu0xRakAeO0Za8pRIuG"
+      }
+     ],
+     "id": "x",
+     "name": "Places",
+     "release_date": "2018-12-06",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "5eNDu0xRakAeO0Za8pRIuG",
+      "name": "Portair",
+      "type": "artist",
+      "uri": "spotify:artist:5eNDu0xRakAeO0Za8pRIuG"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "GBKPL1827884"
+    },
+    "id": "41oUmlprRmTOQHkFT5hymg",
+    "is_local": false,
+    "name": "Places",
+    "type": "track",
+    "uri": "spotify:track:41oUmlprRmTOQHkFT5hymg"
+   }
+  },
+  {
+   "added_at": "2026-06-04T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "6oFs3qk4VepIVFdoD4jmsy",
+       "name": "PVRIS",
+       "type": "artist",
+       "uri": "spotify:artist:6oFs3qk4VepIVFdoD4jmsy"
+      }
+     ],
+     "id": "x",
+     "name": "Hallucinations (Acoustic)",
+     "release_date": "2020-01-10",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "6oFs3qk4VepIVFdoD4jmsy",
+      "name": "PVRIS",
+      "type": "artist",
+      "uri": "spotify:artist:6oFs3qk4VepIVFdoD4jmsy"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USWB11903361"
+    },
+    "id": "7eb8es1eZwGNCgm6BDU8Xh",
+    "is_local": false,
+    "name": "Hallucinations - Acoustic",
+    "type": "track",
+    "uri": "spotify:track:7eb8es1eZwGNCgm6BDU8Xh"
+   }
+  },
+  {
+   "added_at": "2026-06-05T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "49B3nohbHbU886JkWxNdda",
+       "name": "Band of Rascals",
+       "type": "artist",
+       "uri": "spotify:artist:49B3nohbHbU886JkWxNdda"
+      }
+     ],
+     "id": "x",
+     "name": "Tempest",
+     "release_date": "2017-10-13",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "49B3nohbHbU886JkWxNdda",
+      "name": "Band of Rascals",
+      "type": "artist",
+      "uri": "spotify:artist:49B3nohbHbU886JkWxNdda"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "CAQ151700004"
+    },
+    "id": "3t4xt2KYUrfG7CPqo1q8r2",
+    "is_local": false,
+    "name": "Seas Coming Down",
+    "type": "track",
+    "uri": "spotify:track:3t4xt2KYUrfG7CPqo1q8r2"
+   }
+  },
+  {
+   "added_at": "2026-06-06T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "5SyewwVDzgX910bCy1A1Ab",
+       "name": "pleaselevitate",
+       "type": "artist",
+       "uri": "spotify:artist:5SyewwVDzgX910bCy1A1Ab"
+      }
+     ],
+     "id": "x",
+     "name": "i lie",
+     "release_date": "2024-02-16",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "5SyewwVDzgX910bCy1A1Ab",
+      "name": "pleaselevitate",
+      "type": "artist",
+      "uri": "spotify:artist:5SyewwVDzgX910bCy1A1Ab"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "ATEJ62400020"
+    },
+    "id": "0qdLouxGvZA19YRrV1piAg",
+    "is_local": false,
+    "name": "i lie",
+    "type": "track",
+    "uri": "spotify:track:0qdLouxGvZA19YRrV1piAg"
+   }
+  },
+  {
+   "added_at": "2026-06-07T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "4P5BXHaN6CtwLI0zy1NXxB",
+       "name": "Phrenia",
+       "type": "artist",
+       "uri": "spotify:artist:4P5BXHaN6CtwLI0zy1NXxB"
+      }
+     ],
+     "id": "x",
+     "name": "Köddé Vált",
+     "release_date": "2021-01-08",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "4P5BXHaN6CtwLI0zy1NXxB",
+      "name": "Phrenia",
+      "type": "artist",
+      "uri": "spotify:artist:4P5BXHaN6CtwLI0zy1NXxB"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QMFMF2003275"
+    },
+    "id": "18drHVY8QKZ1kdUZfOOro2",
+    "is_local": false,
+    "name": "Köddé Vált",
+    "type": "track",
+    "uri": "spotify:track:18drHVY8QKZ1kdUZfOOro2"
+   }
+  },
+  {
+   "added_at": "2026-06-08T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "1FJHPnmVpsqtad5lE89HwN",
+       "name": "Ponette",
+       "type": "artist",
+       "uri": "spotify:artist:1FJHPnmVpsqtad5lE89HwN"
+      }
+     ],
+     "id": "x",
+     "name": "All the Things She Said",
+     "release_date": "2020-03-20",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "1FJHPnmVpsqtad5lE89HwN",
+      "name": "Ponette",
+      "type": "artist",
+      "uri": "spotify:artist:1FJHPnmVpsqtad5lE89HwN"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "NOCKK2006010"
+    },
+    "id": "5bFIcJJSKtVivKZrmEW5Ma",
+    "is_local": false,
+    "name": "All the Things She Said",
+    "type": "track",
+    "uri": "spotify:track:5bFIcJJSKtVivKZrmEW5Ma"
+   }
+  },
+  {
+   "added_at": "2026-06-09T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "6AyATGg7mDgBlZ4N5uNog0",
+       "name": "SYML",
+       "type": "artist",
+       "uri": "spotify:artist:6AyATGg7mDgBlZ4N5uNog0"
+      }
+     ],
+     "id": "x",
+     "name": "The War",
+     "release_date": "2016-09-09",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "6AyATGg7mDgBlZ4N5uNog0",
+      "name": "SYML",
+      "type": "artist",
+      "uri": "spotify:artist:6AyATGg7mDgBlZ4N5uNog0"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "TCACR1659666"
+    },
+    "id": "1fNMNJqWaPxUHFpZ0Zl3UA",
+    "is_local": false,
+    "name": "The War",
+    "type": "track",
+    "uri": "spotify:track:1fNMNJqWaPxUHFpZ0Zl3UA"
+   }
+  },
+  {
+   "added_at": "2026-07-10T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "4dKpp8jzDVeg4Xoraj6xAL",
+       "name": "Emma Ayzenberg",
+       "type": "artist",
+       "uri": "spotify:artist:4dKpp8jzDVeg4Xoraj6xAL"
+      }
+     ],
+     "id": "x",
+     "name": "Animus",
+     "release_date": "2022-07-15",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "4dKpp8jzDVeg4Xoraj6xAL",
+      "name": "Emma Ayzenberg",
+      "type": "artist",
+      "uri": "spotify:artist:4dKpp8jzDVeg4Xoraj6xAL"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "GBKPL2295177"
+    },
+    "id": "53YwAzrGhPf7Ud49ZnDF59",
+    "is_local": false,
+    "name": "Blind",
+    "type": "track",
+    "uri": "spotify:track:53YwAzrGhPf7Ud49ZnDF59"
+   }
+  },
+  {
+   "added_at": "2026-07-11T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "5n7AGJ1vEaibZpO8oFmdaN",
+       "name": "LoneFi",
+       "type": "artist",
+       "uri": "spotify:artist:5n7AGJ1vEaibZpO8oFmdaN"
+      }
+     ],
+     "id": "x",
+     "name": "0°C Like my heart",
+     "release_date": "2019-02-06",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "5n7AGJ1vEaibZpO8oFmdaN",
+      "name": "LoneFi",
+      "type": "artist",
+      "uri": "spotify:artist:5n7AGJ1vEaibZpO8oFmdaN"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "SE5BU1911520"
+    },
+    "id": "2nddKfAUD1TxXrCf8lLczk",
+    "is_local": false,
+    "name": "0°C Like my heart",
+    "type": "track",
+    "uri": "spotify:track:2nddKfAUD1TxXrCf8lLczk"
+   }
+  },
+  {
+   "added_at": "2026-07-12T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "4WQwU51LUtrVrw0K8BMpAC",
+       "name": "Jaguar Sun",
+       "type": "artist",
+       "uri": "spotify:artist:4WQwU51LUtrVrw0K8BMpAC"
+      }
+     ],
+     "id": "x",
+     "name": "The Heart",
+     "release_date": "2020-01-31",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "4WQwU51LUtrVrw0K8BMpAC",
+      "name": "Jaguar Sun",
+      "type": "artist",
+      "uri": "spotify:artist:4WQwU51LUtrVrw0K8BMpAC"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "CALVP2011285"
+    },
+    "id": "4Qr2AKqQO1s3YQ6gCV72Gd",
+    "is_local": false,
+    "name": "The Heart",
+    "type": "track",
+    "uri": "spotify:track:4Qr2AKqQO1s3YQ6gCV72Gd"
+   }
+  },
+  {
+   "added_at": "2026-07-13T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "0e2fMEJlAuBo3iYh118cKI",
+       "name": "Saint Mesa",
+       "type": "artist",
+       "uri": "spotify:artist:0e2fMEJlAuBo3iYh118cKI"
+      }
+     ],
+     "id": "x",
+     "name": "Prodigal",
+     "release_date": "2021-03-12",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "0e2fMEJlAuBo3iYh118cKI",
+      "name": "Saint Mesa",
+      "type": "artist",
+      "uri": "spotify:artist:0e2fMEJlAuBo3iYh118cKI"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "GBKPL2144963"
+    },
+    "id": "06vg5cias6Dz2CmW8THxZD",
+    "is_local": false,
+    "name": "Prodigal",
+    "type": "track",
+    "uri": "spotify:track:06vg5cias6Dz2CmW8THxZD"
+   }
+  },
+  {
+   "added_at": "2026-07-14T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "3RP50pmG8Wz1mhNCidQj68",
+       "name": "RITUAL",
+       "type": "artist",
+       "uri": "spotify:artist:3RP50pmG8Wz1mhNCidQj68"
+      },
+      {
+       "id": "0z7Yuv7DuDQ5SaVn4VSlLt",
+       "name": "Lisa Hannigan",
+       "type": "artist",
+       "uri": "spotify:artist:0z7Yuv7DuDQ5SaVn4VSlLt"
+      }
+     ],
+     "id": "x",
+     "name": "Josephine",
+     "release_date": "2015-08-05",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "3RP50pmG8Wz1mhNCidQj68",
+      "name": "RITUAL",
+      "type": "artist",
+      "uri": "spotify:artist:3RP50pmG8Wz1mhNCidQj68"
+     },
+     {
+      "id": "0z7Yuv7DuDQ5SaVn4VSlLt",
+      "name": "Lisa Hannigan",
+      "type": "artist",
+      "uri": "spotify:artist:0z7Yuv7DuDQ5SaVn4VSlLt"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "GBKPL1514511"
+    },
+    "id": "7fljdg3Q8zaqJQiolsMIfU",
+    "is_local": false,
+    "name": "Josephine",
+    "type": "track",
+    "uri": "spotify:track:7fljdg3Q8zaqJQiolsMIfU"
+   }
+  },
+  {
+   "added_at": "2026-07-15T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "0iEtIxbK0KxaSlF7G42ZOp",
+       "name": "Metro Boomin",
+       "type": "artist",
+       "uri": "spotify:artist:0iEtIxbK0KxaSlF7G42ZOp"
+      },
+      {
+       "id": "13ubrt8QOOCPljQ2FL1Kca",
+       "name": "A$AP Rocky",
+       "type": "artist",
+       "uri": "spotify:artist:13ubrt8QOOCPljQ2FL1Kca"
+      },
+      {
+       "id": "5pCGvSxNNUcddlRrG0wsrY",
+       "name": "Roisee",
+       "type": "artist",
+       "uri": "spotify:artist:5pCGvSxNNUcddlRrG0wsrY"
+      }
+     ],
+     "id": "x",
+     "name": "METRO BOOMIN PRESENTS SPIDER-MAN: ACROSS THE SPIDER-VERSE (SOUNDTRACK FROM AND INSPIRED BY THE MOTION PICTURE)",
+     "release_date": "2023-06-02",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "0iEtIxbK0KxaSlF7G42ZOp",
+      "name": "Metro Boomin",
+      "type": "artist",
+      "uri": "spotify:artist:0iEtIxbK0KxaSlF7G42ZOp"
+     },
+     {
+      "id": "13ubrt8QOOCPljQ2FL1Kca",
+      "name": "A$AP Rocky",
+      "type": "artist",
+      "uri": "spotify:artist:13ubrt8QOOCPljQ2FL1Kca"
+     },
+     {
+      "id": "5pCGvSxNNUcddlRrG0wsrY",
+      "name": "Roisee",
+      "type": "artist",
+      "uri": "spotify:artist:5pCGvSxNNUcddlRrG0wsrY"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USUM72308540"
+    },
+    "id": "6Ec5LeRzkisa5KJtwLfOoW",
+    "is_local": false,
+    "name": "Am I Dreaming (Metro Boomin & A$AP Rocky, Roisee)",
+    "type": "track",
+    "uri": "spotify:track:6Ec5LeRzkisa5KJtwLfOoW"
+   }
+  },
+  {
+   "added_at": "2026-08-16T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "0e2fMEJlAuBo3iYh118cKI",
+       "name": "Saint Mesa",
+       "type": "artist",
+       "uri": "spotify:artist:0e2fMEJlAuBo3iYh118cKI"
+      }
+     ],
+     "id": "x",
+     "name": "Beads",
+     "release_date": "2017-05-05",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "0e2fMEJlAuBo3iYh118cKI",
+      "name": "Saint Mesa",
+      "type": "artist",
+      "uri": "spotify:artist:0e2fMEJlAuBo3iYh118cKI"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USUM71703691"
+    },
+    "id": "7GOgNJbPfxRIPhu7CGDucz",
+    "is_local": false,
+    "name": "Beads",
+    "type": "track",
+    "uri": "spotify:track:7GOgNJbPfxRIPhu7CGDucz"
+   }
+  },
+  {
+   "added_at": "2026-08-17T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "55DhV9I8VahoWvpa3QMPP5",
+       "name": "Rogue VHS",
+       "type": "artist",
+       "uri": "spotify:artist:55DhV9I8VahoWvpa3QMPP5"
+      },
+      {
+       "id": "1rDy96MTvvmWDAbIg6B6o4",
+       "name": "Tima",
+       "type": "artist",
+       "uri": "spotify:artist:1rDy96MTvvmWDAbIg6B6o4"
+      }
+     ],
+     "id": "x",
+     "name": "Dust + Stars",
+     "release_date": "2020-08-31",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "55DhV9I8VahoWvpa3QMPP5",
+      "name": "Rogue VHS",
+      "type": "artist",
+      "uri": "spotify:artist:55DhV9I8VahoWvpa3QMPP5"
+     },
+     {
+      "id": "1rDy96MTvvmWDAbIg6B6o4",
+      "name": "Tima",
+      "type": "artist",
+      "uri": "spotify:artist:1rDy96MTvvmWDAbIg6B6o4"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QZK6N2072593"
+    },
+    "id": "3wtiqIopwLEsyE7i33ZhEg",
+    "is_local": false,
+    "name": "Dust + Stars",
+    "type": "track",
+    "uri": "spotify:track:3wtiqIopwLEsyE7i33ZhEg"
+   }
+  },
+  {
+   "added_at": "2026-08-18T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "6lyMYewq2SuTFIXgiv7OxH",
+       "name": "Inhaler",
+       "type": "artist",
+       "uri": "spotify:artist:6lyMYewq2SuTFIXgiv7OxH"
+      }
+     ],
+     "id": "x",
+     "name": "Falling In",
+     "release_date": "2020-07-24",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "6lyMYewq2SuTFIXgiv7OxH",
+      "name": "Inhaler",
+      "type": "artist",
+      "uri": "spotify:artist:6lyMYewq2SuTFIXgiv7OxH"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "GBUM72003490"
+    },
+    "id": "0v55XuHDYNj4ELPzpRnNo0",
+    "is_local": false,
+    "name": "Fade Into You",
+    "type": "track",
+    "uri": "spotify:track:0v55XuHDYNj4ELPzpRnNo0"
+   }
+  },
+  {
+   "added_at": "2026-08-19T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "4xbJS00sHh5wBd5nYgsk8z",
+       "name": "Cape Cub",
+       "type": "artist",
+       "uri": "spotify:artist:4xbJS00sHh5wBd5nYgsk8z"
+      }
+     ],
+     "id": "x",
+     "name": "All I Need",
+     "release_date": "2016-08-22",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "4xbJS00sHh5wBd5nYgsk8z",
+      "name": "Cape Cub",
+      "type": "artist",
+      "uri": "spotify:artist:4xbJS00sHh5wBd5nYgsk8z"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "GBKPL1669954"
+    },
+    "id": "6VIU2Lj8k114mUsxtYzZHO",
+    "is_local": false,
+    "name": "All I Need",
+    "type": "track",
+    "uri": "spotify:track:6VIU2Lj8k114mUsxtYzZHO"
+   }
+  },
+  {
+   "added_at": "2026-08-20T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "3ONmBYM261icTRuD38N9vS",
+       "name": "Kat Meoz",
+       "type": "artist",
+       "uri": "spotify:artist:3ONmBYM261icTRuD38N9vS"
+      }
+     ],
+     "id": "x",
+     "name": "Run Tonight",
+     "release_date": "2020-11-04",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "3ONmBYM261icTRuD38N9vS",
+      "name": "Kat Meoz",
+      "type": "artist",
+      "uri": "spotify:artist:3ONmBYM261icTRuD38N9vS"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "DEWO71700178"
+    },
+    "id": "0W4G2TqiYXBvkyelLU90IK",
+    "is_local": false,
+    "name": "Run Tonight",
+    "type": "track",
+    "uri": "spotify:track:0W4G2TqiYXBvkyelLU90IK"
+   }
+  },
+  {
+   "added_at": "2026-08-21T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "04tDiz6koPFuo5JBZyLgFg",
+       "name": "Sadness",
+       "type": "artist",
+       "uri": "spotify:artist:04tDiz6koPFuo5JBZyLgFg"
+      }
+     ],
+     "id": "x",
+     "name": "Kiss In October",
+     "release_date": "2022-06-10",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "04tDiz6koPFuo5JBZyLgFg",
+      "name": "Sadness",
+      "type": "artist",
+      "uri": "spotify:artist:04tDiz6koPFuo5JBZyLgFg"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "GX5MX2273441"
+    },
+    "id": "5SmlSBsvRZMfHgjaVSj8wo",
+    "is_local": false,
+    "name": "Kiss In October",
+    "type": "track",
+    "uri": "spotify:track:5SmlSBsvRZMfHgjaVSj8wo"
+   }
+  },
+  {
+   "added_at": "2026-09-22T10:00:00Z",
+   "track": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "5BRxWwvhe1BxvK6fs4V0dx",
+       "name": "Lissom",
+       "type": "artist",
+       "uri": "spotify:artist:5BRxWwvhe1BxvK6fs4V0dx"
+      },
+      {
+       "id": "7e4AmALFiKR69Xra2EksPU",
+       "name": "Julien Marchal",
+       "type": "artist",
+       "uri": "spotify:artist:7e4AmALFiKR69Xra2EksPU"
+      },
+      {
+       "id": "7FW2qwsY0zLV9GppWatQ5P",
+       "name": "Lowswimmer",
+       "type": "artist",
+       "uri": "spotify:artist:7FW2qwsY0zLV9GppWatQ5P"
+      }
+     ],
+     "id": "x",
+     "name": "Lissom",
+     "release_date": "2018-08-31",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "5BRxWwvhe1BxvK6fs4V0dx",
+      "name": "Lissom",
+      "type": "artist",
+      "uri": "spotify:artist:5BRxWwvhe1BxvK6fs4V0dx"
+     },
+     {
+      "id": "7e4AmALFiKR69Xra2EksPU",
+      "name": "Julien Marchal",
+      "type": "artist",
+      "uri": "spotify:artist:7e4AmALFiKR69Xra2EksPU"
+     },
+     {
+      "id": "7FW2qwsY0zLV9GppWatQ5P",
+      "name": "Lowswimmer",
+      "type": "artist",
+      "uri": "spotify:artist:7FW2qwsY0zLV9GppWatQ5P"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "FR59R1886383"
+    },
+    "id": "7qjF1j0sMTLcmiTKXwVh09",
+    "is_local": false,
+    "name": "Doppelgänger",
+    "type": "track",
+    "uri": "spotify:track:7qjF1j0sMTLcmiTKXwVh09"
+   }
+  },
+  {
+   "added_at": "2026-05-01T10:00:00Z",
+   "track": null
+  }
+ ],
+ "limit": 50,
+ "next": "https://api.spotify.com/v1/me/tracks?offset=50&limit=50",
+ "offset": 0,
+ "previous": null,
+ "total": 63
+}

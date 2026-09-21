@@ -1,0 +1,808 @@
+{
+ "items": [
+  {
+   "id": "BPLKHLLAONEJALAKLIJEBA",
+   "name": "Playlist 00",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 1
+   },
+   "snapshot_id": "snap0",
+   "type": "playlist"
+  },
+  {
+   "id": "KBENFBBLFNILEEENKHOKFK",
+   "name": "Playlist 01",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 26
+   },
+   "snapshot_id": "snap1",
+   "type": "playlist"
+  },
+  {
+   "id": "AKNGFHNFHEEGDCPKBMMJGL",
+   "name": "Playlist 02",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 100
+   },
+   "snapshot_id": "snap2",
+   "type": "playlist"
+  },
+  {
+   "id": "IJJBILJKAHCLLOIKEMDBHL",
+   "name": "Playlist 03",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 9
+   },
+   "snapshot_id": "snap3",
+   "type": "playlist"
+  },
+  {
+   "id": "OGNAJHKLFPIKKLLEJNOIHL",
+   "name": "Playlist 04",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 180
+   },
+   "snapshot_id": "snap4",
+   "type": "playlist"
+  },
+  {
+   "id": "BOJCJPBBLOEBADPEKBPMHD",
+   "name": "Playlist 05",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 17
+   },
+   "snapshot_id": "snap5",
+   "type": "playlist"
+  },
+  {
+   "id": "DFHDBCBPHIMGMCPNONNBMC",
+   "name": "Playlist 06",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 222
+   },
+   "snapshot_id": "snap6",
+   "type": "playlist"
+  },
+  {
+   "id": "IDBINEBIIIHJIHGKBEOJFL",
+   "name": "Playlist 07",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 127
+   },
+   "snapshot_id": "snap7",
+   "type": "playlist"
+  },
+  {
+   "id": "GPCEMPGGCBKGAGGANMEGIL",
+   "name": "Playlist 08",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 146
+   },
+   "snapshot_id": "snap8",
+   "type": "playlist"
+  },
+  {
+   "id": "IPNOKCAKDFCCDNKIHBJLCP",
+   "name": "Playlist 09",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 28
+   },
+   "snapshot_id": "snap9",
+   "type": "playlist"
+  },
+  {
+   "id": "CLAAECPIALGNOJCPGNKOGG",
+   "name": "Playlist 10",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 145
+   },
+   "snapshot_id": "snap10",
+   "type": "playlist"
+  },
+  {
+   "id": "HHCIIMDNEPMGFMJHOGBHPB",
+   "name": "Playlist 11",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 28
+   },
+   "snapshot_id": "snap11",
+   "type": "playlist"
+  },
+  {
+   "id": "IOHMDMKJIFEBHEADIFJILM",
+   "name": "Playlist 12",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 36
+   },
+   "snapshot_id": "snap12",
+   "type": "playlist"
+  },
+  {
+   "id": "LPLEIDMJKAEJNHKHIIFKDL",
+   "name": "Playlist 13",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 716
+   },
+   "snapshot_id": "snap13",
+   "type": "playlist"
+  },
+  {
+   "id": "GINIDCLNHLIPDKHIIBIKFE",
+   "name": "Playlist 14",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 63
+   },
+   "snapshot_id": "snap14",
+   "type": "playlist"
+  },
+  {
+   "id": "NMBJGJKDHCFKAKJBKIICBD",
+   "name": "Playlist 15",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 236
+   },
+   "snapshot_id": "snap15",
+   "type": "playlist"
+  },
+  {
+   "id": "NONJENEHDBJCMKOFPBGMNI",
+   "name": "Playlist 16",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 216
+   },
+   "snapshot_id": "snap16",
+   "type": "playlist"
+  },
+  {
+   "id": "BKBADINECAHONBKEOBJIEB",
+   "name": "Playlist 17",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 101
+   },
+   "snapshot_id": "snap17",
+   "type": "playlist"
+  },
+  {
+   "id": "OONJCGMJNPGOEDMPJGEFFA",
+   "name": "Playlist 18",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 144
+   },
+   "snapshot_id": "snap18",
+   "type": "playlist"
+  },
+  {
+   "id": "GAPIGMMFDJLFMBKPGIHGMA",
+   "name": "Playlist 19",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 66
+   },
+   "snapshot_id": "snap19",
+   "type": "playlist"
+  },
+  {
+   "id": "IIJGKEBJOGDNIEOCKMPPNN",
+   "name": "Playlist 20",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 57
+   },
+   "snapshot_id": "snap20",
+   "type": "playlist"
+  },
+  {
+   "id": "EFGPPPOOMBOKGKKGEAGPLH",
+   "name": "Playlist 21",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 46
+   },
+   "snapshot_id": "snap21",
+   "type": "playlist"
+  },
+  {
+   "id": "MOFMMCHOHPGPONJLKFPONP",
+   "name": "Playlist 22",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 20
+   },
+   "snapshot_id": "snap22",
+   "type": "playlist"
+  },
+  {
+   "id": "APONLNCFPHJPILPLCJAKBE",
+   "name": "Playlist 23",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 12
+   },
+   "snapshot_id": "snap23",
+   "type": "playlist"
+  },
+  {
+   "id": "AHCGPONHNDCHEGCOBGDODF",
+   "name": "Playlist 24",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 17
+   },
+   "snapshot_id": "snap24",
+   "type": "playlist"
+  },
+  {
+   "id": "MPDBBOAPFONHJGEINOFJIL",
+   "name": "Playlist 25",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 16
+   },
+   "snapshot_id": "snap25",
+   "type": "playlist"
+  },
+  {
+   "id": "EBFMALDOAGKCAOLEOHFGHP",
+   "name": "Playlist 26",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 27
+   },
+   "snapshot_id": "snap26",
+   "type": "playlist"
+  },
+  {
+   "id": "HADMJLPEBJFHFDBLNBPCHD",
+   "name": "Playlist 27",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 12
+   },
+   "snapshot_id": "snap27",
+   "type": "playlist"
+  },
+  {
+   "id": "HPJKJOAKBAMHIFHOCEBILI",
+   "name": "Playlist 28",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 11
+   },
+   "snapshot_id": "snap28",
+   "type": "playlist"
+  },
+  {
+   "id": "IDMHAMMEKHOOCILMKOKLLM",
+   "name": "Playlist 29",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 28
+   },
+   "snapshot_id": "snap29",
+   "type": "playlist"
+  },
+  {
+   "id": "AGIGIJLNMOHANPKKPOGOHP",
+   "name": "Playlist 30",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 14
+   },
+   "snapshot_id": "snap30",
+   "type": "playlist"
+  },
+  {
+   "id": "AFIECFAJFMOOEDAHPDCPFE",
+   "name": "Playlist 31",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 30
+   },
+   "snapshot_id": "snap31",
+   "type": "playlist"
+  },
+  {
+   "id": "CCFFHICAGEGHJILPNAHIMJ",
+   "name": "Playlist 32",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 5
+   },
+   "snapshot_id": "snap32",
+   "type": "playlist"
+  },
+  {
+   "id": "ILCFDBLODJBBFPJDDAPHAH",
+   "name": "Playlist 33",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 50
+   },
+   "snapshot_id": "snap33",
+   "type": "playlist"
+  },
+  {
+   "id": "IPMAPEKKJNJHFGAKPGCNGH",
+   "name": "Playlist 34",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 201
+   },
+   "snapshot_id": "snap34",
+   "type": "playlist"
+  },
+  {
+   "id": "NPHICJEEJPOLHHKAALNAFG",
+   "name": "Playlist 35",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 889
+   },
+   "snapshot_id": "snap35",
+   "type": "playlist"
+  },
+  {
+   "id": "BCMJEKEPOMMNFBGILCPJLL",
+   "name": "Playlist 36",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 141
+   },
+   "snapshot_id": "snap36",
+   "type": "playlist"
+  },
+  {
+   "id": "IBIGIMKNHKCNEEDAECEGBF",
+   "name": "Playlist 37",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 66
+   },
+   "snapshot_id": "snap37",
+   "type": "playlist"
+  },
+  {
+   "id": "JANGIDBEMJFHENAIAPGDNE",
+   "name": "Playlist 38",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 49
+   },
+   "snapshot_id": "snap38",
+   "type": "playlist"
+  },
+  {
+   "id": "BIBNKOOAILBJHCKMBDKNJD",
+   "name": "Playlist 39",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 38
+   },
+   "snapshot_id": "snap39",
+   "type": "playlist"
+  },
+  {
+   "id": "PAIJHCINEEOEJEGFBMCFOM",
+   "name": "Playlist 40",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 126
+   },
+   "snapshot_id": "snap40",
+   "type": "playlist"
+  },
+  {
+   "id": "JKEEGIKOFCJFIMEAFIKCHO",
+   "name": "Playlist 41",
+   "collaborative": true,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 472
+   },
+   "snapshot_id": "snap41",
+   "type": "playlist"
+  },
+  {
+   "id": "GKBOPGHIHHFHFLAMIJEEHP",
+   "name": "Playlist 42",
+   "collaborative": true,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 73
+   },
+   "snapshot_id": "snap42",
+   "type": "playlist"
+  },
+  {
+   "id": "KIJMAKLBEOJBOIFGBIADNG",
+   "name": "Playlist 43",
+   "collaborative": true,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 35
+   },
+   "snapshot_id": "snap43",
+   "type": "playlist"
+  },
+  {
+   "id": "JEPNDPGNJKGHJNIFJJOINH",
+   "name": "Playlist 44",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "me_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 18
+   },
+   "snapshot_id": "snap44",
+   "type": "playlist"
+  },
+  {
+   "id": "AAOFIGNAJHEMNDOKLEDLBP",
+   "name": "Playlist 45",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 16
+   },
+   "snapshot_id": "snap45",
+   "type": "playlist"
+  },
+  {
+   "id": "GFMJJFEOPKMGLBFHPCPFFI",
+   "name": "Playlist 46",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 80
+   },
+   "snapshot_id": "snap46",
+   "type": "playlist"
+  },
+  {
+   "id": "BMJFHEAECJIFMGCJBJIGCN",
+   "name": "Playlist 47",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 71
+   },
+   "snapshot_id": "snap47",
+   "type": "playlist"
+  },
+  {
+   "id": "CNEFDAPPNHDFANDPBFOHEN",
+   "name": "Playlist 48",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 84
+   },
+   "snapshot_id": "snap48",
+   "type": "playlist"
+  },
+  {
+   "id": "MLLLKNFPHLGOKCDKLLAOEJ",
+   "name": "Playlist 49",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 694
+   },
+   "snapshot_id": "snap49",
+   "type": "playlist"
+  }
+ ],
+ "limit": 50,
+ "next": "h",
+ "offset": 0,
+ "total": 53
+}

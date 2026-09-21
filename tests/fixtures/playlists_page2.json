@@ -1,0 +1,56 @@
+{
+ "items": [
+  {
+   "id": "MNECOGOLCFIMFCILOKPPIC",
+   "name": "Playlist 50",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 694
+   },
+   "snapshot_id": "snap50",
+   "type": "playlist"
+  },
+  {
+   "id": "DEOBMENLPCNDBKDFKMBCGE",
+   "name": "Playlist 51",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 50
+   },
+   "snapshot_id": "snap51",
+   "type": "playlist"
+  },
+  {
+   "id": "GIMKFOCAGEFCKLFOEAIIED",
+   "name": "Playlist 52",
+   "collaborative": false,
+   "public": true,
+   "owner": {
+    "id": "other_user",
+    "type": "user"
+   },
+   "items": {
+    "href": "h",
+    "total": 798
+   },
+   "snapshot_id": "snap52",
+   "type": "playlist"
+  }
+ ],
+ "limit": 50,
+ "next": null,
+ "offset": 50,
+ "total": 53
+}

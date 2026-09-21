@@ -1,0 +1,255 @@
+{
+ "items": [
+  {
+   "added_at": "2026-03-01T00:00:00Z",
+   "added_by": {
+    "id": "me_user"
+   },
+   "is_local": false,
+   "item": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "3OCijSCs6UVHZibd5nIJWt",
+       "name": "GARDEN",
+       "type": "artist",
+       "uri": "spotify:artist:3OCijSCs6UVHZibd5nIJWt"
+      }
+     ],
+     "id": "x",
+     "name": "Love Me to Death",
+     "release_date": "2020-01-24",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "3OCijSCs6UVHZibd5nIJWt",
+      "name": "GARDEN",
+      "type": "artist",
+      "uri": "spotify:artist:3OCijSCs6UVHZibd5nIJWt"
+     }
+    ],
+    "explicit": true,
+    "external_ids": {
+     "isrc": "NL1AP2006353"
+    },
+    "id": "3u02ZVU19wAK87PVyOIXZC",
+    "is_local": false,
+    "name": "Love Me to Death",
+    "type": "track",
+    "uri": "spotify:track:3u02ZVU19wAK87PVyOIXZC"
+   }
+  },
+  {
+   "added_at": "2026-03-01T00:00:00Z",
+   "added_by": {
+    "id": "me_user"
+   },
+   "is_local": false,
+   "item": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "36Yhe06bTjTT7PL1CCy8u2",
+       "name": "Falkerry",
+       "type": "artist",
+       "uri": "spotify:artist:36Yhe06bTjTT7PL1CCy8u2"
+      }
+     ],
+     "id": "x",
+     "name": "I'm sorry, I'm trying my best",
+     "release_date": "2022-05-15",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "36Yhe06bTjTT7PL1CCy8u2",
+      "name": "Falkerry",
+      "type": "artist",
+      "uri": "spotify:artist:36Yhe06bTjTT7PL1CCy8u2"
+     }
+    ],
+    "explicit": true,
+    "external_ids": {
+     "isrc": "QZHN92236286"
+    },
+    "id": "5MO8ugy3Uc54yumZAHJaEv",
+    "is_local": false,
+    "name": "I'm sorry, I'm trying my best",
+    "type": "track",
+    "uri": "spotify:track:5MO8ugy3Uc54yumZAHJaEv"
+   }
+  },
+  {
+   "added_at": "2026-03-01T00:00:00Z",
+   "added_by": {
+    "id": "me_user"
+   },
+   "is_local": false,
+   "item": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "4N8Ccd33SHnh2cNlojKYBv",
+       "name": "Saltwater Sun",
+       "type": "artist",
+       "uri": "spotify:artist:4N8Ccd33SHnh2cNlojKYBv"
+      }
+     ],
+     "id": "x",
+     "name": "The Wire",
+     "release_date": "2018-03-13",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "4N8Ccd33SHnh2cNlojKYBv",
+      "name": "Saltwater Sun",
+      "type": "artist",
+      "uri": "spotify:artist:4N8Ccd33SHnh2cNlojKYBv"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QMDA61863677"
+    },
+    "id": "1piQSyiRhzNy5u7FRv4M1W",
+    "is_local": false,
+    "name": "The Wire",
+    "type": "track",
+    "uri": "spotify:track:1piQSyiRhzNy5u7FRv4M1W"
+   }
+  },
+  {
+   "added_at": "2026-03-01T00:00:00Z",
+   "added_by": {
+    "id": "me_user"
+   },
+   "is_local": false,
+   "item": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "4WjeQi9wm84lYTIWZ95QoM",
+       "name": "Boston Manor",
+       "type": "artist",
+       "uri": "spotify:artist:4WjeQi9wm84lYTIWZ95QoM"
+      },
+      {
+       "id": "461TaZqofVfcQo2wtMwnQJ",
+       "name": "LeBrock",
+       "type": "artist",
+       "uri": "spotify:artist:461TaZqofVfcQo2wtMwnQJ"
+      }
+     ],
+     "id": "x",
+     "name": "England's Dreaming (Acoustic)",
+     "release_date": "2019-08-19",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "4WjeQi9wm84lYTIWZ95QoM",
+      "name": "Boston Manor",
+      "type": "artist",
+      "uri": "spotify:artist:4WjeQi9wm84lYTIWZ95QoM"
+     },
+     {
+      "id": "461TaZqofVfcQo2wtMwnQJ",
+      "name": "LeBrock",
+      "type": "artist",
+      "uri": "spotify:artist:461TaZqofVfcQo2wtMwnQJ"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "USSTT1900161"
+    },
+    "id": "2CNa5QZV3GOCnval0xDMkN",
+    "is_local": false,
+    "name": "Welcome to The Neighbourhood - LeBrock Remix",
+    "type": "track",
+    "uri": "spotify:track:2CNa5QZV3GOCnval0xDMkN"
+   }
+  },
+  {
+   "added_at": "2026-03-01T00:00:00Z",
+   "added_by": {
+    "id": "me_user"
+   },
+   "is_local": false,
+   "item": {
+    "album": {
+     "album_type": "album",
+     "artists": [
+      {
+       "id": "2iXvf9aR7WqOas4CMbvQNY",
+       "name": "Irish Basement",
+       "type": "artist",
+       "uri": "spotify:artist:2iXvf9aR7WqOas4CMbvQNY"
+      }
+     ],
+     "id": "x",
+     "name": "Heaven or Hell",
+     "release_date": "2023-04-11",
+     "release_date_precision": "day",
+     "type": "album"
+    },
+    "artists": [
+     {
+      "id": "2iXvf9aR7WqOas4CMbvQNY",
+      "name": "Irish Basement",
+      "type": "artist",
+      "uri": "spotify:artist:2iXvf9aR7WqOas4CMbvQNY"
+     }
+    ],
+    "explicit": false,
+    "external_ids": {
+     "isrc": "QZES82383707"
+    },
+    "id": "6VMJHZzYlUOJEhavTKI5CZ",
+    "is_local": false,
+    "name": "Waterfalls",
+    "type": "track",
+    "uri": "spotify:track:6VMJHZzYlUOJEhavTKI5CZ"
+   }
+  },
+  {
+   "added_at": "2026-03-02T00:00:00Z",
+   "is_local": false,
+   "item": null
+  },
+  {
+   "added_at": "2026-03-03T00:00:00Z",
+   "is_local": true,
+   "item": {
+    "is_local": true,
+    "type": "track",
+    "uri": "spotify:local:a:b:c:1",
+    "name": "L"
+   }
+  },
+  {
+   "added_at": "2026-03-04T00:00:00Z",
+   "is_local": false,
+   "item": {
+    "type": "episode",
+    "uri": "spotify:episode:eeeeeeeeeeeeeeeeeeeeee",
+    "id": "eeeeeeeeeeeeeeeeeeeeee",
+    "name": "Pod"
+   }
+  }
+ ],
+ "limit": 100,
+ "next": null,
+ "offset": 0,
+ "total": 8
+}
