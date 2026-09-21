@@ -417,3 +417,9 @@ def test_language_falls_back_to_script_then_none(tmp_path):
 def test_track_without_artists_does_not_crash(tmp_path):
     t = Track(id="t", uri="spotify:track:" + "t" * 22, name="x", artists=())
     assert Enricher(EnrichmentCache(tmp_path / "c.json"), None).resolve(t).genres == ()
+
+
+def test_lowercase_isrc_is_uppercased_for_musicbrainz():
+    mb, _ = make_mb(lambda u, p: Resp(200, ISRC_HIT))
+    mb.artists_for_isrc("tcadp1828007")
+    assert mb._session.calls[0][0].endswith("/isrc/TCADP1828007")

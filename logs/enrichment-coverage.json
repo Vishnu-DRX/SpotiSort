@@ -1,0 +1,117 @@
+{
+  "date": "2026-09-21",
+  "tracks": 773,
+  "unique_primary_artists": 653,
+  "genre_coverage_pct_of_artists": 49.2,
+  "language_coverage_pct_of_tracks": 3.1,
+  "hypothetical_language_pct_with_weak_country_hint": 62.0,
+  "gates": {
+    "genre_ge_60": false,
+    "language_ge_85": false
+  },
+  "language_source_counts": {
+    "playlist": 17,
+    "none": 749,
+    "script": 7
+  },
+  "language_distribution": {
+    "hindi": 14,
+    "japanese": 4,
+    "greek": 2,
+    "chinese": 2,
+    "russian": 2
+  },
+  "genre_source_counts": {
+    "musicbrainz": 321,
+    "none": 332
+  },
+  "top_unresolved_artists_genre": [
+    {
+      "name": "machineheart",
+      "tracks": 5
+    },
+    {
+      "name": "Saint Mesa",
+      "tracks": 4
+    },
+    {
+      "name": "Lucy Daydream",
+      "tracks": 4
+    },
+    {
+      "name": "The Hour",
+      "tracks": 4
+    },
+    {
+      "name": "WesGhost",
+      "tracks": 3
+    },
+    {
+      "name": "The Chain Gang Of 1974",
+      "tracks": 3
+    },
+    {
+      "name": "Ponette",
+      "tracks": 3
+    },
+    {
+      "name": "Mansionair",
+      "tracks": 3
+    },
+    {
+      "name": "Cinnamon Chasers",
+      "tracks": 3
+    },
+    {
+      "name": "Trapdoor Social",
+      "tracks": 3
+    }
+  ],
+  "top_unresolved_artists_language": [
+    {
+      "name": "Dabin",
+      "tracks": 6
+    },
+    {
+      "name": "machineheart",
+      "tracks": 5
+    },
+    {
+      "name": "SYML",
+      "tracks": 5
+    },
+    {
+      "name": "Saint Mesa",
+      "tracks": 4
+    },
+    {
+      "name": "PVRIS",
+      "tracks": 4
+    },
+    {
+      "name": "TWO LANES",
+      "tracks": 4
+    },
+    {
+      "name": "Anavae",
+      "tracks": 4
+    },
+    {
+      "name": "Lucy Daydream",
+      "tracks": 4
+    },
+    {
+      "name": "Giant Rooks",
+      "tracks": 4
+    },
+    {
+      "name": "Of Monsters and Men",
+      "tracks": 4
+    }
+  ],
+  "musicbrainz": {
+    "requests": 20,
+    "retries_after_503_or_429": 0,
+    "errors": 0
+  }
+}

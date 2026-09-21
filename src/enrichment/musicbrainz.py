@@ -119,6 +119,7 @@ class MusicBrainz:
 
     def artists_for_isrc(self, isrc: str) -> list[ArtistInfo] | None:
         """Credited artists of the recording with this ISRC, or None if MusicBrainz has no such ISRC."""
+        isrc = isrc.strip().upper()  # Spotify sometimes returns lowercase ISRCs; MusicBrainz answers 400
         data = self._get(f"isrc/{isrc}", {"inc": "artists+tags"})
         recordings = (data or {}).get("recordings") or []
         if not recordings:
