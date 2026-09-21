@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m pytest:*)",
+      "Bash(python src/sync.py)",
+      "Bash(python src/analyze.py:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "PowerShell(python -m pytest:*)",
+      "PowerShell(git status:*)",
+      "PowerShell(git diff:*)",
+      "PowerShell(git log:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./explore_output.json)",
+      "Bash(git push --force:*)",
+      "Bash(git push -f:*)",
+      "Bash(python src/sync.py --apply:*)",
+      "PowerShell(python src/sync.py --apply:*)"
+    ]
+  }
+}
