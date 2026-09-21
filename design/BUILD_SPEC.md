@@ -83,6 +83,43 @@ designed for a fresh, near-empty Liked Songs inbox.** Therefore:
 17. One-off **legacy-to-Vault migration** (liked since 2023 → top of `Vault_drx`, ordered newest first) is out of scope
     now; decision 14 makes it a trivial follow-up run later.
 
+## Master decisions 3 — VISIBILITY FIRST (binding; reorders the phases)
+User requirement: *"I cannot control something I cannot see and measure."* **No live `--apply` of any kind until the
+user has looked at the dashboard with real (dry-run + backtest) data and said so.** G2 now also requires that.
+New order: **8a Visibility (dashboard + data artifacts) → backtest → 4 (non-live pieces, then live at G2) → 7 → 8b.**
+18. **Every run emits machine-readable artifacts** (dry-run and apply alike, local and Actions):
+    - `logs/YYYY-MM-DD.json` per run (extends the §8 format) and `logs/runs.json`, a rolling index of the last 90 runs
+      (time, mode, counts, errors, warnings, liked before/after, duration, verdict).
+    - `logs/latest-plan.json`: the **inbox snapshot** — every song currently in Liked Songs with: title, artists, added_at,
+      age_days, decision (`will_move | too_young | no_match | target_problem | blocked`), matched rule, target playlist,
+      `eligible_on` date, `target_position`, resolved language/genres each with **source tier + confidence**, and an
+      **explain trace** (every rule in order: which conditions passed/failed, and why evaluation stopped).
+    - Enrichment coverage/accuracy and backtest results as counts-only JSON.
+    Real-run files are git-ignored locally; the workflow force-adds them (user accepted a public repo).
+19. **Dashboard (`docs/dashboard/`, part of the same PWA, static, no build step)** with two data sources, switchable:
+    *Local* (`python -m src.dashboard` serves `logs/` on localhost and opens the browser; nothing leaves the machine) and
+    *Repo* (GitHub raw URLs of the user's fork). Views, each answering one question:
+    1. **Overview** — is it healthy? last run status/time, next scheduled run, liked count, pending count, moves this week,
+       errors/warnings, safety verdict (reconcile OK / mismatch), one-line "what will happen next".
+    2. **Inbox** — what's waiting and why? sortable/filterable table of the snapshot; columns above; click a song → **Explain
+       drawer** showing the rule-by-rule trace and the signals (with tier/confidence) that fed it.
+    3. **Rules** — what does each rule do? matches (last run / 30 days), last matched, **dead rules (0 matches)**,
+       **shadowed rules** (never reached because an earlier broader rule takes everything — computed from the plan),
+       rules using weak signals flagged.
+    4. **Playlists** — every target: resolved / missing / not writable / ambiguous, size, moves in/out.
+    5. **Runs** — history table + per-run detail (moved, skipped, errors, journal), diff between two runs.
+    6. **Safety** — journal of removals, restore command per run, reconcile results, liked-count timeline,
+       vanished-song warnings (decision 16 when built).
+    7. **Signals** — enrichment coverage and per-signal precision (script / hint / country_default / playlist / MusicBrainz).
+    8. **Backtest** — per-playlist precision/recall, confusion table, top misroutes (counts, or names when in Local mode).
+    Requirements: works offline from fixtures, clear empty/error states (no data, stale data older than 2 days = warning
+    banner), dark/light, 375 px + 1280 px usable, keyboard accessible, no runtime external requests except the
+    configured GitHub raw source. Also show a **data-freshness stamp** everywhere.
+20. **Proof for 8a:** Playwright e2e over fixtures for every view and the Explain drawer; the dashboard renders the
+    user's **real** dry-run + backtest data locally (screenshots saved git-ignored in `logs/screens/`, described in the
+    report without song names); a written **"how to read it"** section in the README; master reviews by opening the
+    local dashboard with the user.
+
 ## Verified write shapes (live-tested 2026-09-21 on `SpotiSort Test`; liked count 773 preserved)
 - Add to playlist: `POST /playlists/{id}/items`, JSON body `{"uris":["spotify:track:..."]}` → **201**
   `{"snapshot_id"}`. Max 100 (101 → 400).
