@@ -499,3 +499,22 @@ def test_live_smoke_counts():
     sc.load_env()
     counts = sc.smoke(SpotifyClient.from_env(dry_run=True))
     assert counts["liked"] > 0
+
+
+def test_save_tracks_sends_nothing_when_everything_already_liked():
+    client, session, _ = writable(
+        {("GET", "/me/library/contains"): lambda m, u, kw: FakeResponse(200, [True] * len(kw["params"]["uris"].split(",")))}
+    )
+    assert client.save_tracks([uri(1), uri(2)]) == []
+    assert [c[0] for c in session.on_api()] == ["GET"]
+
+
+def test_smoke_output_is_counts_only(load_fixture, monkeypatch, capsys):
+    routes = paged_routes(load_fixture)
+    client, _, _ = make(routes)
+    monkeypatch.setenv("SPOTISORT_LIVE", "1")
+    monkeypatch.setattr(sc.SpotifyClient, "from_env", classmethod(lambda cls, **kw: client))
+    assert sc.main(["--smoke", "--env", "missing.env"]) == 0
+    out = capsys.readouterr().out
+    assert all(line.split(": ")[1].isdigit() for line in out.strip().splitlines())
+    assert "liked: 60" in out and "owned_playlists: 29" in out and "collaborative_playlists: 3" in out

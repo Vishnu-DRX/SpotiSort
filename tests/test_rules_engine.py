@@ -435,3 +435,9 @@ def test_missing_enrichment_still_allows_artist_and_year_conditions():
 def test_missing_enrichment_makes_combined_genre_and_artist_rule_fail():
     r = rule({"artist_in": ["Bonobo"], "genre_contains": ["jazz"]})
     assert run(make_track(), [r], None) is None
+
+
+def test_naive_datetimes_are_treated_as_utc():
+    track = make_track(added_at=datetime(2026, 9, 1))  # naive
+    assert age_days(track, NOW) == pytest.approx(20)
+    assert age_days(make_track(added_at=days_ago(3)), datetime(2026, 9, 21)) == pytest.approx(3)

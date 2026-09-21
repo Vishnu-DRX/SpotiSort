@@ -13,7 +13,7 @@ Semantics
 from __future__ import annotations
 
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Sequence
 
 from .models import Enrichment, Match, Rule, Track
@@ -41,10 +41,15 @@ def release_year(release_date: str | None, precision: str | None = None) -> int 
     return int(m.group(1))
 
 
+def _aware(dt: datetime) -> datetime:
+    return dt if dt.tzinfo else dt.replace(tzinfo=timezone.utc)
+
+
 def age_days(track: Track, now: datetime) -> float | None:
+    """Days since the track was liked; naive datetimes are treated as UTC."""
     if track.added_at is None:
         return None
-    return (now - track.added_at).total_seconds() / 86400
+    return (_aware(now) - _aware(track.added_at)).total_seconds() / 86400
 
 
 def resolve_days_threshold(rule: Rule, default_days_threshold: int) -> int:

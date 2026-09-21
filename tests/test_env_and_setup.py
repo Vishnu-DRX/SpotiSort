@@ -133,3 +133,66 @@ def test_smoke_refuses_without_live_flag(monkeypatch, capsys):
 def test_setup_without_client_id_fails_cleanly(monkeypatch, capsys):
     monkeypatch.delenv("SPOTIFY_CLIENT_ID", raising=False)
     assert sc.main(["--setup", "--env", "definitely-missing.env"]) == 2
+
+
+# ---- the real localhost redirect server (state check is a security control)
+
+
+def _run_capture(query: str, timeout: float = 5):
+    import threading
+    import urllib.request
+
+    outcome = {}
+
+    def serve():
+        try:
+            outcome["code"] = sc._capture_code("GOODSTATE", timeout, lambda: None)
+        except sc.SpotifyError as exc:
+            outcome["error"] = str(exc)
+
+    t = threading.Thread(target=serve)
+    t.start()
+    import time
+
+    for _ in range(50):  # wait for the socket to open
+        try:
+            urllib.request.urlopen(f"http://127.0.0.1:{sc.REDIRECT_PORT}/callback?{query}", timeout=2).read()
+            break
+        except OSError:
+            time.sleep(0.1)
+    t.join(10)
+    return outcome
+
+
+def test_capture_code_happy_path():
+    assert _run_capture("code=THECODE&state=GOODSTATE") == {"code": "THECODE"}
+
+
+def test_capture_code_rejects_state_mismatch():
+    out = _run_capture("code=THECODE&state=EVIL")
+    assert "state mismatch" in out["error"] and "code" not in out
+
+
+def test_capture_code_reports_denied_authorization():
+    assert "denied" in _run_capture("error=access_denied&state=GOODSTATE")["error"]
+
+
+def test_capture_code_rejects_missing_code():
+    assert "no code" in _run_capture("state=GOODSTATE")["error"]
+
+
+def test_capture_code_times_out():
+    import threading
+
+    out = {}
+
+    def serve():
+        try:
+            sc._capture_code("S", 0.5, lambda: None)
+        except sc.SpotifyError as exc:
+            out["error"] = str(exc)
+
+    t = threading.Thread(target=serve)
+    t.start()
+    t.join(10)
+    assert "timed out" in out["error"]
