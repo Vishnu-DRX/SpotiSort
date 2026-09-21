@@ -3,14 +3,48 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="SpotiSort turns your Spotify Liked Songs into an inbox, sorting them into playlists you already have." />
     <title>SpotiSort</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <main>
-      <h1>SpotiSort</h1>
-      <p>Config UI coming soon.</p>
-    </main>
+    <div class="wrap">
+      <header>
+        <h1>SpotiSort</h1>
+        <p class="tagline">Turn your Liked Songs into an inbox.</p>
+        <a class="button" href="https://github.com/Vishnu-DRX/SpotiSort">View on GitHub</a>
+      </header>
+      <main>
+        <section aria-labelledby="status">
+          <h2 id="status">Status</h2>
+          <div class="card">
+            <span class="badge">Phase 1</span>
+            <p>Phase 1 - foundation: core library and CI are in place. Sorting is not enabled yet. Config builder coming.</p>
+          </div>
+        </section>
+        <section aria-labelledby="what">
+          <h2 id="what">What it does</h2>
+          <p>After N days, your liked songs are matched against your rules - artist, language, genre, release year, explicit - and moved into playlists you already have.</p>
+          <ul>
+            <li>Never creates playlists unless a rule allows it.</li>
+            <li>Dry-run by default, so you see what would happen first.</li>
+            <li>Never loses a liked song: journal, verify, and restore.</li>
+          </ul>
+        </section>
+        <section aria-labelledby="how">
+          <h2 id="how">How it works</h2>
+          <ol>
+            <li>Fork the repository.</li>
+            <li>Create your own Spotify Developer app.</li>
+            <li>Add two GitHub secrets.</li>
+            <li>A daily GitHub Action does the sorting. No server involved.</li>
+          </ol>
+        </section>
+      </main>
+      <footer>
+        <p><a href="https://github.com/Vishnu-DRX/SpotiSort">github.com/Vishnu-DRX/SpotiSort</a></p>
+      </footer>
+    </div>
     <script src="app.js"></script>
   </body>
 </html>

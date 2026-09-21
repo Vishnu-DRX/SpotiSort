@@ -10,6 +10,12 @@ rules:
     target_playlist: "Jazz Vault"
     days_threshold: 7          # optional override of the global default
 
+  - name: "Hindi to Hindi Vibes"
+    enabled: true
+    match:
+      language_in: ["hindi"]      # language comes from enrichment (Phase 2), not from Spotify
+    target_playlist: "Hindi Vibes"
+
   - name: "Favorite chill artists"
     enabled: true
     match:
