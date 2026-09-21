@@ -103,3 +103,14 @@ language coverage, target-language tracks:  100.0 %   (17 of 17 tracks whose art
 The whole-library figure is dominated by the weak English default (390 tracks); the target-language figure is trivially 100 % until the real mapping (which should cover far more of the library) is supplied. Please paste the mapping and I will re-run `python -m src.enrich --report`.
 Tests: 707 default (+75 e2e), all green.
 7. Reviewer caveats to note: (a) "target-language coverage" is near-tautological (the same playlist signal defines the denominator and resolves the language), so it says little about `language_in` reliability; a meaningful check needs held-out labelled songs. (b) The English default can mislabel non-English Latin-script songs by US/GB/... artists; the `english_default` switch exists for that. (c) The earlier commit of `logs/enrichment-coverage.json` with top-10 artist names is still in git history (counts-only from now on); say if you want history rewritten (I have not, no force-push).
+
+### Update: user's real (partial) language mapping applied
+User supplied 4 mappings ("start with these"): Dil -> hindi, The Simulation Archives -> english, NewAgeMadrasMail -> malayalam (was guessed tamil), nani mo wakaranai -> japanese.
+Kept in git-ignored `config.local.yaml`; re-run `python -m src.enrich --report` (warm cache, 0 MusicBrainz requests):
+```
+learned from playlists: hindi 144, english 145, malayalam 101, japanese 63 tracks
+language, whole library:          53.9 %  (country_default 378, playlist 32, script 7, none 356)
+language, target-language tracks: 100 %   (32 of 32)   <- still near-tautological, see caveat (a) above
+genre: 49.2 % of 653 artists (unchanged, best-effort)
+```
+Only 32 liked songs share artists/tracks with the four mapped playlists, so target-language coverage stays small. More mappings (e.g. other language playlists) will raise it.
