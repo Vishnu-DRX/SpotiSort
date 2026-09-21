@@ -134,7 +134,10 @@ def build_plan(
             "threshold_days": d.threshold,
             "already_in_target": t.uri in membership.get(playlist.id, set()),
             "original_added_at": t.added_at.isoformat() if t.added_at else None,
+            "target_position": next((r.target_position for r in config.rules if r.name == d.rule_name), "bottom"),
         })
+    # within a playlist songs are ordered newest liked first (master decision 14); stable across playlists
+    plan.moves.sort(key=lambda m: m["original_added_at"] or "", reverse=True)
     return plan
 
 
@@ -155,3 +158,33 @@ def targets_needed(
             if p is not None:
                 ids.add(p.id)
     return ids
+
+
+@dataclass(frozen=True)
+class InsertBatch:
+    playlist_id: str
+    uris: tuple[str, ...]
+    position: int | None  # None = append at the bottom; 0 = insert at the top
+
+
+def insert_batches(moves: Sequence[Mapping[str, Any]], batch_size: int = 100) -> list[InsertBatch]:
+    """Turn planned moves into ordered playlist-insert calls (master decision 14).
+
+    Per playlist the songs are newest-liked-first. ``bottom``: batches are appended in that order. ``top``: each
+    batch is inserted at position 0, **oldest chunk first**, so after all batches the newest song is at index 0
+    and the existing playlist order sits untouched below (inserting newest chunk first would invert the order).
+    A playlist is either top or bottom per rule; mixing rules with different positions on one playlist is split
+    per position group.
+    """
+    groups: dict[tuple[str, str], list[Mapping[str, Any]]] = {}
+    for m in moves:
+        groups.setdefault((m["playlist_id"], m.get("target_position", "bottom")), []).append(m)
+    out: list[InsertBatch] = []
+    for (pid, position), items in groups.items():
+        items = sorted(items, key=lambda m: m.get("original_added_at") or "", reverse=True)  # newest first
+        chunks = [tuple(i["uri"] for i in items[k:k + batch_size]) for k in range(0, len(items), batch_size)]
+        if position == "top":
+            out += [InsertBatch(pid, c, 0) for c in reversed(chunks)]
+        else:
+            out += [InsertBatch(pid, c, None) for c in chunks]
+    return out

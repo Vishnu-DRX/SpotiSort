@@ -408,8 +408,8 @@ def test_language_in_unknown_language_rejected():
 
 
 def test_enrichment_english_default_flag():
-    assert _cfg().english_default is True
-    assert _cfg(enrichment={"english_default": False}).english_default is False
+    assert _cfg().english_default is False
+    assert _cfg(enrichment={"english_default": True}).english_default is True
 
 
 def test_enrichment_english_default_must_be_bool():
@@ -418,3 +418,15 @@ def test_enrichment_english_default_must_be_bool():
 
     with pytest.raises(ConfigError, match="english_default"):
         _cfg(enrichment={"english_default": "no"})
+
+
+def test_target_position_default_and_values():
+    import pytest
+    from src.config import ConfigError
+
+    base = {"name": "r", "target_playlist": "p", "match": {"explicit": True}}
+    assert _cfg(rules=[base]).rules[0].target_position == "bottom"
+    assert _cfg(rules=[{**base, "target_position": "top"}]).rules[0].target_position == "top"
+    for bad in ("middle", 0, None, True):
+        with pytest.raises(ConfigError, match="target_position"):
+            _cfg(rules=[{**base, "target_position": bad}])

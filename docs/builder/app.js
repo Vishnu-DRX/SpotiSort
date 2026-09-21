@@ -22,10 +22,10 @@
   var lastRemoved = null;
 
   function blankState() {
-    return { defaultDays: '14', fallback: '', musicbrainz: true, englishDefault: true, langPlaylists: [], rules: [], revealAll: false };
+    return { defaultDays: '14', fallback: '', musicbrainz: true, englishDefault: false, langPlaylists: [], rules: [], revealAll: false };
   }
   function newRule() {
-    return { id: nextId++, pristine: true, name: '', enabled: true, target: '', days: '', create: false, match: [] };
+    return { id: nextId++, pristine: true, name: '', enabled: true, target: '', days: '', create: false, position: 'bottom', match: [] };
   }
   function newLp() { return { id: nextId++, name: '', lang: '' }; }
 
@@ -90,6 +90,7 @@
       var out = { name: r.name, enabled: r.enabled, match: match, target_playlist: r.target };
       if (r.days.trim() !== '') out.days_threshold = toInt(r.days);
       out.create_missing_playlists = r.create;
+      out.target_position = r.position;
       return out;
     });
     return { data: data, extra: extra };
@@ -344,6 +345,17 @@
     return h('div', { class: 'field check' }, cb, h('label', { for: id, text: label }), h('p', { class: 'hint', id: id + '-hint', text: hint }));
   }
 
+  function positionField(rule) {
+    var id = fid(rule, 'position');
+    var sel = h('select', { id: id, 'aria-describedby': id + '-hint' },
+      h('option', { value: 'bottom', text: 'Bottom (default)' }),
+      h('option', { value: 'top', text: 'Top' }));
+    sel.value = rule.position;
+    sel.addEventListener('change', function () { rule.position = sel.value; rule.pristine = false; update(); });
+    return h('div', { class: 'field' }, h('label', { for: id, text: 'Insert position' }), sel,
+      h('p', { class: 'hint', id: id + '-hint', text: 'target_position: Top means new songs go to the top; existing order kept.' }));
+  }
+
   function move(index, delta, which) {
     var to = index + delta;
     if (to < 0 || to >= state.rules.length) return;
@@ -393,6 +405,7 @@
       h('div', { class: 'checks' },
         checkField(rule, 'enabled', 'Enabled', 'Disabled rules are skipped.'),
         checkField(rule, 'create', 'Create playlist if missing', 'create_missing_playlists. Off means the rule only uses playlists that already exist.')),
+      positionField(rule),
       textField(rule, 'days_threshold', 'Days threshold override', 'days', 'Optional. Blank uses the global default.', { inputmode: 'numeric' }),
       h('fieldset', { class: 'conds' },
         h('legend', { text: 'Match conditions (all must match)' }),
@@ -477,6 +490,7 @@
       rule.target = rr.target_playlist === undefined || rr.target_playlist === null ? '' : String(rr.target_playlist);
       rule.days = rr.days_threshold === undefined || rr.days_threshold === null ? '' : String(rr.days_threshold);
       rule.create = rr.create_missing_playlists === true;
+      rule.position = rr.target_position === 'top' ? 'top' : 'bottom';
       var m = rr.match;
       if (m && typeof m === 'object' && !Array.isArray(m)) {
         Object.keys(m).forEach(function (k) {

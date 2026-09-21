@@ -28,6 +28,7 @@ import threading
 import time
 import urllib.parse
 import webbrowser
+from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Iterable, Iterator
@@ -76,6 +77,16 @@ class SpotifyError(RuntimeError):
     def __init__(self, message: str, status: int | None = None):
         super().__init__(message)
         self.status = status
+
+
+@dataclass(frozen=True)
+class BatchOutcome:
+    """Result of one write batch: what was sent, whether it committed, and why not if it did not."""
+
+    uris: tuple[str, ...]
+    ok: bool
+    error: str | None = None
+    snapshot: str | None = None
 
 
 class DryRunError(SpotifyError):
@@ -447,58 +458,115 @@ class SpotifyClient:
         if not isinstance(playlist_id, str) or not PLAYLIST_ID_RE.match(playlist_id):
             raise ValueError("invalid playlist id")
 
-    def add_playlist_items(self, playlist_id: str, uris: Iterable[str]) -> str | None:
-        """POST /playlists/{id}/items in batches of 100. Returns the last snapshot_id."""
+    # Batched writers return one BatchOutcome per batch and never raise away what already committed
+    # (master decision 9). Programming errors (dry-run, bad URIs/ids) still raise *before* anything is sent.
+
+    def _run_batches(self, chunks: list[list[str]], send: Callable[[list[str], str | None], str | None],
+                     snapshot: str | None = None) -> list[BatchOutcome]:
+        outcomes: list[BatchOutcome] = []
+        failed = False
+        for chunk in chunks:
+            if failed:  # a failed batch stops the rest: later batches would break ordering/atomicity assumptions
+                outcomes.append(BatchOutcome(tuple(chunk), False, "skipped after an earlier batch failed", snapshot))
+                continue
+            try:
+                snapshot = send(chunk, snapshot) or snapshot
+                outcomes.append(BatchOutcome(tuple(chunk), True, None, snapshot))
+            except SpotifyError as exc:
+                failed = True
+                outcomes.append(BatchOutcome(tuple(chunk), False, str(exc), snapshot))
+        return outcomes
+
+    def add_playlist_items_batched(
+        self, playlist_id: str, uris: Iterable[str], *, position: int | None = None
+    ) -> list[BatchOutcome]:
+        """POST /playlists/{id}/items in batches of 100; ``position`` (e.g. 0 = top) is sent in the JSON body."""
         self._require_writable("add playlist items")
         self._check_playlist_id(playlist_id)
         uris = validate_track_uris(uris)
-        snapshot = None
-        for chunk in _chunks(uris, PLAYLIST_BATCH):
-            data = self._json("POST", f"/playlists/{playlist_id}/items", json={"uris": chunk})
-            snapshot = (data or {}).get("snapshot_id", snapshot)
-        return snapshot
+        if position is not None and (not isinstance(position, int) or isinstance(position, bool) or position < 0):
+            raise ValueError("position must be a non-negative integer")
 
-    def remove_playlist_items(
+        def send(chunk: list[str], _snap: str | None) -> str | None:
+            body: dict[str, Any] = {"uris": chunk}
+            if position is not None:
+                body["position"] = position
+            data = self._json("POST", f"/playlists/{playlist_id}/items", json=body)
+            return (data or {}).get("snapshot_id")
+
+        return self._run_batches(list(_chunks(uris, PLAYLIST_BATCH)), send)
+
+    def remove_playlist_items_batched(
         self, playlist_id: str, uris: Iterable[str], snapshot_id: str | None = None
-    ) -> str | None:
-        """DELETE /playlists/{id}/items in batches of 100.
-
-        ``snapshot_id`` must come from a previous *write* response, never a fresh GET (read-after-write
-        lag). Later batches chain the snapshot returned by the batch before.
-        """
+    ) -> list[BatchOutcome]:
+        """DELETE /playlists/{id}/items in batches of 100, chaining the snapshot from the previous *write*."""
         self._require_writable("remove playlist items")
         self._check_playlist_id(playlist_id)
         uris = validate_track_uris(uris)
-        snapshot = snapshot_id
-        for chunk in _chunks(uris, PLAYLIST_BATCH):
+
+        def send(chunk: list[str], snap: str | None) -> str | None:
             body: dict[str, Any] = {"items": [{"uri": u} for u in chunk]}
-            if snapshot:
-                body["snapshot_id"] = snapshot
+            if snap:
+                body["snapshot_id"] = snap
             data = self._json("DELETE", f"/playlists/{playlist_id}/items", json=body)
-            snapshot = (data or {}).get("snapshot_id", snapshot)
-        return snapshot
+            return (data or {}).get("snapshot_id")
 
-    def save_tracks(self, uris: Iterable[str], *, allow_resave: bool = False) -> list[str]:
-        """PUT /me/library in batches of 40. Returns the URIs actually sent.
+        return self._run_batches(list(_chunks(uris, PLAYLIST_BATCH)), send, snapshot_id)
 
-        Re-saving an already-liked track resets its ``added_at``, so already-liked tracks are skipped
-        (via ``contains``) unless ``allow_resave`` is set — only ``--restore`` should do that.
-        """
+    def save_tracks_batched(self, uris: Iterable[str], *, allow_resave: bool = False) -> list[BatchOutcome]:
+        """PUT /me/library in batches of 40 (skips already-liked tracks unless ``allow_resave``: re-saving resets added_at)."""
         self._require_writable("save tracks")
         uris = validate_track_uris(uris)
         if not allow_resave and uris:
             liked = self.contains_saved(uris)
             uris = [u for u in uris if not liked[u]]
-        for chunk in _chunks(uris, LIBRARY_BATCH):
-            self._request("PUT", "/me/library", params={"uris": ",".join(chunk)})
-        return uris
 
-    def remove_saved_tracks(self, uris: Iterable[str]) -> None:
+        def send(chunk: list[str], _snap: str | None) -> None:
+            self._request("PUT", "/me/library", params={"uris": ",".join(chunk)})
+
+        return self._run_batches(list(_chunks(uris, LIBRARY_BATCH)), send)
+
+    def remove_saved_tracks_batched(self, uris: Iterable[str]) -> list[BatchOutcome]:
         """DELETE /me/library in batches of 40. Callers must have journalled + verified first."""
         self._require_writable("remove saved tracks")
         uris = validate_track_uris(uris)
-        for chunk in _chunks(uris, LIBRARY_BATCH):
+
+        def send(chunk: list[str], _snap: str | None) -> None:
             self._request("DELETE", "/me/library", params={"uris": ",".join(chunk)})
+
+        return self._run_batches(list(_chunks(uris, LIBRARY_BATCH)), send)
+
+    # Legacy single-result wrappers (raise on the first failed batch).
+
+    @staticmethod
+    def _raise_first_failure(outcomes: list[BatchOutcome]) -> None:
+        for o in outcomes:
+            if not o.ok:
+                raise SpotifyError(o.error or "batch failed")
+
+    def add_playlist_items(self, playlist_id: str, uris: Iterable[str], *, position: int | None = None) -> str | None:
+        """POST /playlists/{id}/items in batches of 100. Returns the last snapshot_id."""
+        outcomes = self.add_playlist_items_batched(playlist_id, uris, position=position)
+        self._raise_first_failure(outcomes)
+        return outcomes[-1].snapshot if outcomes else None
+
+    def remove_playlist_items(
+        self, playlist_id: str, uris: Iterable[str], snapshot_id: str | None = None
+    ) -> str | None:
+        """DELETE /playlists/{id}/items in batches of 100 (snapshot chained from the previous write)."""
+        outcomes = self.remove_playlist_items_batched(playlist_id, uris, snapshot_id)
+        self._raise_first_failure(outcomes)
+        return outcomes[-1].snapshot if outcomes else snapshot_id
+
+    def save_tracks(self, uris: Iterable[str], *, allow_resave: bool = False) -> list[str]:
+        """PUT /me/library in batches of 40. Returns the URIs actually sent."""
+        outcomes = self.save_tracks_batched(uris, allow_resave=allow_resave)
+        self._raise_first_failure(outcomes)
+        return [u for o in outcomes for u in o.uris]
+
+    def remove_saved_tracks(self, uris: Iterable[str]) -> None:
+        """DELETE /me/library in batches of 40."""
+        self._raise_first_failure(self.remove_saved_tracks_batched(uris))
 
 
 # ---------------------------------------------------------------- PKCE login (--setup)

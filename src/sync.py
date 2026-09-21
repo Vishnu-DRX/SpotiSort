@@ -23,7 +23,11 @@ from .enrich import build_language_map
 from .enrichment.cache import DEFAULT_PATH, EnrichmentCache
 from .enrichment.enricher import Enricher
 from .enrichment.musicbrainz import MusicBrainz
+from dataclasses import replace
+
+from . import artifacts
 from .planner import Plan, build_plan, targets_needed
+from .signals import gate, load_precision
 from .spotify_client import SpotifyClient, SpotifyError, load_env
 
 SAVE_EVERY = 25
@@ -57,6 +61,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--limit", type=int, default=None, help="plan at most N moves (oldest liked first)")
     p.add_argument("--since", default=None, help="only consider songs liked on/after YYYY-MM-DD")
     p.add_argument("--rule", default=None, help="only plan moves for the rule with this name")
+    p.add_argument("--what-if-enable-all", action="store_true", help="preview: treat disabled rules as enabled (dry-run only)")
     p.add_argument("--no-network", action="store_true", help="do not call MusicBrainz (cache + local signals only)")
     return p.parse_args(argv)
 
@@ -119,6 +124,14 @@ def run(args: argparse.Namespace) -> int:
     if cache.dirty:
         cache.save()
 
+    logs_dir = Path(args.logs_dir)
+    precision = load_precision(logs_dir / "signal-precision.json")
+    raw_enrichments = enrichments
+    enrichments = {tid: gate(e, precision)[0] for tid, e in raw_enrichments.items()}  # only qualified signals drive rules
+    cfg_text = Path(args.config).read_text(encoding="utf-8")
+    if args.what_if_enable_all:
+        config = replace(config, rules=tuple(replace(r, enabled=True) for r in config.rules))
+
     needed = targets_needed(tracks, enrichments, config, now, playlists, args.rule)
     membership = {pid: {t.uri for t in client.iter_playlist_items(pid)} for pid in needed}
 
@@ -134,11 +147,33 @@ def run(args: argparse.Namespace) -> int:
         print("FATAL: a write call reached the Spotify API during a dry run", file=sys.stderr)
         return 3
 
-    log = build_log(plan, True, session.audit, now, time.monotonic() - started)
-    logs_dir = Path(args.logs_dir)
+    duration = time.monotonic() - started
+    run_id = now.strftime("%Y%m%dT%H%M%SZ")
+    snapshot = artifacts.build_latest_plan(
+        tracks, raw_enrichments, config, now, playlists, precision=precision, run_id=run_id, mode="dry_run",
+        what_if=args.what_if_enable_all, cfg_hash=artifacts.config_hash(cfg_text),
+    )
+    rule_counts = {r["name"]: r["wins"] for r in snapshot["rules"]}
+    log = build_log(plan, True, session.audit, now, duration)
+    log.update({
+        "run_id": run_id, "mode": "dry_run", "what_if": args.what_if_enable_all,
+        "liked_before": len(tracks), "liked_after": len(tracks),
+        "verdict": "dry_run", "rule_counts": rule_counts, "config_hash": snapshot["config_hash"],
+        "plan_counts": snapshot["counts"],
+    })
     logs_dir.mkdir(parents=True, exist_ok=True)
     out = logs_dir / f"{now.date().isoformat()}.json"
-    out.write_text(json.dumps(log, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    artifacts.atomic_write_json(out, log)
+    artifacts.atomic_write_json(logs_dir / "latest-plan.json", snapshot)
+    artifacts.update_runs_index(
+        logs_dir / "runs.json",
+        artifacts.run_entry(
+            run_id=run_id, now=now, mode="dry_run", plan_counts=snapshot["counts"], moved=0, errors=len(log["errors"]),
+            warnings=len(plan.warnings), liked_before=len(tracks), liked_after=len(tracks), duration_s=duration,
+            rule_counts=rule_counts, log_file=out.name, what_if=args.what_if_enable_all,
+        ),
+        now,
+    )
     print_summary(plan, out)
     return 0
 

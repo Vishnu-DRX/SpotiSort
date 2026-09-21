@@ -5,7 +5,7 @@
 
   var TOP_LEVEL_KEYS = ['default_days_threshold', 'fallback_playlist', 'rules', 'language_playlists', 'enrichment'];
   var ENRICHMENT_KEYS = ['musicbrainz', 'english_default'];
-  var RULE_KEYS = ['name', 'enabled', 'match', 'target_playlist', 'days_threshold', 'create_missing_playlists'];
+  var RULE_KEYS = ['name', 'enabled', 'match', 'target_playlist', 'days_threshold', 'create_missing_playlists', 'target_position'];
   var LIST_MATCH_KEYS = ['artist_in', 'genre_contains', 'language_in'];
   var INT_MATCH_KEYS = ['release_year_before', 'release_year_after'];
   var STR_MATCH_KEYS = ['track_name_contains', 'album_name_contains'];
@@ -85,6 +85,8 @@
     if (typeof enabled !== 'boolean') add('enabled', "'enabled' must be true or false");
     var create = 'create_missing_playlists' in raw ? raw.create_missing_playlists : false;
     if (typeof create !== 'boolean') add('create_missing_playlists', "'create_missing_playlists' must be true or false");
+    var position = 'target_position' in raw ? raw.target_position : 'bottom';
+    if (position !== 'top' && position !== 'bottom') add('target_position', "'target_position' must be 'top' or 'bottom'");
     var days = raw.days_threshold;
     if (days !== undefined && days !== null && (!isInt(days) || days < 0)) {
       add('days_threshold', "'days_threshold' must be an integer >= 0");

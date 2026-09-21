@@ -1,0 +1,214 @@
+{
+ "version": 1,
+ "generated_at": "2026-09-21T05:45:00+00:00",
+ "config_hash": "41ed2a46e9c0",
+ "all_rules_enabled": true,
+ "inbox": {
+  "tracks": 592,
+  "playlists": 5
+ },
+ "playlists": [
+  {
+   "id": "P01",
+   "name": "Fake Malayalam Mix",
+   "tracks": 120,
+   "predicted": 111,
+   "tp": 104,
+   "precision": 0.9369,
+   "recall": 0.8667,
+   "unrouted": 8
+  },
+  {
+   "id": "P02",
+   "name": "Fake Hindi Hits",
+   "tracks": 92,
+   "predicted": 86,
+   "tp": 80,
+   "precision": 0.9302,
+   "recall": 0.8696,
+   "unrouted": 3
+  },
+  {
+   "id": "P03",
+   "name": "Fake Rock",
+   "tracks": 305,
+   "predicted": 265,
+   "tp": 262,
+   "precision": 0.9887,
+   "recall": 0.859,
+   "unrouted": 20
+  },
+  {
+   "id": "P04",
+   "name": "Fake Chill",
+   "tracks": 45,
+   "predicted": 67,
+   "tp": 40,
+   "precision": 0.597,
+   "recall": 0.8889,
+   "unrouted": 2
+  },
+  {
+   "id": "P05",
+   "name": "Fake Latino",
+   "tracks": 30,
+   "predicted": 0,
+   "tp": 0,
+   "precision": null,
+   "recall": 0.0,
+   "unrouted": 30
+  }
+ ],
+ "confusions": [
+  {
+   "true": "P01",
+   "predicted": "P02",
+   "count": 6
+  },
+  {
+   "true": "P02",
+   "predicted": "P01",
+   "count": 4
+  },
+  {
+   "true": "P03",
+   "predicted": "P04",
+   "count": 20
+  },
+  {
+   "true": "P04",
+   "predicted": "P03",
+   "count": 3
+  },
+  {
+   "true": "P02",
+   "predicted": "P04",
+   "count": 5
+  },
+  {
+   "true": "P01",
+   "predicted": "P04",
+   "count": 2
+  },
+  {
+   "true": "P03",
+   "predicted": "P01",
+   "count": 3
+  }
+ ],
+ "totals": {
+  "tracks": 592,
+  "routed": 529,
+  "correct": 486,
+  "misrouted": 43,
+  "unrouted": 63,
+  "precision": 0.9187,
+  "recall": 0.8209
+ },
+ "rules": [
+  {
+   "name_id": "R01",
+   "name": "Malayalam favourites",
+   "predicted": 110,
+   "correct": 104,
+   "precision": 0.9455
+  },
+  {
+   "name_id": "R02",
+   "name": "Hindi hits",
+   "predicted": 90,
+   "correct": 80,
+   "precision": 0.8889
+  },
+  {
+   "name_id": "R03",
+   "name": "Rock legends",
+   "predicted": 270,
+   "correct": 262,
+   "precision": 0.9704
+  },
+  {
+   "name_id": "R04",
+   "name": "Lo-fi study",
+   "predicted": 60,
+   "correct": 40,
+   "precision": 0.6667
+  },
+  {
+   "name_id": "R05",
+   "name": "Spanish nights",
+   "predicted": 0,
+   "correct": 0,
+   "precision": null
+  }
+ ],
+ "top_misroutes": [
+  {
+   "title": "Fake Anthem Remix",
+   "artists": [
+    "Fake Band Alpha"
+   ],
+   "true": [
+    "Fake Rock"
+   ],
+   "predicted": "Fake Chill",
+   "rule": "Lo-fi study"
+  },
+  {
+   "title": "Sample Ballad III",
+   "artists": [
+    "Fake Band Beta"
+   ],
+   "true": [
+    "Fake Rock"
+   ],
+   "predicted": "Fake Chill",
+   "rule": "Lo-fi study"
+  },
+  {
+   "title": "Fake Dil (Slow)",
+   "artists": [
+    "Pyaar Placeholder"
+   ],
+   "true": [
+    "Fake Hindi Hits"
+   ],
+   "predicted": "Fake Chill",
+   "rule": "Lo-fi study"
+  },
+  {
+   "title": "Placeholder Pyaar II",
+   "artists": [
+    "Pyaar Placeholder"
+   ],
+   "true": [
+    "Fake Hindi Hits",
+    "Fake Malayalam Mix"
+   ],
+   "predicted": "Fake Malayalam Mix",
+   "rule": "Malayalam favourites"
+  },
+  {
+   "title": "Mazha Loop",
+   "artists": [
+    "Vayali Test"
+   ],
+   "true": [
+    "Fake Malayalam Mix"
+   ],
+   "predicted": "Fake Hindi Hits",
+   "rule": "Hindi hits"
+  },
+  {
+   "title": "Nameless Loop 09",
+   "artists": [
+    "Beats Not Real"
+   ],
+   "true": [
+    "Fake Chill"
+   ],
+   "predicted": "Fake Rock",
+   "rule": "Rock legends"
+  }
+ ]
+}

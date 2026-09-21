@@ -1,6 +1,6 @@
 """Combine providers behind ``Enricher.resolve(track) -> Enrichment``.
 
-Language order: playlist-learned > script detection > weak English country default > None
+Language tiers: playlist-learned > script > hint (MusicBrainz tag/area) > weak English country default > None
 (MusicBrainz work/release language is intentionally not used). Genres come from the primary artist via MusicBrainz tags.
 """
 
@@ -12,9 +12,12 @@ from ..models import Enrichment, Track
 from .cache import EnrichmentCache
 from .musicbrainz import ArtistInfo, MusicBrainz, MusicBrainzError
 from .playlist_language import LanguageMap
+from .hints import language_hint
 from .script_detect import detect_script_language, dominant_script
 
 ENGLISH_COUNTRIES = frozenset({"US", "GB", "AU", "CA", "IE", "NZ"})
+# Prior confidence per tier; replaced by measured precision once a backtest exists (signal-precision).
+TIER_CONFIDENCE = {"playlist": 0.95, "script": 0.9, "hint": 0.6, "country_default": 0.4, "musicbrainz": 0.6}
 
 
 def _fold(s: str) -> str:
@@ -27,7 +30,7 @@ class Enricher:
         cache: EnrichmentCache,
         musicbrainz: MusicBrainz | None = None,
         language_map: LanguageMap | None = None,
-        english_default: bool = True,
+        english_default: bool = False,
     ):
         self.cache = cache
         self.mb = musicbrainz
@@ -86,24 +89,53 @@ class Enricher:
             and dominant_script(track.name, track.album_name) is None
         )
 
-    def resolve(self, track: Track) -> Enrichment:
+    def signal_candidates(self, track: Track, *, loo: bool = False) -> dict[str, str | None]:
+        """What each language tier says on its own (None = no opinion). Used by the backtest to measure precision."""
+        return self._candidates(track, self._artist_entry(track), loo)
+
+    def _candidates(self, track: Track, entry: dict[str, Any] | None, loo: bool) -> dict[str, str | None]:
+        out: dict[str, str | None] = {"playlist": None, "script": None, "hint": None, "country_default": None}
+        if self.language_map is not None:
+            out["playlist"] = self.language_map.language_for(track, loo=loo)
+        out["script"] = detect_script_language(track.name, track.album_name, *(a.name for a in track.artists))
+        if entry:
+            hint = language_hint(entry.get("genres") or [], entry.get("country"))
+            out["hint"] = hint[0] if hint else None
+            if self._english_by_country(track, entry):
+                out["country_default"] = "english"
+        return out
+
+    def resolve(self, track: Track, *, exclude_own_playlist_vote: bool = False) -> Enrichment:
+        """Genres + language with the tier that produced them.
+
+        ``exclude_own_playlist_vote`` removes this track's own membership from the playlist signal
+        (leave-one-out); the backtest uses it so playlist-learned language is not judged on its own answer.
+        """
         sources: list[str] = []
         genres: tuple[str, ...] = ()
+        genre_source = genre_conf = None
         entry = self._artist_entry(track)
         if entry and entry.get("genres"):
             genres = tuple(entry["genres"])
             sources.append("musicbrainz")
+            genre_source, genre_conf = "musicbrainz", TIER_CONFIDENCE["musicbrainz"]
 
-        language = None
-        if self.language_map is not None:
-            language = self.language_map.language_for(track)
-            if language:
-                sources.append("playlist")
-        if language is None:
-            language = detect_script_language(track.name, track.album_name, *(a.name for a in track.artists))
-            if language:
-                sources.append("script")
-        if language is None and self.english_default and self._english_by_country(track, entry):
-            language = "english"
-            sources.append("country_default")
-        return Enrichment(genres=genres, language=language, sources=tuple(sources))
+        cands = self._candidates(track, entry, exclude_own_playlist_vote)
+        language = source = None
+        for tier in ("playlist", "script", "hint", "country_default"):
+            if tier == "country_default" and not self.english_default:
+                continue
+            if cands[tier]:
+                language, source = cands[tier], tier
+                break
+        if source:
+            sources.append(source)
+        return Enrichment(
+            genres=genres,
+            language=language,
+            sources=tuple(sources),
+            language_source=source,
+            language_confidence=TIER_CONFIDENCE.get(source) if source else None,
+            genre_source=genre_source,
+            genre_confidence=genre_conf,
+        )

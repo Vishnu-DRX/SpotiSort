@@ -120,6 +120,79 @@ New order: **8a Visibility (dashboard + data artifacts) → backtest → 4 (non-
     report without song names); a written **"how to read it"** section in the README; master reviews by opening the
     local dashboard with the user.
 
+## Master decisions 4 — PRODUCT-QUALITY SITE (binding; do this BEFORE the dashboard so it inherits the design system)
+The `.github.io` site is the product's face: forks publish it to their own users. It must look and behave like a real web
+product, not a dev tool. Order: **U1 design system + site shell → U2 Configure → U3 dashboard (decision 19 views)**.
+21. **Naming:** the builder is now **"Configure"** (nav label, page title, headings). Primary action is **"Save
+    configuration"**. Never say "config builder" in user-facing text.
+22. **Brand/visual system (Spotify-inspired, not Spotify-branded):** design tokens in one `docs/assets/tokens.css`:
+    background `#121212`, surface `#181818`, elevated `#282828`, hover `#2A2A2A`, borders `#333`, text `#FFFFFF`, secondary
+    `#B3B3B3`, muted `#7A7A7A`, accent green `#1DB954` (hover `#1ED760`, pressed `#169C46`), danger `#E5484D`, warning
+    `#F5A623`, info `#3E8EDE`. Dark is default; a light theme (white/`#F6F6F6`, same green, contrast-checked) and a
+    theme toggle that respects `prefers-color-scheme`. Type scale, 4/8 px spacing scale, radii, shadows and motion tokens
+    (respect `prefers-reduced-motion`). Contrast WCAG AA everywhere (green text on dark must pass; use white-on-green
+    for filled buttons only if it passes, else black-on-green as Spotify does). **Do NOT use the Spotify logo or wordmark;**
+    footer states "SpotiSort is an independent open-source project, not affiliated with or endorsed by Spotify."
+23. **Component library (vanilla CSS/JS, no build step):** buttons (primary pill, secondary, ghost, danger, icon, loading,
+    disabled), inputs/selects/checkboxes/switches/segmented controls/tag inputs, cards, tabs, modal/drawer, toasts,
+    tooltip, popover, badge/chip, table, empty state, skeleton, banner, stepper, code/YAML view. **All native controls
+    restyled to match:** custom scrollbars (`scrollbar-color`/`scrollbar-width` + `::-webkit-scrollbar`, thin green-on-dark
+    thumb), styled focus rings (visible, 2 px green offset), selection colour, `accent-color`, `color-scheme`, styled
+    `<select>`/file input/number input/checkbox/radio. One demo page `docs/assets/kitchen-sink.html` shows every component in
+    every state (used for screenshots and review).
+24. **Tooltips done right:** appear on hover AND keyboard focus, dismiss on Esc, reachable on touch (tap the "?" icon),
+    `role="tooltip"` + `aria-describedby`, never contain essential info alone. Every non-obvious field in Configure gets a
+    plain-language tooltip plus, where useful, an inline example ("e.g. Bonobo, Tycho").
+25. **Site shell & pages:** sticky header (logo mark of our own, nav: Home · Configure · Dashboard · Setup guide · GitHub),
+    responsive mobile menu, footer. **Home:** hero (what it does in one line, primary CTA "Set up your sorter", secondary
+    "View on GitHub"), 3-step "How it works" with a small illustration/diagram (SVG), feature grid (language-first rules,
+    safe by default/dry-run, runs free on GitHub Actions, your data stays in your fork), a screenshot/mock of the dashboard,
+    FAQ (Premium needed, is it safe, what is a dry run, why fork), trust bar (open source, MIT/licence, no servers).
+    **Setup guide page:** numbered walkthrough with copy buttons for every command/URL: Spotify Developer app → fork →
+    secrets → Actions permission → first dry run → read the dashboard → go live, with "you should see…" checkpoints.
+    404 page. Favicon set, `<meta>` description, Open Graph/Twitter card image, canonical URL, `lang`, semantic landmarks,
+    skip-to-content link, print stylesheet not needed.
+26. **GitHub & socials:** header/footer/hero link to the **canonical upstream repo `https://github.com/Vishnu-DRX/SpotiSort`**
+    ("Star / Fork on GitHub" with live star count fetched at runtime, failing silently). In Repo mode the site also derives the
+    visitor's own fork from `location` (`<owner>.github.io/<repo>` → `github.com/<owner>/<repo>`) and shows an "Your fork"
+    link. Author credit ("Built by <name>") + social icons are read from ONE file, `docs/site.config.json` (keys: name, github,
+    plus optional linkedin, x, instagram, website, youtube, email — omit any that are null). Icons are inline SVG. Forks keep
+    the upstream credit line but may edit that file.
+27. **Configure (formerly config builder) UX:**
+    - A guided **stepper**: 1 *Basics* (how many days a song waits, fallback playlist) → 2 *Languages* (map your playlists to
+      languages) → 3 *Rules* (what goes where) → 4 *Review & save*. Each step has a one-paragraph explanation, what-good-looks-
+      like example, and a "Why does this matter?" popover. Steps are also reachable from a sidebar/tabs; progress is shown;
+      validation is inline and per step; **Next is never blocked** but errors are summarised on Review.
+    - **Templates** on first visit: "Sort by language", "Sort by artist", "Start blank". **Live preview** panel showing the
+      YAML plus a plain-English summary ("Songs older than 14 days that are Hindi go to *Dil*").
+    - **Basic vs Advanced mode toggle** (persisted). Basic hides: per-rule day overrides, `target_position`,
+      `create_missing_playlists`, weak-signal switches, YAML editing, import/export. **Advanced** reveals them, plus an editable
+      YAML view (bidirectional sync with the form, error markers), import by file/paste/drag-drop, download, schema reference
+      drawer, and the versions diff view.
+    - Rule cards: drag-and-drop **and** keyboard reorder, duplicate, enable/disable switch, collapse, per-rule validation, and
+      a note that order = priority (first match wins). Undo/redo (Ctrl+Z / Ctrl+Y) within a session. Debounced autosave of an
+      unsaved *draft*; a "leave with unsaved changes" guard.
+28. **Versioned configurations — keep the last 5 saved versions:** **Save configuration** creates a version
+    `{id, savedAt, label(optional), summary("3 rules · 2 language playlists"), yaml}`; the list is capped at **5** (the oldest
+    is dropped, and the UI warns before dropping it). A **Versions** panel lists them with timestamp, summary and *Compare with
+    current* (rule-level diff + YAML text diff), **Restore** (confirm dialog; restoring loads it as the working draft and, when
+    saved, becomes the newest version — nothing is lost silently), **Download** one/all, **Label**/rename. Storage: browser
+    `localStorage` namespaced by `<owner>/<repo>`, wrapped in try/catch with an in-memory fallback and a visible warning if
+    storage is blocked. Later (Phase 7) the **Repo** save path commits `config.yaml` to the user's repo and the Versions panel
+    also lists the last 5 commits of `config.yaml` via the GitHub API for revert; the local and repo lists are shown side by
+    side and clearly labelled. Until Phase 7, "Save configuration" saves a version locally and offers **Download / Copy** with a
+    short note on where to put the file.
+29. **Save-to-GitHub feasibility (do first in Phase 7):** verify whether GitHub's OAuth device-flow endpoints work from a browser
+    (CORS). If not, implement a guided **fine-grained personal access token** flow (deep link to the token page with the exact
+    permission: Contents read/write on this repo only; token kept in `sessionStorage`, never persisted, never logged) and document
+    the trade-off. Record the finding in the phase report.
+30. **Quality gates for the site (proof required in the report):** axe-core accessibility scan with **0 serious/critical**
+    violations on every page and state; Lighthouse (CI via `treosh/lighthouse-ci-action`) **≥ 90** for Performance,
+    Accessibility, Best Practices, SEO on Home/Configure/Dashboard (mobile profile); Playwright on **Chromium, Firefox and
+    WebKit** at 375, 768 and 1280 px; screenshots of every page in dark and light saved to `docs/screenshots/` (committed
+    for the marketing pages) for master review; keyboard-only walkthrough test of the full Configure flow; PWA installable
+    (real Lighthouse this time); total transferred JS/CSS budget stated and met (target < 250 KB excluding vendored js-yaml).
+
 ## Verified write shapes (live-tested 2026-09-21 on `SpotiSort Test`; liked count 773 preserved)
 - Add to playlist: `POST /playlists/{id}/items`, JSON body `{"uris":["spotify:track:..."]}` → **201**
   `{"snapshot_id"}`. Max 100 (101 → 400).

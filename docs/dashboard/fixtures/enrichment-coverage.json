@@ -1,0 +1,38 @@
+{
+ "date": "2026-09-21",
+ "tracks": 42,
+ "unique_primary_artists": 24,
+ "genre_coverage_pct_of_artists": 79.2,
+ "genre_note": "fixture data",
+ "language_coverage_pct_whole_library": 82.6,
+ "language_coverage_pct_target_language_tracks": 100.0,
+ "target_language_tracks": 15,
+ "target_language_tracks_resolved": 15,
+ "language_source_counts": {
+  "playlist": 6,
+  "script": 6,
+  "hint": 5,
+  "country_default": 13,
+  "none": 12
+ },
+ "language_distribution": {
+  "english": 13,
+  "hindi": 4,
+  "malayalam": 4,
+  "tamil": 2,
+  "spanish": 2,
+  "bengali": 1,
+  "telugu": 1,
+  "japanese": 1,
+  "korean": 1
+ },
+ "genre_source_counts": {
+  "musicbrainz": 32,
+  "none": 12
+ },
+ "musicbrainz": {
+  "requests": 18,
+  "retries_after_503_or_429": 1,
+  "errors": 0
+ }
+}

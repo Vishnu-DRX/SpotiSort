@@ -1,0 +1,233 @@
+{
+ "date": "2026-09-15",
+ "run_id": "2026-09-15T06:00:00Z",
+ "mode": "apply",
+ "dry_run": false,
+ "what_if": false,
+ "evaluated": 52,
+ "moved": [
+  {
+   "track": "Fake Anthem",
+   "artist": "Fake Band Alpha",
+   "uri": "spotify:track:fakeanthem",
+   "playlist": "Fake Rock",
+   "playlist_id": "pl07",
+   "rule": "Rock legends",
+   "matched": {},
+   "age_days": 30.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-10T10:00:00+00:00",
+   "target_position": "top"
+  },
+  {
+   "track": "Placeholder Love",
+   "artist": "Sample Singer",
+   "uri": "spotify:track:placeholderl",
+   "playlist": "Fake English",
+   "playlist_id": "pl11",
+   "rule": "English pop",
+   "matched": {},
+   "age_days": 31.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-11T10:00:00+00:00",
+   "target_position": "bottom"
+  },
+  {
+   "track": "Nameless Loop 02",
+   "artist": "Beats Not Real",
+   "uri": "spotify:track:namelessloop",
+   "playlist": "Fake Chill",
+   "playlist_id": "pl08",
+   "rule": "Lo-fi study",
+   "matched": {},
+   "age_days": 32.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-12T10:00:00+00:00",
+   "target_position": "bottom"
+  },
+  {
+   "track": "Fake Dil",
+   "artist": "Pyaar Placeholder",
+   "uri": "spotify:track:fakedil",
+   "playlist": "Fake Hindi Hits",
+   "playlist_id": "pl02",
+   "rule": "Hindi hits",
+   "matched": {},
+   "age_days": 33.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-13T10:00:00+00:00",
+   "target_position": "top"
+  },
+  {
+   "track": "Noche Falsa",
+   "artist": "La Banda Ejemplo",
+   "uri": "spotify:track:nochefalsa",
+   "playlist": "Fake Latino",
+   "playlist_id": "pl06",
+   "rule": "Spanish nights",
+   "matched": {},
+   "age_days": 34.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-14T10:00:00+00:00",
+   "target_position": "bottom"
+  },
+  {
+   "track": "Dummy Hearts",
+   "artist": "Faux Star",
+   "uri": "spotify:track:dummyhearts",
+   "playlist": "Fake English",
+   "playlist_id": "pl11",
+   "rule": "English pop",
+   "matched": {},
+   "age_days": 35.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-15T10:00:00+00:00",
+   "target_position": "bottom"
+  }
+ ],
+ "skipped_no_match": 18,
+ "skipped_too_young": [
+  {
+   "track": "Fresh Fixture 0",
+   "artist": "Sample Singer",
+   "rule": "English pop",
+   "age_days": 2.0,
+   "threshold_days": 14
+  },
+  {
+   "track": "Fresh Fixture 1",
+   "artist": "Sample Singer",
+   "rule": "English pop",
+   "age_days": 3.0,
+   "threshold_days": 14
+  },
+  {
+   "track": "Fresh Fixture 2",
+   "artist": "Sample Singer",
+   "rule": "English pop",
+   "age_days": 4.0,
+   "threshold_days": 14
+  }
+ ],
+ "skipped_playlist_missing": [],
+ "errors": [],
+ "warnings": [],
+ "journal": [
+  {
+   "uri": "spotify:track:fakeanthem",
+   "name": "Fake Anthem",
+   "artists": [
+    "Fake Band Alpha"
+   ],
+   "original_added_at": "2026-08-10T10:00:00+00:00",
+   "target_playlist_id": "pl07"
+  },
+  {
+   "uri": "spotify:track:placeholderl",
+   "name": "Placeholder Love",
+   "artists": [
+    "Sample Singer"
+   ],
+   "original_added_at": "2026-08-11T10:00:00+00:00",
+   "target_playlist_id": "pl11"
+  },
+  {
+   "uri": "spotify:track:namelessloop",
+   "name": "Nameless Loop 02",
+   "artists": [
+    "Beats Not Real"
+   ],
+   "original_added_at": "2026-08-12T10:00:00+00:00",
+   "target_playlist_id": "pl08"
+  },
+  {
+   "uri": "spotify:track:fakedil",
+   "name": "Fake Dil",
+   "artists": [
+    "Pyaar Placeholder"
+   ],
+   "original_added_at": "2026-08-13T10:00:00+00:00",
+   "target_playlist_id": "pl02"
+  },
+  {
+   "uri": "spotify:track:nochefalsa",
+   "name": "Noche Falsa",
+   "artists": [
+    "La Banda Ejemplo"
+   ],
+   "original_added_at": "2026-08-14T10:00:00+00:00",
+   "target_playlist_id": "pl06"
+  },
+  {
+   "uri": "spotify:track:dummyhearts",
+   "name": "Dummy Hearts",
+   "artists": [
+    "Faux Star"
+   ],
+   "original_added_at": "2026-08-15T10:00:00+00:00",
+   "target_playlist_id": "pl11"
+  }
+ ],
+ "liked_before": 52,
+ "liked_after": 46,
+ "verdict": "ok",
+ "rule_counts": {
+  "Lo-fi study": 2,
+  "English pop": 3,
+  "Hindi hits": 1
+ },
+ "config_hash": "41ed2a46e9c0",
+ "plan_counts": {
+  "will_move": 6,
+  "too_young": 4,
+  "no_match": 18,
+  "blocked": 0,
+  "target_problem": 0
+ },
+ "http_audit": {
+  "GET api.spotify.com": 31,
+  "POST api.spotify.com": 2,
+  "PUT api.spotify.com": 0,
+  "DELETE api.spotify.com": 3
+ },
+ "runtime_seconds": 88.4,
+ "reconcile": {
+  "expected_after": 46,
+  "actual_after": 46,
+  "ok": true
+ },
+ "restore_command": "python -m src.sync --restore logs/2026-09-15.json",
+ "batches": [
+  {
+   "playlist_id": "pl02",
+   "size": 1,
+   "committed": true
+  },
+  {
+   "playlist_id": "pl06",
+   "size": 1,
+   "committed": true
+  },
+  {
+   "playlist_id": "pl07",
+   "size": 1,
+   "committed": true
+  },
+  {
+   "playlist_id": "pl08",
+   "size": 1,
+   "committed": true
+  },
+  {
+   "playlist_id": "pl11",
+   "size": 2,
+   "committed": true
+  }
+ ]
+}

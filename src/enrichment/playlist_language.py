@@ -40,14 +40,26 @@ class LanguageMap:
     def artist_language(self, artist_id: str) -> str | None:
         return self._winner(self._artist_votes.get(artist_id))
 
-    def language_for(self, track: Track) -> str | None:
-        """Track's own playlist membership first, then the credited artists' learned languages."""
-        direct = self._winner(self._track_votes.get(track.id))
-        if direct:
-            return direct
+    def language_for(self, track: Track, loo: bool = False) -> str | None:
+        """Track's own playlist membership first, then the credited artists' learned languages.
+
+        ``loo`` (leave-one-out) ignores this track's own votes, for honest backtesting.
+        """
+        own = self._track_votes.get(track.id)
+        if not loo:
+            direct = self._winner(own)
+            if direct:
+                return direct
         votes: Counter[str] = Counter()
         for a in track.artists:
-            lang = self.artist_language(a.id) if a.id else None
+            if not a.id:
+                continue
+            av = self._artist_votes.get(a.id)
+            if av is None:
+                continue
+            if loo and own:
+                av = av - own  # Counter subtraction drops non-positive counts
+            lang = self._winner(av)
             if lang:
                 votes[lang] += 1
         return self._winner(votes) if votes else None

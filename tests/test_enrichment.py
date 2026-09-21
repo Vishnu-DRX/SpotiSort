@@ -431,6 +431,7 @@ def test_lowercase_isrc_is_uppercased_for_musicbrainz():
 def _english_enricher(tmp_path, country, **kw):
     c = EnrichmentCache(tmp_path / "c.json")
     c.put_artist("sp1", {"genres": [], "country": country})
+    kw.setdefault("english_default", True)
     return Enricher(c, None, LanguageMap(), **kw)
 
 
@@ -440,9 +441,46 @@ def test_english_default_for_english_speaking_countries(tmp_path, country):
     assert r.language == "english" and r.sources == ("country_default",)
 
 
-@pytest.mark.parametrize("country", ["IN", "JP", "DE", None])
+@pytest.mark.parametrize("country", ["IN", None])
 def test_no_english_default_for_other_countries(tmp_path, country):
     assert _english_enricher(tmp_path, country).resolve(track(name="Plain Song")).language is None
+
+
+@pytest.mark.parametrize("country,lang", [("JP", "japanese"), ("DE", "german"), ("KR", "korean")])
+def test_monolingual_country_gives_hint_tier_not_english(tmp_path, country, lang):
+    r = _english_enricher(tmp_path, country).resolve(track(name="Plain Song"))
+    assert r.language == lang and r.language_source == "hint"
+
+
+def test_english_default_is_off_unless_asked(tmp_path):
+    c = EnrichmentCache(tmp_path / "c.json")
+    c.put_artist("sp1", {"genres": [], "country": "US"})
+    assert Enricher(c, None, LanguageMap()).resolve(track(name="Plain Song")).language is None
+
+
+def test_hint_from_tags_and_source_recorded(tmp_path):
+    c = EnrichmentCache(tmp_path / "c.json")
+    c.put_artist("sp1", {"genres": ["bollywood", "pop"], "country": "IN"})
+    r = Enricher(c, None, LanguageMap()).resolve(track(name="Plain Song"))
+    assert (r.language, r.language_source, r.sources[-1]) == ("hindi", "hint", "hint")
+    assert r.language_confidence == 0.6 and r.genre_source == "musicbrainz"
+
+
+def test_source_and_confidence_for_playlist_script_country_default(tmp_path):
+    m = LanguageMap()
+    m.add(track(tid="a", artist_id="sp9"), "tamil")
+    e = Enricher(EnrichmentCache(tmp_path / "c.json"), None, m, english_default=True)
+    assert e.resolve(track(tid="b", artist_id="sp9")).language_source == "playlist"
+    assert e.resolve(track(name="केसरिया", artist_id="q")).language_source == "script"
+
+
+def test_loo_ignores_the_tracks_own_playlist_vote():
+    m = LanguageMap()
+    m.add(track(tid="a", artist_id="x"), "hindi")   # only evidence about artist x is track a itself
+    assert m.language_for(track(tid="a", artist_id="x")) == "hindi"
+    assert m.language_for(track(tid="a", artist_id="x"), loo=True) is None
+    m.add(track(tid="b", artist_id="x"), "hindi")   # a second track by the same artist survives leave-one-out
+    assert m.language_for(track(tid="a", artist_id="x"), loo=True) == "hindi"
 
 
 def test_english_default_can_be_switched_off(tmp_path):

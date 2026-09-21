@@ -1,0 +1,136 @@
+{
+ "version": 1,
+ "generated_at": "2026-09-21T05:30:00+00:00",
+ "min_precision": 0.9,
+ "min_samples": 10,
+ "by_signal": {
+  "playlist": {
+   "malayalam": {
+    "truth": 120,
+    "predicted": 118,
+    "correct": 118,
+    "precision": 1.0,
+    "recall": 0.9833
+   },
+   "hindi": {
+    "truth": 88,
+    "predicted": 84,
+    "correct": 83,
+    "precision": 0.9881,
+    "recall": 0.9432
+   },
+   "tamil": {
+    "truth": 64,
+    "predicted": 60,
+    "correct": 59,
+    "precision": 0.9833,
+    "recall": 0.9219
+   }
+  },
+  "script": {
+   "malayalam": {
+    "truth": 120,
+    "predicted": 40,
+    "correct": 40,
+    "precision": 1.0,
+    "recall": 0.3333
+   },
+   "hindi": {
+    "truth": 88,
+    "predicted": 30,
+    "correct": 29,
+    "precision": 0.9667,
+    "recall": 0.3295
+   },
+   "bengali": {
+    "truth": 12,
+    "predicted": 12,
+    "correct": 12,
+    "precision": 1.0,
+    "recall": 1.0
+   },
+   "japanese": {
+    "truth": 9,
+    "predicted": 9,
+    "correct": 9,
+    "precision": 1.0,
+    "recall": 1.0
+   }
+  },
+  "hint": {
+   "spanish": {
+    "truth": 24,
+    "predicted": 20,
+    "correct": 19,
+    "precision": 0.95,
+    "recall": 0.7917
+   },
+   "tamil": {
+    "truth": 64,
+    "predicted": 14,
+    "correct": 8,
+    "precision": 0.5714,
+    "recall": 0.125
+   },
+   "korean": {
+    "truth": 6,
+    "predicted": 6,
+    "correct": 5,
+    "precision": 0.8333,
+    "recall": 0.8333
+   }
+  },
+  "country_default": {
+   "english": {
+    "truth": 210,
+    "predicted": 200,
+    "correct": 190,
+    "precision": 0.95,
+    "recall": 0.9048
+   },
+   "hindi": {
+    "truth": 88,
+    "predicted": 5,
+    "correct": 2,
+    "precision": 0.4,
+    "recall": 0.0227
+   }
+  }
+ },
+ "qualified": {
+  "bengali": [
+   "playlist",
+   "script"
+  ],
+  "english": [
+   "playlist",
+   "script",
+   "country_default"
+  ],
+  "hindi": [
+   "playlist",
+   "script"
+  ],
+  "japanese": [
+   "playlist",
+   "script"
+  ],
+  "korean": [
+   "playlist",
+   "script"
+  ],
+  "malayalam": [
+   "playlist",
+   "script"
+  ],
+  "spanish": [
+   "playlist",
+   "script",
+   "hint"
+  ],
+  "tamil": [
+   "playlist",
+   "script"
+  ]
+ }
+}

@@ -56,3 +56,10 @@ config.local.yaml
 # Local dry-run/real run logs (dated); the Phase 4 workflow commits them with git add -f
 logs/2*.json
 config.draft.yaml
+
+# Run artifacts contain song titles; the Actions workflow force-adds them (Phase 4)
+logs/latest-plan.json
+logs/runs.json
+logs/backtest-detail.*
+logs/screens/
+logs/local/

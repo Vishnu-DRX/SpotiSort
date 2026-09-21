@@ -145,10 +145,10 @@ def test_counts_and_moves(env):
     assert all(m["matched"] == {"artist_in": "Bonobo"} for m in log["moved"])
 
 
-def test_moves_oldest_first(env):
+def test_moves_newest_first(env):
     tmp, cfg = env
     run(tmp, cfg)
-    assert [m["uri"] for m in read_log(tmp)["moved"]] == ["spotify:track:t1", "spotify:track:t2", "spotify:track:t6"]
+    assert [m["uri"] for m in read_log(tmp)["moved"]] == ["spotify:track:t6", "spotify:track:t2", "spotify:track:t1"]
 
 
 def test_journal_matches_moves_one_to_one(env):
@@ -232,7 +232,7 @@ def test_limit_flag_caps_moves_oldest_first(env):
     tmp, cfg = env
     assert run(tmp, cfg, "--limit", "2") == 0
     log = read_log(tmp)
-    assert [m["uri"] for m in log["moved"]] == ["spotify:track:t1", "spotify:track:t2"]
+    assert [m["uri"] for m in log["moved"]] == ["spotify:track:t2", "spotify:track:t1"]
     assert len(log["journal"]) == 2 and log["evaluated"] == 6
 
 
@@ -321,10 +321,10 @@ def test_no_token_like_strings_in_log(env):
     assert not re.search(r"(AT|RT|CS)-[A-Za-z0-9-]{10,}", raw)
 
 
-def test_only_todays_log_file_written(env):
+def test_only_expected_artifacts_written(env):
     tmp, cfg = env
     run(tmp, cfg)
-    assert [p.name for p in (tmp / "logs").iterdir()] == [f"{TODAY}.json"]
+    assert sorted(p.name for p in (tmp / "logs").iterdir()) == sorted([f"{TODAY}.json", "latest-plan.json", "runs.json"])
 
 
 def test_musicbrainz_flag_is_not_used_with_no_network(env, monkeypatch):

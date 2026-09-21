@@ -25,6 +25,7 @@ RULE_KEYS = {
     "target_playlist",
     "days_threshold",
     "create_missing_playlists",
+    "target_position",
 }
 LIST_MATCH_KEYS = {"artist_in", "genre_contains", "language_in"}
 INT_MATCH_KEYS = {"release_year_before", "release_year_after"}
@@ -112,6 +113,9 @@ def _validate_rule(raw: Any, index: int, errors: list[str]) -> Rule | None:
     create = raw.get("create_missing_playlists", False)
     if not isinstance(create, bool):
         errors.append(f"{where}: 'create_missing_playlists' must be true or false")
+    position = raw.get("target_position", "bottom")
+    if position not in ("top", "bottom"):
+        errors.append(f"{where}: 'target_position' must be 'top' or 'bottom'")
     days = raw.get("days_threshold")
     if days is not None and (not _is_int(days) or days < 0):
         errors.append(f"{where}: 'days_threshold' must be an integer >= 0")
@@ -126,6 +130,7 @@ def _validate_rule(raw: Any, index: int, errors: list[str]) -> Rule | None:
         enabled=enabled,
         days_threshold=days,
         create_missing_playlists=create,
+        target_position=position,
     )
 
 
@@ -164,7 +169,7 @@ def parse_config(data: Any) -> Config:
                 lang_playlists[name] = canon
 
     musicbrainz = True
-    english_default = True
+    english_default = False
     raw_enrich = data.get("enrichment", {})
     if raw_enrich is None:
         raw_enrich = {}

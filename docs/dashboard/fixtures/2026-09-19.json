@@ -1,0 +1,145 @@
+{
+ "date": "2026-09-19",
+ "run_id": "2026-09-19T06:00:00Z",
+ "mode": "dry_run",
+ "dry_run": true,
+ "what_if": false,
+ "evaluated": 41,
+ "moved": [
+  {
+   "track": "Fake Anthem",
+   "artist": "Fake Band Alpha",
+   "uri": "spotify:track:fakeanthem",
+   "playlist": "Fake Rock",
+   "playlist_id": "pl07",
+   "rule": "Rock legends",
+   "matched": {},
+   "age_days": 30.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-10T10:00:00+00:00",
+   "target_position": "top"
+  },
+  {
+   "track": "Placeholder Love",
+   "artist": "Sample Singer",
+   "uri": "spotify:track:placeholderl",
+   "playlist": "Fake English",
+   "playlist_id": "pl11",
+   "rule": "English pop",
+   "matched": {},
+   "age_days": 31.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-11T10:00:00+00:00",
+   "target_position": "bottom"
+  },
+  {
+   "track": "Nameless Loop 02",
+   "artist": "Beats Not Real",
+   "uri": "spotify:track:namelessloop",
+   "playlist": "Fake Chill",
+   "playlist_id": "pl08",
+   "rule": "Lo-fi study",
+   "matched": {},
+   "age_days": 32.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-12T10:00:00+00:00",
+   "target_position": "bottom"
+  },
+  {
+   "track": "Fake Dil",
+   "artist": "Pyaar Placeholder",
+   "uri": "spotify:track:fakedil",
+   "playlist": "Fake Hindi Hits",
+   "playlist_id": "pl02",
+   "rule": "Hindi hits",
+   "matched": {},
+   "age_days": 33.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-13T10:00:00+00:00",
+   "target_position": "top"
+  },
+  {
+   "track": "Noche Falsa",
+   "artist": "La Banda Ejemplo",
+   "uri": "spotify:track:nochefalsa",
+   "playlist": "Fake Latino",
+   "playlist_id": "pl06",
+   "rule": "Spanish nights",
+   "matched": {},
+   "age_days": 34.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-14T10:00:00+00:00",
+   "target_position": "bottom"
+  }
+ ],
+ "skipped_no_match": 25,
+ "skipped_too_young": [
+  {
+   "track": "Fresh Fixture 0",
+   "artist": "Sample Singer",
+   "rule": "English pop",
+   "age_days": 2.0,
+   "threshold_days": 14
+  },
+  {
+   "track": "Fresh Fixture 1",
+   "artist": "Sample Singer",
+   "rule": "English pop",
+   "age_days": 3.0,
+   "threshold_days": 14
+  },
+  {
+   "track": "Fresh Fixture 2",
+   "artist": "Sample Singer",
+   "rule": "English pop",
+   "age_days": 4.0,
+   "threshold_days": 14
+  }
+ ],
+ "skipped_playlist_missing": [
+  {
+   "track": "Pretend Blues",
+   "target_playlist": "Fake Jazz Vault",
+   "rule": "Old jazz",
+   "reason": "missing",
+   "would_create": false
+  },
+  {
+   "track": "Pretend Blues",
+   "target_playlist": "Fake Jazz Vault",
+   "rule": "Old jazz",
+   "reason": "missing",
+   "would_create": false
+  }
+ ],
+ "errors": [],
+ "warnings": [
+  "warning 1: target playlist 'Fake Jazz Vault' not found",
+  "warning 2: target playlist 'Fake Jazz Vault' not found"
+ ],
+ "journal": [],
+ "liked_before": 41,
+ "liked_after": 41,
+ "verdict": "dry_run",
+ "rule_counts": {
+  "Hindi hits": 2,
+  "English pop": 3
+ },
+ "config_hash": "41ed2a46e9c0",
+ "plan_counts": {
+  "will_move": 5,
+  "too_young": 7,
+  "no_match": 25,
+  "blocked": 2,
+  "target_problem": 2
+ },
+ "http_audit": {
+  "GET api.spotify.com": 28
+ },
+ "runtime_seconds": 44.8
+}

@@ -51,6 +51,10 @@ class Enrichment:
     genres: tuple[str, ...] = ()
     language: str | None = None
     sources: tuple[str, ...] = ()
+    language_source: str | None = None  # playlist | script | hint | country_default
+    language_confidence: float | None = None
+    genre_source: str | None = None  # musicbrainz
+    genre_confidence: float | None = None
 
 
 @dataclass(frozen=True)
@@ -61,6 +65,7 @@ class Rule:
     enabled: bool = True
     days_threshold: int | None = None
     create_missing_playlists: bool = False
+    target_position: str = "bottom"  # top | bottom
 
 
 @dataclass(frozen=True)
@@ -70,7 +75,7 @@ class Config:
     rules: tuple[Rule, ...] = ()
     language_playlists: dict[str, str] = field(default_factory=dict)  # playlist name -> canonical language
     musicbrainz: bool = True  # enrichment.musicbrainz
-    english_default: bool = True  # enrichment.english_default
+    english_default: bool = False  # enrichment.english_default (weak guess; off unless asked for)
 
 
 @dataclass(frozen=True)

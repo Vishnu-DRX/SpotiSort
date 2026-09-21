@@ -1,0 +1,193 @@
+{
+ "date": "2026-09-17",
+ "run_id": "2026-09-17T06:00:00Z",
+ "mode": "apply",
+ "dry_run": false,
+ "what_if": false,
+ "evaluated": 46,
+ "moved": [
+  {
+   "track": "Fake Anthem",
+   "artist": "Fake Band Alpha",
+   "uri": "spotify:track:fakeanthem",
+   "playlist": "Fake Rock",
+   "playlist_id": "pl07",
+   "rule": "Rock legends",
+   "matched": {},
+   "age_days": 30.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-10T10:00:00+00:00",
+   "target_position": "top"
+  },
+  {
+   "track": "Placeholder Love",
+   "artist": "Sample Singer",
+   "uri": "spotify:track:placeholderl",
+   "playlist": "Fake English",
+   "playlist_id": "pl11",
+   "rule": "English pop",
+   "matched": {},
+   "age_days": 31.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-11T10:00:00+00:00",
+   "target_position": "bottom"
+  },
+  {
+   "track": "Nameless Loop 02",
+   "artist": "Beats Not Real",
+   "uri": "spotify:track:namelessloop",
+   "playlist": "Fake Chill",
+   "playlist_id": "pl08",
+   "rule": "Lo-fi study",
+   "matched": {},
+   "age_days": 32.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-12T10:00:00+00:00",
+   "target_position": "bottom"
+  },
+  {
+   "track": "Fake Dil",
+   "artist": "Pyaar Placeholder",
+   "uri": "spotify:track:fakedil",
+   "playlist": "Fake Hindi Hits",
+   "playlist_id": "pl02",
+   "rule": "Hindi hits",
+   "matched": {},
+   "age_days": 33.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-13T10:00:00+00:00",
+   "target_position": "top"
+  }
+ ],
+ "skipped_no_match": 17,
+ "skipped_too_young": [
+  {
+   "track": "Fresh Fixture 0",
+   "artist": "Sample Singer",
+   "rule": "English pop",
+   "age_days": 2.0,
+   "threshold_days": 14
+  },
+  {
+   "track": "Fresh Fixture 1",
+   "artist": "Sample Singer",
+   "rule": "English pop",
+   "age_days": 3.0,
+   "threshold_days": 14
+  },
+  {
+   "track": "Fresh Fixture 2",
+   "artist": "Sample Singer",
+   "rule": "English pop",
+   "age_days": 4.0,
+   "threshold_days": 14
+  }
+ ],
+ "skipped_playlist_missing": [
+  {
+   "track": "Pretend Blues",
+   "target_playlist": "Fake Jazz Vault",
+   "rule": "Old jazz",
+   "reason": "missing",
+   "would_create": false
+  }
+ ],
+ "errors": [],
+ "warnings": [
+  "warning 1: target playlist 'Fake Jazz Vault' not found",
+  "liked count did not reconcile: expected 42, found 43; run aborted and songs re-added"
+ ],
+ "journal": [
+  {
+   "uri": "spotify:track:fakeanthem",
+   "name": "Fake Anthem",
+   "artists": [
+    "Fake Band Alpha"
+   ],
+   "original_added_at": "2026-08-10T10:00:00+00:00",
+   "target_playlist_id": "pl07"
+  },
+  {
+   "uri": "spotify:track:placeholderl",
+   "name": "Placeholder Love",
+   "artists": [
+    "Sample Singer"
+   ],
+   "original_added_at": "2026-08-11T10:00:00+00:00",
+   "target_playlist_id": "pl11"
+  },
+  {
+   "uri": "spotify:track:namelessloop",
+   "name": "Nameless Loop 02",
+   "artists": [
+    "Beats Not Real"
+   ],
+   "original_added_at": "2026-08-12T10:00:00+00:00",
+   "target_playlist_id": "pl08"
+  },
+  {
+   "uri": "spotify:track:fakedil",
+   "name": "Fake Dil",
+   "artists": [
+    "Pyaar Placeholder"
+   ],
+   "original_added_at": "2026-08-13T10:00:00+00:00",
+   "target_playlist_id": "pl02"
+  }
+ ],
+ "liked_before": 46,
+ "liked_after": 43,
+ "verdict": "mismatch",
+ "rule_counts": {
+  "Spanish nights": 2,
+  "Lo-fi study": 1,
+  "Rock legends": 1
+ },
+ "config_hash": "41ed2a46e9c0",
+ "plan_counts": {
+  "will_move": 4,
+  "too_young": 5,
+  "no_match": 17,
+  "blocked": 1,
+  "target_problem": 1
+ },
+ "http_audit": {
+  "GET api.spotify.com": 31,
+  "POST api.spotify.com": 2,
+  "PUT api.spotify.com": 0,
+  "DELETE api.spotify.com": 3
+ },
+ "runtime_seconds": 95.7,
+ "reconcile": {
+  "expected_after": 42,
+  "actual_after": 43,
+  "ok": false
+ },
+ "restore_command": "python -m src.sync --restore logs/2026-09-17.json",
+ "batches": [
+  {
+   "playlist_id": "pl02",
+   "size": 1,
+   "committed": true
+  },
+  {
+   "playlist_id": "pl07",
+   "size": 1,
+   "committed": true
+  },
+  {
+   "playlist_id": "pl08",
+   "size": 1,
+   "committed": true
+  },
+  {
+   "playlist_id": "pl11",
+   "size": 1,
+   "committed": true
+  }
+ ]
+}

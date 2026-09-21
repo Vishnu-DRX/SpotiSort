@@ -1,0 +1,155 @@
+{
+ "date": "2026-09-14",
+ "run_id": "2026-09-14T06:00:00Z",
+ "mode": "dry_run",
+ "dry_run": true,
+ "what_if": false,
+ "evaluated": 52,
+ "moved": [
+  {
+   "track": "Fake Anthem",
+   "artist": "Fake Band Alpha",
+   "uri": "spotify:track:fakeanthem",
+   "playlist": "Fake Rock",
+   "playlist_id": "pl07",
+   "rule": "Rock legends",
+   "matched": {},
+   "age_days": 30.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-10T10:00:00+00:00",
+   "target_position": "top"
+  },
+  {
+   "track": "Placeholder Love",
+   "artist": "Sample Singer",
+   "uri": "spotify:track:placeholderl",
+   "playlist": "Fake English",
+   "playlist_id": "pl11",
+   "rule": "English pop",
+   "matched": {},
+   "age_days": 31.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-11T10:00:00+00:00",
+   "target_position": "bottom"
+  },
+  {
+   "track": "Nameless Loop 02",
+   "artist": "Beats Not Real",
+   "uri": "spotify:track:namelessloop",
+   "playlist": "Fake Chill",
+   "playlist_id": "pl08",
+   "rule": "Lo-fi study",
+   "matched": {},
+   "age_days": 32.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-12T10:00:00+00:00",
+   "target_position": "bottom"
+  },
+  {
+   "track": "Fake Dil",
+   "artist": "Pyaar Placeholder",
+   "uri": "spotify:track:fakedil",
+   "playlist": "Fake Hindi Hits",
+   "playlist_id": "pl02",
+   "rule": "Hindi hits",
+   "matched": {},
+   "age_days": 33.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-13T10:00:00+00:00",
+   "target_position": "top"
+  },
+  {
+   "track": "Noche Falsa",
+   "artist": "La Banda Ejemplo",
+   "uri": "spotify:track:nochefalsa",
+   "playlist": "Fake Latino",
+   "playlist_id": "pl06",
+   "rule": "Spanish nights",
+   "matched": {},
+   "age_days": 34.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-14T10:00:00+00:00",
+   "target_position": "bottom"
+  },
+  {
+   "track": "Dummy Hearts",
+   "artist": "Faux Star",
+   "uri": "spotify:track:dummyhearts",
+   "playlist": "Fake English",
+   "playlist_id": "pl11",
+   "rule": "English pop",
+   "matched": {},
+   "age_days": 35.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-15T10:00:00+00:00",
+   "target_position": "bottom"
+  },
+  {
+   "track": "Mock Midnight",
+   "artist": "Test Tones",
+   "uri": "spotify:track:mockmidnight",
+   "playlist": "Fake English",
+   "playlist_id": "pl11",
+   "rule": "English pop",
+   "matched": {},
+   "age_days": 36.0,
+   "threshold_days": 14,
+   "already_in_target": false,
+   "original_added_at": "2026-08-16T10:00:00+00:00",
+   "target_position": "bottom"
+  }
+ ],
+ "skipped_no_match": 20,
+ "skipped_too_young": [
+  {
+   "track": "Fresh Fixture 0",
+   "artist": "Sample Singer",
+   "rule": "English pop",
+   "age_days": 2.0,
+   "threshold_days": 14
+  },
+  {
+   "track": "Fresh Fixture 1",
+   "artist": "Sample Singer",
+   "rule": "English pop",
+   "age_days": 3.0,
+   "threshold_days": 14
+  },
+  {
+   "track": "Fresh Fixture 2",
+   "artist": "Sample Singer",
+   "rule": "English pop",
+   "age_days": 4.0,
+   "threshold_days": 14
+  }
+ ],
+ "skipped_playlist_missing": [],
+ "errors": [],
+ "warnings": [],
+ "journal": [],
+ "liked_before": 52,
+ "liked_after": 52,
+ "verdict": "dry_run",
+ "rule_counts": {
+  "Lo-fi study": 3,
+  "English pop": 4
+ },
+ "config_hash": "41ed2a46e9c0",
+ "plan_counts": {
+  "will_move": 7,
+  "too_young": 5,
+  "no_match": 20,
+  "blocked": 0,
+  "target_problem": 0
+ },
+ "http_audit": {
+  "GET api.spotify.com": 28
+ },
+ "runtime_seconds": 41.2
+}

@@ -128,13 +128,13 @@ def test_build_each_rule_type(builder, label, build, expected):
     assert got.name == "My rule" and got.target_playlist == "My Playlist"
     assert got.match == expected
     assert got.enabled is True and got.create_missing_playlists is False and got.days_threshold is None
+    assert got.target_position == "bottom"
 
 
 def test_full_build_with_globals_and_all_keys(builder):
     builder.get_by_label("Default days threshold").fill("21")
     builder.get_by_label("Fallback playlist").fill("Inbox Overflow")
     builder.get_by_label("Look up genre and language on MusicBrainz").uncheck()
-    builder.get_by_label("Assume English for Latin-script songs", exact=False).uncheck()
     builder.get_by_role("button", name="Add language playlist").click()
     builder.locator("#lp-list li").first.get_by_label("Playlist name", exact=True).fill("Chill Hindi")
     lang = builder.locator("#lp-list li").first.get_by_label("Language", exact=True)
@@ -146,6 +146,7 @@ def test_full_build_with_globals_and_all_keys(builder):
     r.get_by_label("Days threshold override").fill("3")
     r.get_by_label("Create playlist if missing").check()
     r.get_by_label("Enabled", exact=True).uncheck()
+    r.get_by_label("Insert position").select_option("top")
     add_chips(r, "artist_in", "Bonobo")
     add_chips(r, "genre_contains", "ambient")
     add_chips(r, "language_in", "en")
@@ -166,6 +167,7 @@ def test_full_build_with_globals_and_all_keys(builder):
     assert dict(cfg.language_playlists) == {"Chill Hindi": "hindi"}
     (got,) = cfg.rules
     assert got.enabled is False and got.create_missing_playlists is True and got.days_threshold == 3
+    assert got.target_position == "top"
     assert got.match == {
         "artist_in": ["Bonobo"], "genre_contains": ["ambient"], "language_in": ["english"],
         "release_year_before": 2020, "release_year_after": 1990, "explicit": False,
@@ -383,6 +385,8 @@ PARITY = [
     {"enrichment": {"english_default": "yes"}}, {"enrichment": {"english_default": 1, "musicbrainz": None}},
     {"enrichment": {"english_default": False, "musicbrainz": True}}, {"rules": {}},
     {"rules": ["x", {}, {"name": "a"}]},
+    *[{"rules": [{"name": "r", "target_playlist": "p", "match": {"explicit": True}, "target_position": v}]}
+      for v in ("top", "bottom", "middle", "", "TOP", True, 0, 1, None, [], {})],
     {"rules": [{"name": "O'Brien", "target_playlist": "p", "match": {}, "extra": 1}]},
     {"rules": [{"name": "r", "target_playlist": "p", "match": {"nope": 1, "artist_in": [], "genre_contains": ["a", ""],
                                                                  "language_in": ["hi", "zzz"], "release_year_before": 0,
@@ -412,13 +416,35 @@ def test_js_validator_matches_python_messages(builder, doc):
 # ------------------------------------------------------------------ english_default
 def test_english_default_toggle_changes_yaml(builder):
     box = builder.get_by_label("Assume English for Latin-script songs", exact=False)
-    assert box.is_checked()
-    assert preview_data(builder)["enrichment"] == {"musicbrainz": True, "english_default": True}
-    box.uncheck()
+    assert not box.is_checked()
+    assert "Off by default" in builder.locator("#g-en-hint").text_content()
     assert preview_data(builder)["enrichment"] == {"musicbrainz": True, "english_default": False}
     assert validated(download_text(builder)).english_default is False
     box.check()
     assert preview_data(builder)["enrichment"]["english_default"] is True
+    assert validated(download_text(builder)).english_default is True
+
+
+def test_insert_position_select(builder):
+    r = add_rule(builder, "Vault", "The Vault")
+    add_cond(r, "explicit").select_option("false")
+    sel = r.get_by_label("Insert position")
+    assert sel.input_value() == "bottom"
+    assert [o.text_content() for o in sel.locator("option").all()] == ["Bottom (default)", "Top"]
+    assert validated(download_text(builder)).rules[0].target_position == "bottom"
+    sel.select_option("top")
+    assert preview_data(builder)["rules"][0]["target_position"] == "top"
+    assert validated(download_text(builder)).rules[0].target_position == "top"
+
+
+@pytest.mark.parametrize("value", ["top", "bottom"])
+def test_insert_position_import_roundtrip(builder, value):
+    text = f"rules:\n  - name: R\n    target_playlist: P\n    target_position: {value}\n    match:\n      explicit: true\n"
+    builder.locator("#import summary").click()
+    builder.get_by_label("Or paste YAML").fill(text)
+    builder.get_by_role("button", name="Load into form").click()
+    assert rule(builder, 0).get_by_label("Insert position").input_value() == value
+    assert validated(download_text(builder)).rules[0].target_position == value
 
 
 @pytest.mark.parametrize("value", [True, False])
@@ -437,7 +463,7 @@ def test_english_default_invalid_flags_field(builder):
     builder.get_by_label("Or paste YAML").fill("enrichment:\n  english_default: maybe\n")
     builder.get_by_role("button", name="Load into form").click()
     assert "'enrichment.english_default' must be true or false" in builder.locator("#import-status").text_content()
-    assert builder.get_by_label("Assume English for Latin-script songs", exact=False).is_checked()  # falls back to default
+    assert not builder.get_by_label("Assume English for Latin-script songs", exact=False).is_checked()  # falls back to default
 
 
 # ------------------------------------------------------------------ import
@@ -446,7 +472,7 @@ def test_import_example_config_roundtrips(builder):
     builder.locator("#import summary").click()
     builder.get_by_label("Or paste YAML").fill(original)
     builder.get_by_role("button", name="Load into form").click()
-    assert "Loaded 5 rules" in builder.locator("#import-status").text_content()
+    assert "Loaded 6 rules" in builder.locator("#import-status").text_content()
     assert builder.locator("#rules > li").count() == 5
     assert rule(builder, 0).get_by_label("Rule name").input_value() == "Jazz to Jazz Vault"
     assert rule(builder, 0).get_by_label("Days threshold override").input_value() == "7"
@@ -547,8 +573,8 @@ def test_service_worker_and_offline_reload(make_page, site):
     page.reload()  # now controlled by the SW
     page.wait_for_function("navigator.serviceWorker.controller !== null")
     keys = page.evaluate("caches.keys()")
-    assert keys == ["spotisort-shell-v2"]
-    cached = page.evaluate("caches.open('spotisort-shell-v2').then(c => c.keys()).then(ks => ks.map(k => k.url))")
+    assert keys == ["spotisort-shell-v3"]
+    cached = page.evaluate("caches.open('spotisort-shell-v3').then(c => c.keys()).then(ks => ks.map(k => k.url))")
     for needed in ("builder/", "builder/app.js", "builder/languages.js", "builder/validate.js", "builder/builder.css",
                    "vendor/js-yaml.min.js", "manifest.webmanifest", "icons/icon-192.png", "style.css"):
         assert site + needed in cached, needed

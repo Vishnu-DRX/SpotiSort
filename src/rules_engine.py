@@ -60,52 +60,89 @@ def _fold(value: str) -> str:
     return value.strip().casefold()
 
 
+def check_key(track: Track, enrichment: Enrichment | None, key: str, wanted: Any) -> tuple[bool, Any, Any]:
+    """Evaluate one match key. Returns (passed, actual_value_seen, what_matched)."""
+    if key == "artist_in":
+        names = {_fold(a.name) for a in track.artists}
+        hits = [w for w in wanted if _fold(w) in names]
+        return bool(hits), [a.name for a in track.artists], hits[0] if hits else None
+    if key == "genre_contains":
+        genres = list(enrichment.genres) if enrichment else []
+        folded = [_fold(g) for g in genres]
+        hit = next((w for w in wanted if _fold(w) and any(_fold(w) in g for g in folded)), None)
+        return hit is not None, genres, hit
+    if key == "language_in":
+        lang = enrichment.language if enrichment else None
+        ok = bool(lang) and _fold(lang) in {_fold(w) for w in wanted}
+        return ok, lang, lang if ok else None
+    if key in ("release_year_before", "release_year_after"):
+        year = release_year(track.release_date, track.release_date_precision)
+        if year is None:
+            return False, None, None
+        ok = year < wanted if key == "release_year_before" else year > wanted
+        return ok, year, year if ok else None
+    if key == "explicit":
+        ok = bool(track.explicit) is wanted
+        return ok, bool(track.explicit), wanted if ok else None
+    if key == "track_name_contains":
+        ok = bool(wanted.strip()) and _fold(wanted) in _fold(track.name)
+        return ok, track.name, wanted if ok else None
+    if key == "album_name_contains":
+        ok = bool(wanted.strip()) and _fold(wanted) in _fold(track.album_name)
+        return ok, track.album_name, wanted if ok else None
+    return False, None, None  # unknown key: never silently ignore a condition
+
+
 def _match_keys(
     track: Track, enrichment: Enrichment | None, match: dict[str, Any]
 ) -> dict[str, Any] | None:
     """Return {key: what matched} if every key is satisfied, else None."""
     matched: dict[str, Any] = {}
     for key, wanted in match.items():
-        if key == "artist_in":
-            names = {_fold(a.name) for a in track.artists}
-            hits = [w for w in wanted if _fold(w) in names]
-            if not hits:
-                return None
-            matched[key] = hits[0]
-        elif key == "genre_contains":
-            genres = [_fold(g) for g in (enrichment.genres if enrichment else ())]
-            hit = next((w for w in wanted if _fold(w) and any(_fold(w) in g for g in genres)), None)
-            if hit is None:
-                return None
-            matched[key] = hit
-        elif key == "language_in":
-            lang = enrichment.language if enrichment else None
-            if not lang or _fold(lang) not in {_fold(w) for w in wanted}:
-                return None
-            matched[key] = lang
-        elif key in ("release_year_before", "release_year_after"):
-            year = release_year(track.release_date, track.release_date_precision)
-            if year is None:
-                return None
-            ok = year < wanted if key == "release_year_before" else year > wanted
-            if not ok:
-                return None
-            matched[key] = year
-        elif key == "explicit":
-            if bool(track.explicit) is not wanted:
-                return None
-            matched[key] = wanted
-        elif key == "track_name_contains":
-            if not wanted.strip() or _fold(wanted) not in _fold(track.name):
-                return None
-            matched[key] = wanted
-        elif key == "album_name_contains":
-            if not wanted.strip() or _fold(wanted) not in _fold(track.album_name):
-                return None
-            matched[key] = wanted
-        else:  # unknown key: never silently ignore a condition
+        ok, _, hit = check_key(track, enrichment, key, wanted)
+        if not ok:
             return None
+        matched[key] = hit
     return matched
+
+
+def explain(
+    track: Track,
+    enrichment: Enrichment | None,
+    rules: Sequence[Rule],
+    now: datetime,
+    default_days_threshold: int = DEFAULT_DAYS_THRESHOLD,
+) -> dict[str, Any]:
+    """Rule-by-rule trace, in order, for one track (the dashboard's Explain drawer).
+
+    Every rule's conditions are evaluated (so the dashboard can show shadowed rules), but ``stopped_here`` marks the
+    rule that actually decided the song: the first enabled rule whose conditions pass. Later rules are 'not_reached'.
+    """
+    age = age_days(track, now)
+    trace: list[dict[str, Any]] = []
+    decided: str | None = None
+    for rule in rules:
+        threshold = resolve_days_threshold(rule, default_days_threshold)
+        entry: dict[str, Any] = {"rule": rule.name, "enabled": rule.enabled, "threshold_days": threshold, "conditions": []}
+        if not rule.enabled or not rule.match:
+            entry["result"] = "skipped_disabled" if not rule.enabled else "skipped_empty"
+            trace.append(entry)
+            continue
+        all_ok = True
+        for key, wanted in rule.match.items():
+            ok, actual, _ = check_key(track, enrichment, key, wanted)
+            entry["conditions"].append({"key": key, "wanted": wanted, "actual": actual, "passed": ok})
+            all_ok = all_ok and ok
+        if decided is not None:
+            entry["result"] = "not_reached_but_would_match" if all_ok else "not_reached"
+        elif all_ok:
+            decided = rule.name
+            aged = age is not None and age >= threshold
+            entry["result"] = "matched" if aged else "matched_too_young"
+        else:
+            entry["result"] = "failed"
+        trace.append(entry)
+    return {"trace": trace, "decided_by": decided, "age_days": age}
 
 
 def first_match(

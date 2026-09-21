@@ -303,7 +303,7 @@ def test_plan_distinct_missing_names_each_warn():
 def test_plan_limit_caps_moves_and_takes_oldest_first():
     ts = [track(1, age=20), track(2, age=90), track(3, age=50), track(4, age=70)]
     p = plan_for(ts, cfg(rule(BONOBO)), [pl("P")], limit=2)
-    assert [m["uri"] for m in p.moves] == ["spotify:track:t2", "spotify:track:t4"]
+    assert [m["uri"] for m in p.moves] == ["spotify:track:t4", "spotify:track:t2"]  # oldest two selected, listed newest first
     assert p.evaluated == 4
 
 
@@ -325,10 +325,10 @@ def test_plan_limit_does_not_count_missing_targets():
     assert len(p.moves) == 1 and len(p.skipped_playlist_missing) == 1
 
 
-def test_plan_moves_sorted_oldest_first_without_limit():
+def test_plan_moves_sorted_newest_first_without_limit():
     ts = [track(1, age=20), track(2, age=90), track(3, age=50)]
     p = plan_for(ts, cfg(rule(BONOBO)), [pl("P")])
-    assert [m["uri"] for m in p.moves] == ["spotify:track:t2", "spotify:track:t3", "spotify:track:t1"]
+    assert [m["uri"] for m in p.moves] == ["spotify:track:t1", "spotify:track:t3", "spotify:track:t2"]
 
 
 def test_plan_since_filter_keeps_on_or_after():
