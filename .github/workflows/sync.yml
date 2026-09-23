@@ -61,6 +61,10 @@ jobs:
           python -c "from src.config import load_config; load_config('config.yaml'); print('config.yaml is valid')"
 
       - name: Sync
+        env:
+          # Only this step (the one that produces logs the next step commits) marks itself as a "committed run",
+          # so logging.include_track_names is honoured only for output that is actually about to be published.
+          SPOTISORT_COMMITTED_RUN: "1"
         run: |
           set -euo pipefail
           args=(--config config.yaml --max-moves "${MAX_MOVES:-50}")

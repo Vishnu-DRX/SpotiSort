@@ -9,7 +9,8 @@ import pytest
 
 from src import artifacts
 from src.artifacts import (
-    atomic_write_json, build_latest_plan, config_hash, iso, run_entry, update_runs_index,
+    atomic_write_json, build_latest_plan, config_hash, iso, redact_log, redact_plan, run_entry, schedule_info,
+    update_runs_index,
 )
 from src.models import Artist, Config, Enrichment, Playlist, Rule, Track
 
@@ -475,3 +476,132 @@ def test_atomic_write_replace_failure_cleans_tmp(tmp_path, monkeypatch):
     with pytest.raises(OSError):
         atomic_write_json(f, {"a": 2})
     assert json.loads(f.read_text()) == {"a": 1} and [p.name for p in tmp_path.iterdir()] == ["x.json"]
+
+
+# ------------------------------------------------------------- privacy redaction (decision 32)
+
+
+def test_redact_plan_removes_titles_and_artists_but_keeps_everything_else():
+    original = plan([trk(1), trk(2, artist="Tycho")])
+    redacted = redact_plan(original)
+    assert redacted is not original["songs"] and redacted["songs"] is not original["songs"]  # no aliasing
+    assert redacted["titles_hidden"] is True
+    assert "titles_hidden" not in original  # the source snapshot is untouched
+    for song in redacted["songs"]:
+        assert song["title"] is None and song["artists"] == []
+    # everything that isn't a name is preserved byte-for-byte
+    stripped = json.loads(json.dumps(original))
+    for orig_song, red_song in zip(stripped["songs"], redacted["songs"]):
+        for key in orig_song:
+            if key not in ("title", "artists", "explain"):
+                assert red_song[key] == orig_song[key], key
+    assert redacted["counts"] == original["counts"] and redacted["rules"] == original["rules"]
+
+
+def test_redact_plan_hides_name_bearing_condition_values_in_explain_trace():
+    cfg = Config(rules=(R("chill", {"artist_in": ["Bonobo"], "explicit": True}, "Chill"),))
+    redacted = redact_plan(plan([trk(1)], cfg=cfg))
+    conditions = redacted["songs"][0]["explain"]["trace"][0]["conditions"]
+    by_key = {c["key"]: c for c in conditions}
+    assert by_key["artist_in"]["actual"] is None and by_key["artist_in"]["passed"] is True  # match result kept
+    assert by_key["explicit"]["actual"] is not None  # explicit is not a name-bearing key
+
+
+def test_redact_plan_does_not_mutate_its_input():
+    original = plan([trk(1)])
+    before = json.loads(json.dumps(original))
+    redact_plan(original)
+    assert original == before
+
+
+def test_redact_log_removes_track_and_artist_everywhere_they_appear():
+    log = {
+        "moved": [{"track": "Song A", "artist": "Bonobo", "uri": "spotify:track:t1", "playlist": "Chill",
+                   "playlist_id": "id-Chill", "rule": "chill", "age_days": 30, "already_in_target": False}],
+        "skipped_too_young": [{"track": "Song B", "artist": "Tycho", "rule": "chill", "age_days": 1, "threshold_days": 14}],
+        "skipped_playlist_missing": [{"track": "Song C", "target_playlist": "Ghost", "rule": "ghost",
+                                      "reason": "missing", "would_create": False}],
+        "journal": [{"uri": "spotify:track:t1", "name": "Song A", "artists": "Bonobo",
+                     "original_added_at": "2026-08-01T00:00:00+00:00", "target_playlist_id": "id-Chill"}],
+        "evaluated": 5, "errors": [], "warnings": [],
+    }
+    redacted = redact_log(log)
+    assert redacted["titles_hidden"] is True
+    assert redacted["moved"][0]["track"] is None and redacted["moved"][0]["artist"] is None
+    assert redacted["moved"][0]["uri"] == "spotify:track:t1" and redacted["moved"][0]["playlist"] == "Chill"
+    assert redacted["skipped_too_young"][0]["track"] is None and redacted["skipped_too_young"][0]["artist"] is None
+    assert redacted["skipped_too_young"][0]["rule"] == "chill"
+    assert redacted["skipped_playlist_missing"][0]["track"] is None
+    assert redacted["skipped_playlist_missing"][0]["target_playlist"] == "Ghost"  # playlist name is not a song name
+    assert redacted["journal"][0]["name"] is None and redacted["journal"][0]["artists"] is None
+    assert redacted["journal"][0]["uri"] == "spotify:track:t1"  # restore still works from a redacted log's journal
+    assert redacted["journal"][0]["target_playlist_id"] == "id-Chill"
+    assert redacted["journal"][0]["original_added_at"] == "2026-08-01T00:00:00+00:00"
+    assert redacted["evaluated"] == 5
+
+
+def test_redact_log_handles_missing_optional_sections():
+    assert redact_log({"evaluated": 0}) == {"evaluated": 0, "titles_hidden": True}
+
+
+def test_redact_log_does_not_mutate_its_input():
+    log = {"moved": [{"track": "Song A", "artist": "Bonobo", "uri": "u1"}]}
+    before = json.loads(json.dumps(log))
+    redact_log(log)
+    assert log == before
+
+
+# ------------------------------------------------------------- schedule_info (decision 34)
+
+
+def test_schedule_info_none_when_not_scheduled():
+    assert schedule_info(None, NOW) is None
+    assert schedule_info("", NOW) is None
+    assert schedule_info("   ", NOW) is None
+
+
+def test_schedule_info_daily_cron_description_and_next_run():
+    info = schedule_info("0 3 * * *", NOW)
+    assert info["cron"] == "0 3 * * *"
+    assert info["description"] == "Every day at 03:00 UTC"
+    assert info["next_run"] == iso(NOW.replace(hour=3, minute=0, second=0, microsecond=0) + timedelta(days=1))
+
+
+def test_schedule_info_next_run_is_today_if_still_ahead():
+    early = NOW.replace(hour=0, minute=0)
+    info = schedule_info("0 3 * * *", early)
+    assert info["next_run"] == iso(early.replace(hour=3, minute=0))
+
+
+def test_schedule_info_weekly_cron_names_the_day():
+    # 2026-09-21 is a Monday; day-of-week 1 = Monday in cron's 0=Sunday numbering
+    info = schedule_info("30 9 * * 1", NOW)
+    assert info["description"] == "Every Monday at 09:30 UTC"
+    assert info["next_run"] is not None
+
+
+def test_schedule_info_unparseable_cron_still_returns_a_description():
+    info = schedule_info("*/15 * * * *", NOW)
+    assert info["cron"] == "*/15 * * * *" and info["next_run"] is None and "*/15" in info["description"]
+    info = schedule_info("garbage", NOW)
+    assert info["next_run"] is None and "garbage" in info["description"]
+
+
+def test_schedule_info_out_of_range_fields_do_not_crash():
+    info = schedule_info("99 99 * * *", NOW)
+    assert info["next_run"] is None
+
+
+def test_update_runs_index_stores_schedule():
+    d = update_runs_index_target = {}
+    from src.artifacts import update_runs_index as uri_
+
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        f = f"{td}/runs.json"
+        sched = schedule_info("0 3 * * *", NOW)
+        data = uri_(f, {"run_id": "a", "time": iso(NOW)}, NOW, schedule=sched)
+        assert data["schedule"] == sched
+        # a later call without a schedule argument does not silently keep the old one hostage on the caller's behalf
+        data2 = uri_(f, {"run_id": "b", "time": iso(NOW)}, NOW)
+        assert data2["schedule"] is None

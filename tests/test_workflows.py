@@ -85,3 +85,14 @@ def test_sync_permissions_and_bot_identity(sync):
 
 def test_tests_workflow_is_read_only():
     assert load("tests.yml")["permissions"] == {"contents": "read"}
+
+
+def test_sync_step_marks_itself_as_a_committed_run_and_only_that_step(sync):
+    """SPOTISORT_COMMITTED_RUN gates title redaction (decision 32). It must be scoped to the Sync step alone —
+    setting it at job level would also affect 'Check configuration exists', which is harmless today but would
+    silently change behaviour if that step ever ran src.sync. Job-level env must not carry it either."""
+    steps = sync["jobs"]["sync"]["steps"]
+    assert "SPOTISORT_COMMITTED_RUN" not in sync["jobs"]["sync"].get("env", {})
+    marked = [s for s in steps if "SPOTISORT_COMMITTED_RUN" in s.get("env", {})]
+    assert [s["name"] for s in marked] == ["Sync"]
+    assert marked[0]["env"]["SPOTISORT_COMMITTED_RUN"] == "1"

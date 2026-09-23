@@ -430,3 +430,40 @@ def test_target_position_default_and_values():
     for bad in ("middle", 0, None, True):
         with pytest.raises(ConfigError, match="target_position"):
             _cfg(rules=[{**base, "target_position": bad}])
+
+
+def test_logging_include_track_names_default_false():
+    assert _cfg().include_track_names is False
+    assert _cfg(logging={}).include_track_names is False
+
+
+def test_logging_include_track_names_true():
+    assert _cfg(logging={"include_track_names": True}).include_track_names is True
+
+
+def test_logging_include_track_names_must_be_bool():
+    import pytest
+    from src.config import ConfigError
+
+    with pytest.raises(ConfigError, match="include_track_names"):
+        _cfg(logging={"include_track_names": "yes"})
+
+
+def test_logging_rejects_unknown_key():
+    import pytest
+    from src.config import ConfigError
+
+    with pytest.raises(ConfigError, match="logging.retention_days"):
+        _cfg(logging={"retention_days": 30})
+
+
+def test_logging_must_be_mapping():
+    import pytest
+    from src.config import ConfigError
+
+    with pytest.raises(ConfigError, match="'logging' must be a mapping"):
+        _cfg(logging=["include_track_names"])
+
+
+def test_logging_null_is_same_as_absent():
+    assert _cfg(logging=None).include_track_names is False
