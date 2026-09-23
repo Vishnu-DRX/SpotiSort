@@ -1,5 +1,7 @@
 -r requirements.txt
 pytest>=8
-# Browser tests for the Pages config builder (tests/e2e). Optional: they auto-skip without these.
+# Browser tests for the Pages config builder + marketing site (tests/e2e). Optional: they auto-skip without these.
 playwright>=1.40
 pytest-playwright>=0.5
+# Accessibility scanning (tests/e2e/test_site.py). Optional: those tests auto-skip without it.
+axe-playwright-python>=0.1.4

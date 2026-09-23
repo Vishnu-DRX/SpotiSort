@@ -1,16 +1,20 @@
 {
-  "name": "SpotiSort config builder",
+  "name": "SpotiSort",
   "short_name": "SpotiSort",
-  "description": "Build and validate a SpotiSort config.yaml. Works offline.",
-  "id": "./builder/",
-  "start_url": "./builder/",
+  "description": "Sort your Spotify Liked Songs into playlists you already have, on a schedule, for free.",
+  "id": "./",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#fbfaf7",
-  "theme_color": "#157a3c",
+  "background_color": "#121212",
+  "theme_color": "#121212",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
     { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Configure", "short_name": "Configure", "url": "./builder/", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Dashboard", "short_name": "Dashboard", "url": "./dashboard/", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
   ]
 }

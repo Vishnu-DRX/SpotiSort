@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kitchen sink — SpotiSort components</title>
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#121212" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="tokens.css" />
+<link rel="stylesheet" href="components.css" />
+<style>
+  body { padding: var(--space-5); max-width: 64rem; margin: 0 auto; }
+  .ks-section { margin-bottom: var(--space-7); }
+  .ks-row { display: flex; flex-wrap: wrap; gap: var(--space-3); align-items: center; margin-bottom: var(--space-3); }
+  .ks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--space-4); }
+  .ks-toolbar { position: sticky; top: 0; z-index: 100; background: var(--color-bg); padding: var(--space-3) 0; border-bottom: 1px solid var(--color-border); margin-bottom: var(--space-5); display: flex; gap: var(--space-3); align-items: center; }
+</style>
+</head>
+<body>
+<div class="ks-toolbar">
+  <h1 style="margin:0; font-size: var(--text-lg);">Kitchen sink</h1>
+  <button class="btn btn-secondary btn-sm" data-theme-toggle>Toggle theme</button>
+  <span class="muted small">Every component, every state. Used for screenshots + axe scans.</span>
+</div>
+
+<section class="ks-section" id="buttons" aria-labelledby="h-buttons">
+  <h2 id="h-buttons">Buttons</h2>
+  <div class="ks-row">
+    <button class="btn btn-primary">Primary</button>
+    <button class="btn btn-secondary">Secondary</button>
+    <button class="btn btn-ghost">Ghost</button>
+    <button class="btn btn-danger">Danger</button>
+    <button class="btn btn-icon" aria-label="Settings"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" /></svg></button>
+  </div>
+  <div class="ks-row">
+    <button class="btn btn-primary is-loading">Loading</button>
+    <button class="btn btn-secondary" disabled>Disabled</button>
+    <button class="btn btn-danger" aria-disabled="true">Aria-disabled</button>
+    <button class="btn btn-primary btn-sm">Small</button>
+  </div>
+</section>
+
+<section class="ks-section" id="forms" aria-labelledby="h-forms">
+  <h2 id="h-forms">Inputs, selects, checkboxes, radios, switches</h2>
+  <div class="ks-grid">
+    <div class="field">
+      <label class="label" for="ks-input">Text input <button class="help" data-tip="Example tooltip text." aria-label="Why does this matter?">?</button></label>
+      <input id="ks-input" class="input" type="text" placeholder="Bonobo, Tycho" />
+      <p class="hint">e.g. Bonobo, Tycho</p>
+    </div>
+    <div class="field">
+      <label class="label" for="ks-input-err">Invalid input</label>
+      <input id="ks-input-err" class="input" type="text" aria-invalid="true" aria-describedby="ks-err-msg" value="bad value" />
+      <p class="error-msg" id="ks-err-msg">This playlist name doesn't match anything you own.</p>
+    </div>
+    <div class="field">
+      <label class="label" for="ks-input-dis">Disabled input</label>
+      <input id="ks-input-dis" class="input" type="text" disabled value="Locked" />
+    </div>
+    <div class="field">
+      <label class="label" for="ks-select">Select</label>
+      <select id="ks-select" class="select"><option>Top</option><option>Bottom</option></select>
+    </div>
+    <div class="field">
+      <label class="label" for="ks-num">Number</label>
+      <input id="ks-num" class="input" type="number" value="14" min="0" />
+    </div>
+    <div class="field">
+      <label class="label" for="ks-file">File</label>
+      <input id="ks-file" class="input" type="file" />
+    </div>
+    <div class="field">
+      <label class="label" for="ks-textarea">Textarea</label>
+      <textarea id="ks-textarea" class="textarea">rules:\n  - name: Example</textarea>
+    </div>
+  </div>
+  <div class="ks-row" style="margin-top: var(--space-4)">
+    <label class="check-row"><input type="checkbox" class="check" checked /> Checked</label>
+    <label class="check-row"><input type="checkbox" class="check" /> Unchecked</label>
+    <label class="check-row"><input type="checkbox" class="check" disabled /> Disabled</label>
+    <label class="check-row"><input type="radio" class="radio" name="ks-radio" checked /> Radio A</label>
+    <label class="check-row"><input type="radio" class="radio" name="ks-radio" /> Radio B</label>
+  </div>
+  <div class="ks-row">
+    <label class="switch"><input type="checkbox" class="switch-input" role="switch" checked /><span class="switch-ui" aria-hidden="true"></span><span class="switch-label">On</span></label>
+    <label class="switch"><input type="checkbox" class="switch-input" role="switch" /><span class="switch-ui" aria-hidden="true"></span><span class="switch-label">Off</span></label>
+    <label class="switch"><input type="checkbox" class="switch-input" role="switch" disabled /><span class="switch-ui" aria-hidden="true"></span><span class="switch-label">Disabled</span></label>
+  </div>
+  <div class="ks-row">
+    <div class="segmented" role="radiogroup" aria-label="Density demo">
+      <label><input type="radio" name="ks-density" checked /><span>Comfortable</span></label>
+      <label><input type="radio" name="ks-density" /><span>Compact</span></label>
+    </div>
+  </div>
+  <div class="field" style="max-width: 24rem">
+    <label class="label" for="ks-tags-input">Tag input</label>
+    <div class="tags" id="ks-tags" data-tag-input data-values="Bonobo,Tycho"><input id="ks-tags-input" type="text" aria-label="Add an artist" /></div>
+  </div>
+</section>
+
+<section class="ks-section" id="cards" aria-labelledby="h-cards">
+  <h2 id="h-cards">Cards</h2>
+  <div class="ks-grid">
+    <div class="card"><h3>Plain card</h3><p class="muted small">Default surface.</p></div>
+    <div class="card card-elevated"><h3>Elevated card</h3><p class="muted small">With shadow.</p></div>
+    <a class="card card-interactive" href="#cards"><h3>Interactive card</h3><p class="muted small">Hoverable link card.</p></a>
+  </div>
+</section>
+
+<section class="ks-section" id="tabs" aria-labelledby="h-tabs">
+  <h2 id="h-tabs">Tabs</h2>
+  <div role="tablist" aria-label="Kitchen sink tabs demo">
+    <button role="tab" id="ks-t1" aria-controls="ks-p1" aria-selected="true" class="tab">Basics</button>
+    <button role="tab" id="ks-t2" aria-controls="ks-p2" aria-selected="false" class="tab">Rules</button>
+    <button role="tab" id="ks-t3" aria-controls="ks-p3" aria-selected="false" class="tab">Review</button>
+  </div>
+  <div role="tabpanel" id="ks-p1" aria-labelledby="ks-t1" class="tabpanel">Basics panel content.</div>
+  <div role="tabpanel" id="ks-p2" aria-labelledby="ks-t2" class="tabpanel" hidden>Rules panel content.</div>
+  <div role="tabpanel" id="ks-p3" aria-labelledby="ks-t3" class="tabpanel" hidden>Review panel content.</div>
+</section>
+
+<section class="ks-section" id="overlays" aria-labelledby="h-overlays">
+  <h2 id="h-overlays">Modal, drawer</h2>
+  <div class="ks-row">
+    <button class="btn btn-secondary" data-open="ks-modal">Open modal</button>
+    <button class="btn btn-secondary" data-open="ks-drawer">Open drawer</button>
+    <button class="btn btn-secondary" id="ks-confirm-btn">Open confirm dialog</button>
+  </div>
+  <div class="overlay" id="ks-modal" hidden>
+    <div class="dialog" role="dialog" aria-labelledby="ks-modal-title">
+      <div class="dialog-head"><h2 id="ks-modal-title">Example modal</h2><button class="btn btn-icon" data-close aria-label="Close">×</button></div>
+      <div class="dialog-body"><p>Focus is trapped here; Esc closes; focus returns to the trigger.</p><input class="input" placeholder="Focusable field" /></div>
+      <div class="dialog-foot"><button class="btn btn-secondary" data-close>Cancel</button><button class="btn btn-primary" data-close>Confirm</button></div>
+    </div>
+  </div>
+  <div class="overlay overlay-side" id="ks-drawer" hidden>
+    <div class="drawer" role="dialog" aria-labelledby="ks-drawer-title">
+      <div class="dialog-head"><h2 id="ks-drawer-title">Example drawer</h2><button class="btn btn-icon" data-close aria-label="Close">×</button></div>
+      <div class="dialog-body"><p>Same behaviour as the modal, slides from the side.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="ks-section" id="toasts" aria-labelledby="h-toasts">
+  <h2 id="h-toasts">Toasts</h2>
+  <div class="ks-row">
+    <button class="btn btn-secondary btn-sm" id="ks-toast-info">Info toast</button>
+    <button class="btn btn-secondary btn-sm" id="ks-toast-success">Success toast</button>
+    <button class="btn btn-secondary btn-sm" id="ks-toast-warning">Warning toast</button>
+    <button class="btn btn-secondary btn-sm" id="ks-toast-error">Error toast</button>
+  </div>
+</section>
+
+<section class="ks-section" id="tooltips" aria-labelledby="h-tooltips">
+  <h2 id="h-tooltips">Tooltip, popover</h2>
+  <div class="ks-row">
+    <button class="help" data-tip="Days before a song is eligible to move." aria-label="Why does this matter?">?</button>
+    <span tabindex="0" data-tip="Matched on any credited artist, case-insensitive.">Hover or focus me</span>
+    <button aria-expanded="false" data-popover="ks-pop" class="btn btn-secondary btn-sm">Open popover</button>
+    <div id="ks-pop" hidden><p style="margin:0">Richer popover content, can include a <a href="#tooltips">link</a>.</p></div>
+  </div>
+</section>
+
+<section class="ks-section" id="badges" aria-labelledby="h-badges">
+  <h2 id="h-badges">Badge, chip</h2>
+  <div class="ks-row">
+    <span class="badge">Neutral</span>
+    <span class="badge badge-success">Healthy</span>
+    <span class="badge badge-danger">Error</span>
+    <span class="badge badge-warning">Stale</span>
+    <span class="badge badge-info">Dry run</span>
+  </div>
+  <div class="ks-row">
+    <button class="chip" aria-pressed="true">Decision: Will move</button>
+    <button class="chip" aria-pressed="false">Rule: 2</button>
+    <span class="chip">Language: Hindi <button class="chip-x" aria-label="Remove Hindi filter">×</button></span>
+  </div>
+</section>
+
+<section class="ks-section" id="table" aria-labelledby="h-table">
+  <h2 id="h-table">Table</h2>
+  <div class="table-wrap">
+    <table class="table">
+      <thead><tr><th data-sort="text">Song</th><th data-sort="text">Decision</th><th data-sort="num" class="num">Age (days)</th></tr></thead>
+      <tbody>
+        <tr><td>Track Alpha</td><td><span class="badge badge-success">Will move</span></td><td class="num" data-value="21">21</td></tr>
+        <tr><td>Track Beta</td><td><span class="badge badge-info">Too new</span></td><td class="num" data-value="3">3</td></tr>
+        <tr><td>Track Gamma</td><td><span class="badge">No match</span></td><td class="num" data-value="40">40</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="ks-section" id="feedback" aria-labelledby="h-feedback">
+  <h2 id="h-feedback">Empty state, skeleton, banner, stepper</h2>
+  <div class="empty" style="margin-bottom: var(--space-4)">
+    <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /></svg>
+    <h3>No songs waiting</h3>
+    <p>Your inbox is empty — check back after your next scheduled run.</p>
+  </div>
+  <div class="stack-sm" style="max-width: 20rem; margin-bottom: var(--space-4)">
+    <div class="skeleton-line"></div>
+    <div class="skeleton-line"></div>
+    <div class="skeleton-line short"></div>
+  </div>
+  <div class="stack-sm" style="margin-bottom: var(--space-4)">
+    <div class="banner" role="status"><svg class="icon" viewBox="0 0 24 24"><path d="M12 16v-4M12 8h.01" /><circle cx="12" cy="12" r="9" /></svg><div class="banner-body">Info banner: this is a dry run.</div></div>
+    <div class="banner banner-success" role="status"><svg class="icon" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg><div class="banner-body">Success banner: reconcile OK.</div></div>
+    <div class="banner banner-warning" role="status"><svg class="icon" viewBox="0 0 24 24"><path d="M12 9v4M12 17h.01" /><circle cx="12" cy="12" r="9" /></svg><div class="banner-body">Warning banner: data is 3 days old. <button class="btn btn-icon btn-sm" data-dismiss aria-label="Dismiss">×</button></div></div>
+    <div class="banner banner-danger" role="alert"><svg class="icon" viewBox="0 0 24 24"><path d="M12 8v5M12 17h.01" /><circle cx="12" cy="12" r="9" /></svg><div class="banner-body">Error banner: a run failed to reconcile.</div></div>
+  </div>
+  <ol class="stepper">
+    <li class="is-done">Basics</li>
+    <li aria-current="step">Languages</li>
+    <li>Rules</li>
+    <li>Review</li>
+  </ol>
+</section>
+
+<section class="ks-section" id="code" aria-labelledby="h-code">
+  <h2 id="h-code">Code / YAML view</h2>
+  <div class="code" data-copyable><pre><code>default_days_threshold: 14
+fallback_playlist: null</code></pre></div>
+</section>
+
+<section class="ks-section" id="disclosure" aria-labelledby="h-disclosure">
+  <h2 id="h-disclosure">Disclosure</h2>
+  <details class="disclosure"><summary>Is it safe to run against my real library?</summary><p>Yes — nothing is removed until it is confirmed added elsewhere.</p></details>
+  <details class="disclosure" open><summary>What is a dry run? (open by default)</summary><p>A preview that performs zero write calls.</p></details>
+</section>
+
+<section class="ks-section" id="meter" aria-labelledby="h-meter">
+  <h2 id="h-meter">Meter</h2>
+  <div class="meter" role="meter" aria-label="Genre coverage" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" style="--v:72%; max-width: 20rem"><span></span></div>
+  <div class="meter meter-warning" role="meter" aria-label="Language coverage" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="--v:40%; max-width: 20rem; margin-top: var(--space-2)"><span></span></div>
+  <div class="meter meter-danger" role="meter" aria-label="Signal precision" aria-valuenow="12" aria-valuemin="0" aria-valuemax="100" style="--v:12%; max-width: 20rem; margin-top: var(--space-2)"><span></span></div>
+</section>
+
+<script src="ui.js"></script>
+<script>
+  document.getElementById('ks-confirm-btn').addEventListener('click', function () {
+    SpotiUI.confirm({ title: 'Restore this version?', message: 'This replaces your current draft.', confirmLabel: 'Restore', cancelLabel: 'Cancel' });
+  });
+  document.getElementById('ks-toast-info').addEventListener('click', function () { SpotiUI.toast('This is an info toast.'); });
+  document.getElementById('ks-toast-success').addEventListener('click', function () { SpotiUI.toast('Configuration saved.', { type: 'success' }); });
+  document.getElementById('ks-toast-warning').addEventListener('click', function () { SpotiUI.toast('Data is 3 days old.', { type: 'warning' }); });
+  document.getElementById('ks-toast-error').addEventListener('click', function () { SpotiUI.toast('Could not save.', { type: 'error' }); });
+</script>
+</body>
+</html>

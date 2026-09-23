@@ -143,6 +143,11 @@
   --motion-ease: cubic-bezier(0.2, 0, 0, 1);
   --touch-target: 44px;
   --content-max: 80rem;
+  --header-h: 64px;
+  --z-header: 50;
+  --z-overlay: 200;
+  --z-toast: 300;
+  --z-tip: 400;
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,7 +1,7 @@
 // SpotiSort service worker: cache-first for the app shell so the builder works offline.
 // Bump CACHE_VERSION whenever any cached file changes. All URLs are relative to this file
 // (works under the /SpotiSort/ GitHub Pages base path).
-const CACHE_VERSION = 'v5';
+const CACHE_VERSION = 'v6';
 const CACHE_NAME = 'spotisort-shell-' + CACHE_VERSION;
 const SHELL = [
   './',
@@ -9,6 +9,10 @@ const SHELL = [
   'style.css',
   'app.js',
   'manifest.webmanifest',
+  '404.html',
+  'site.config.json',
+  'setup/',
+  'setup/index.html',
   'builder/',
   'builder/index.html',
   'builder/builder.css',
@@ -16,10 +20,18 @@ const SHELL = [
   'builder/validate.js',
   'builder/languages.js',
   'vendor/js-yaml.min.js',
+  'icons/favicon-32.png',
+  'icons/icon-180.png',
   'icons/icon-192.png',
   'icons/icon-512.png',
   'icons/icon-maskable-512.png',
+  'assets/favicon.svg',
+  'assets/og.png',
   'assets/tokens.css',
+  'assets/components.css',
+  'assets/site.css',
+  'assets/ui.js',
+  'assets/shell.js',
   'dashboard/',
   'dashboard/index.html',
   'dashboard/dashboard.css',
@@ -71,7 +83,7 @@ self.addEventListener('fetch', (event) => {
         return await fetch(req);
       } catch (err) {
         if (req.mode === 'navigate') {
-          const shell = await cache.match(new URL('builder/index.html', self.location).href);
+          const shell = await cache.match(new URL('index.html', self.location).href);
           if (shell) return shell;
         }
         throw err;

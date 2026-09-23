@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<script>try{var t=localStorage.getItem('spotisort-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Setup guide — SpotiSort</title>
+<meta name="description" content="Step-by-step setup for SpotiSort: create a Spotify developer app, fork the repo, get a refresh token, add secrets, and run your first safe dry run." />
+<link rel="canonical" href="https://vishnu-drx.github.io/SpotiSort/setup/" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Setup guide — SpotiSort" />
+<meta property="og:description" content="Step-by-step setup for SpotiSort, from a Spotify developer app to your first safe dry run." />
+<meta property="og:image" content="../assets/og.png" />
+<meta property="og:url" content="https://vishnu-drx.github.io/SpotiSort/setup/" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="theme-color" content="#121212" />
+<link rel="manifest" href="../manifest.webmanifest" />
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
+<link rel="icon" type="image/png" sizes="32x32" href="../icons/favicon-32.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="../icons/icon-180.png" />
+<link rel="stylesheet" href="../assets/tokens.css" />
+<link rel="stylesheet" href="../assets/components.css" />
+<link rel="stylesheet" href="../assets/site.css" />
+</head>
+<body>
+<div id="site-shell">
+  <noscript>
+    <p><a href="../index.html">SpotiSort</a> ·
+       <a href="../builder/">Configure</a> ·
+       <a href="../dashboard/">Dashboard</a> ·
+       <a href="./">Setup guide</a> ·
+       <a href="https://github.com/Vishnu-DRX/SpotiSort">GitHub</a></p>
+  </noscript>
+</div>
+
+<main id="main" class="container" style="padding-top: var(--space-6); padding-bottom: var(--space-8);">
+  <div class="section-head" style="margin-bottom: var(--space-6); text-align: left; max-width: 46rem;">
+    <h1>Setup guide</h1>
+    <p>About 15–20 minutes. Every command below has a copy button. Each step tells you what you should see before moving on.</p>
+  </div>
+
+  <ol class="setup-steps" style="list-style: none; padding: 0; margin: 0 0 var(--space-7);">
+
+    <li class="setup-step">
+      <span class="setup-step-num" aria-hidden="true"></span>
+      <div class="card stack">
+        <h2>Create a Spotify Developer app</h2>
+        <p>Spotify Premium is required to create a developer app (this can't be checked automatically — it's a hard prerequisite). Go to the <a href="https://developer.spotify.com/dashboard" rel="noopener">Spotify Developer dashboard</a> and create an app.</p>
+        <p>Use exactly this redirect URI — SpotiSort's local login server listens here:</p>
+        <div class="code" data-copyable><pre><code>http://127.0.0.1:8888/callback</code></pre></div>
+        <p>Note the <strong>Client ID</strong> shown on the app page — you'll need it in step 3. No Client Secret is needed.</p>
+        <div class="banner banner-success" role="note">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
+          <div class="banner-body"><strong>You should see:</strong> your new app's dashboard page with a visible Client ID and the redirect URI listed under settings.</div>
+        </div>
+      </div>
+    </li>
+
+    <li class="setup-step">
+      <span class="setup-step-num" aria-hidden="true"></span>
+      <div class="card stack">
+        <h2>Fork the repository</h2>
+        <p>Fork <a href="https://github.com/Vishnu-DRX/SpotiSort" rel="noopener">github.com/Vishnu-DRX/SpotiSort</a> to your own GitHub account, then clone your fork locally.</p>
+        <div class="code" data-copyable><pre><code>git clone https://github.com/&lt;your-username&gt;/SpotiSort.git</code></pre></div>
+        <div class="banner banner-success" role="note">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
+          <div class="banner-body"><strong>You should see:</strong> a <code>SpotiSort</code> folder on your machine, and a fork under your own account on GitHub.</div>
+        </div>
+      </div>
+    </li>
+
+    <li class="setup-step">
+      <span class="setup-step-num" aria-hidden="true"></span>
+      <div class="card stack">
+        <h2>Get your refresh token locally</h2>
+        <p>Install Python 3.12, then from inside your cloned fork:</p>
+        <div class="code" data-copyable><pre><code>python -m pip install -r requirements.txt</code></pre></div>
+        <p>Copy <code>.env.example</code> to <code>.env</code> and put your Client ID from step 1 in it:</p>
+        <div class="code" data-copyable><pre><code>SPOTIFY_CLIENT_ID=your-client-id-here</code></pre></div>
+        <p>Then run the one-time login:</p>
+        <div class="code" data-copyable><pre><code>python -m src.spotify_client --setup</code></pre></div>
+        <p class="hint">This opens your browser to Spotify's own login screen, then captures the result on <code>127.0.0.1:8888</code>. Nothing secret is printed to the terminal.</p>
+        <div class="banner banner-success" role="note">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
+          <div class="banner-body"><strong>You should see:</strong> a browser tab confirming login succeeded, and a new <code>SPOTIFY_REFRESH_TOKEN</code> line written into your local <code>.env</code>.</div>
+        </div>
+      </div>
+    </li>
+
+    <li class="setup-step">
+      <span class="setup-step-num" aria-hidden="true"></span>
+      <div class="card stack">
+        <h2>Add the two Actions secrets</h2>
+        <p>SpotiSort's scheduled workflow needs <code>SPOTIFY_CLIENT_ID</code> and <code>SPOTIFY_REFRESH_TOKEN</code> as GitHub Actions secrets on your fork. <strong>Never paste these into this website</strong> — only into GitHub itself.</p>
+        <p><strong>Windows:</strong></p>
+        <div class="code" data-copyable><pre><code>powershell scripts/set_secrets.ps1</code></pre></div>
+        <p><strong>macOS / Linux</strong> (values are piped in via stdin, never shown or logged):</p>
+        <div class="code" data-copyable><pre><code>gh secret set SPOTIFY_CLIENT_ID --body "$SPOTIFY_CLIENT_ID"
+gh secret set SPOTIFY_REFRESH_TOKEN --body "$SPOTIFY_REFRESH_TOKEN"</code></pre></div>
+        <div class="banner banner-success" role="note">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
+          <div class="banner-body"><strong>You should see:</strong> both secrets listed under your fork's Settings → Secrets and variables → Actions (values are never shown again, only names).</div>
+        </div>
+      </div>
+    </li>
+
+    <li class="setup-step">
+      <span class="setup-step-num" aria-hidden="true"></span>
+      <div class="card stack">
+        <h2>Allow Actions to write, and enable Pages</h2>
+        <p>In your fork: <strong>Settings → Actions → General → Workflow permissions</strong>, select <strong>Read and write permissions</strong>, and save. This lets the scheduled run commit its own logs back to your repo.</p>
+        <p>Then: <strong>Settings → Pages</strong>, set source to <strong>Deploy from a branch</strong>, branch <code>main</code>, folder <code>/docs</code>.</p>
+        <div class="banner banner-success" role="note">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
+          <div class="banner-body"><strong>You should see:</strong> a Pages URL like <code>https://&lt;you&gt;.github.io/SpotiSort/</code> serving your own copy of this site within a few minutes.</div>
+        </div>
+      </div>
+    </li>
+
+    <li class="setup-step">
+      <span class="setup-step-num" aria-hidden="true"></span>
+      <div class="card stack">
+        <h2>Create your config</h2>
+        <p>Open <a href="../builder/">Configure</a> on your Pages site, build your rules, and select <strong>Save configuration</strong>. Put the downloaded <code>config.yaml</code> in your repo's root and commit it.</p>
+        <div class="banner banner-success" role="note">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
+          <div class="banner-body"><strong>You should see:</strong> <code>config.yaml</code> at the top level of your repo, matching what Configure previewed.</div>
+        </div>
+      </div>
+    </li>
+
+    <li class="setup-step">
+      <span class="setup-step-num" aria-hidden="true"></span>
+      <div class="card stack">
+        <h2>First dry run</h2>
+        <p>On GitHub: <strong>Actions → Sync → Run workflow</strong>, leave <strong>dry run</strong> ticked, and run it. Then open your <a href="../dashboard/">Dashboard</a> and read the Overview and Inbox views.</p>
+        <div class="banner banner-success" role="note">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
+          <div class="banner-body"><strong>You should see:</strong> a green run in the Actions tab, and the dashboard showing what it would have moved — with nothing actually moved yet.</div>
+        </div>
+      </div>
+    </li>
+
+    <li class="setup-step">
+      <span class="setup-step-num" aria-hidden="true"></span>
+      <div class="card stack">
+        <h2>Go live, later</h2>
+        <p>When the dry run looks right, live runs are still guarded: a <strong>newest N</strong> selector and a <strong>max-moves cap</strong> stop any single run from touching more than you expect.</p>
+        <p>By default, committed run logs hide song titles (<code>logging.include_track_names: false</code>) — public logs carry counts and URIs only. Turn it on in Configure if you want your own logs to show titles, or open the log files locally in the dashboard to see titles regardless of this setting.</p>
+      </div>
+    </li>
+  </ol>
+
+  <section class="card stack" aria-labelledby="trouble-heading">
+    <h2 id="trouble-heading">If something goes wrong</h2>
+    <ul>
+      <li><strong>Login window doesn't open:</strong> re-run <code>python -m src.spotify_client --setup</code>; make sure nothing else is using port 8888.</li>
+      <li><strong>Actions run fails immediately:</strong> check both secrets are set (Settings → Secrets and variables → Actions) and that Workflow permissions are Read and write.</li>
+      <li><strong>Pages shows a 404:</strong> confirm the Pages source is <code>main</code> / <code>/docs</code> and wait a few minutes after enabling it.</li>
+      <li><strong>Dashboard says data is stale:</strong> that's expected until a scheduled or manual run has completed and committed a new log.</li>
+      <li>Still stuck? Open an issue on the <a href="https://github.com/Vishnu-DRX/SpotiSort/issues" rel="noopener">upstream repository</a>.</li>
+    </ul>
+  </section>
+</main>
+
+<script src="../assets/ui.js" defer></script>
+<script src="../assets/shell.js" defer data-active="setup"></script>
+</body>
+</html>

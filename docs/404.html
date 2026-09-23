@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<script>try{var t=localStorage.getItem('spotisort-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Page not found — SpotiSort</title>
+<meta name="description" content="This page doesn't exist on SpotiSort. Head back home or open the setup guide." />
+<meta name="robots" content="noindex" />
+<meta name="theme-color" content="#121212" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png" />
+<link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/components.css" />
+<link rel="stylesheet" href="assets/site.css" />
+</head>
+<body>
+<div id="site-shell">
+  <noscript>
+    <p><a href="index.html">SpotiSort</a> ·
+       <a href="builder/">Configure</a> ·
+       <a href="dashboard/">Dashboard</a> ·
+       <a href="setup/">Setup guide</a> ·
+       <a href="https://github.com/Vishnu-DRX/SpotiSort">GitHub</a></p>
+  </noscript>
+</div>
+
+<main id="main" class="container notfound">
+  <svg width="72" height="72" viewBox="0 0 32 32" role="img" aria-hidden="true" style="margin: 0 auto var(--space-4);">
+    <rect x="1" y="1" width="30" height="30" rx="9" fill="var(--color-elevated)" stroke="var(--color-border)" />
+    <path d="M9 20l7-7 7 7" stroke="var(--color-muted)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M9 13l7-7 7 7" stroke="var(--color-muted)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.5" />
+  </svg>
+  <p class="notfound-code">404</p>
+  <h1>This song skipped to nowhere</h1>
+  <p class="muted">The page you're looking for doesn't exist, or the link is out of date.</p>
+  <div class="hero-cta" style="margin-top: var(--space-5);">
+    <a class="btn btn-primary" href="index.html">Back to Home</a>
+    <a class="btn btn-secondary" href="setup/">Setup guide</a>
+  </div>
+</main>
+
+<script src="assets/ui.js" defer></script>
+<script src="assets/shell.js" defer data-active="none"></script>
+</body>
+</html>

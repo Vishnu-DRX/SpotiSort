@@ -1,56 +1,189 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="SpotiSort turns your Spotify Liked Songs into an inbox, sorting them into playlists you already have." />
-    <meta name="theme-color" content="#157a3c" />
-    <title>SpotiSort</title>
-    <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
-    <link rel="apple-touch-icon" href="icons/icon-192.png" />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="wrap">
-      <header>
-        <h1>SpotiSort</h1>
-        <p class="tagline">Turn your Liked Songs into an inbox.</p>
-        <a class="button" href="builder/">Open the config builder</a>
-        <a class="button secondary" href="dashboard/">Open the dashboard</a>
-        <a class="button secondary" href="https://github.com/Vishnu-DRX/SpotiSort">View on GitHub</a>
-      </header>
-      <main>
-        <section aria-labelledby="status">
-          <h2 id="status">Status</h2>
-          <div class="card">
-            <span class="badge">Phase 1</span>
-            <p>Phase 1 - foundation: core library and CI are in place. Sorting is not enabled yet. The config builder is available now: build and validate your <code>config.yaml</code> in the browser, offline.</p>
-          </div>
-        </section>
-        <section aria-labelledby="what">
-          <h2 id="what">What it does</h2>
-          <p>After N days, your liked songs are matched against your rules - artist, language, genre, release year, explicit - and moved into playlists you already have.</p>
-          <ul>
-            <li>Never creates playlists unless a rule allows it.</li>
-            <li>Dry-run by default, so you see what would happen first.</li>
-            <li>Never loses a liked song: journal, verify, and restore.</li>
-          </ul>
-        </section>
-        <section aria-labelledby="how">
-          <h2 id="how">How it works</h2>
-          <ol>
-            <li>Fork the repository.</li>
-            <li>Create your own Spotify Developer app.</li>
-            <li>Add two GitHub secrets.</li>
-            <li>A daily GitHub Action does the sorting. No server involved.</li>
-          </ol>
-        </section>
-      </main>
-      <footer>
-        <p><a href="https://github.com/Vishnu-DRX/SpotiSort">github.com/Vishnu-DRX/SpotiSort</a></p>
-      </footer>
+<head>
+<meta charset="utf-8" />
+<script>try{var t=localStorage.getItem('spotisort-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SpotiSort — sort your Liked Songs automatically</title>
+<meta name="description" content="SpotiSort treats your Spotify Liked Songs as an inbox and moves older songs into playlists you already have, using rules you write. Free, open source, runs on your own GitHub Actions." />
+<link rel="canonical" href="https://vishnu-drx.github.io/SpotiSort/" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="SpotiSort — sort your Liked Songs automatically" />
+<meta property="og:description" content="Your Liked Songs are an inbox. SpotiSort sorts them into playlists you already have, on a schedule, for free." />
+<meta property="og:image" content="assets/og.png" />
+<meta property="og:url" content="https://vishnu-drx.github.io/SpotiSort/" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="SpotiSort — sort your Liked Songs automatically" />
+<meta name="twitter:description" content="Your Liked Songs are an inbox. SpotiSort sorts them into playlists you already have, on a schedule, for free." />
+<meta name="twitter:image" content="assets/og.png" />
+<meta name="theme-color" content="#121212" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
+<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png" />
+<link rel="stylesheet" href="assets/tokens.css" />
+<link rel="stylesheet" href="assets/components.css" />
+<link rel="stylesheet" href="assets/site.css" />
+</head>
+<body>
+<div id="site-shell">
+  <noscript>
+    <p><a href="index.html">SpotiSort</a> ·
+       <a href="builder/">Configure</a> ·
+       <a href="dashboard/">Dashboard</a> ·
+       <a href="setup/">Setup guide</a> ·
+       <a href="https://github.com/Vishnu-DRX/SpotiSort">GitHub</a></p>
+  </noscript>
+</div>
+
+<main id="main">
+  <section class="hero container">
+    <div class="hero-inner">
+      <h1>Your Liked Songs are an inbox. Let it sort itself.</h1>
+      <p class="hero-sub">SpotiSort waits a few days, then moves each liked song into a playlist you already have — using plain rules you write, running free on your own GitHub Actions.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="setup/">Set up your sorter</a>
+        <a class="btn btn-secondary" href="https://github.com/Vishnu-DRX/SpotiSort" rel="noopener">View on GitHub</a>
+      </div>
     </div>
-    <script src="app.js"></script>
-  </body>
+  </section>
+
+  <section class="section container" aria-labelledby="how-heading">
+    <div class="section-head">
+      <h2 id="how-heading">How it works</h2>
+      <p>Three steps, no server, nothing but your own fork and your own Spotify app.</p>
+    </div>
+    <div class="how-steps">
+      <div class="how-step">
+        <span class="how-step-num" aria-hidden="true">1</span>
+        <h3>Liked Songs inbox</h3>
+        <p class="muted">Every song you like waits here. Nothing moves right away.</p>
+      </div>
+      <div class="how-step">
+        <span class="how-step-num" aria-hidden="true">2</span>
+        <h3>Your rules</h3>
+        <p class="muted">After N days, each song is checked against rules you wrote — language, artist, year, and more.</p>
+      </div>
+      <div class="how-step">
+        <span class="how-step-num" aria-hidden="true">3</span>
+        <h3>Your playlists</h3>
+        <p class="muted">A match moves the song into a playlist you already own. No match, no rule breaks — nothing bad happens.</p>
+      </div>
+    </div>
+    <figure class="stack center" style="margin-top: var(--space-6)">
+      <svg viewBox="0 0 720 160" role="img" aria-labelledby="flow-title" style="max-width: 46rem; margin: 0 auto; width: 100%; height: auto;">
+        <title id="flow-title">Liked Songs inbox flows through rules into your playlists</title>
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0 0L10 5L0 10z" fill="var(--color-text-secondary)" />
+          </marker>
+        </defs>
+        <g font-family="var(--font-sans)" font-size="15" fill="var(--color-text)">
+          <rect x="8" y="46" width="180" height="68" rx="12" fill="var(--color-surface)" stroke="var(--color-border)" />
+          <text x="98" y="72" text-anchor="middle" font-weight="700">Liked Songs</text>
+          <text x="98" y="94" text-anchor="middle" fill="var(--color-text-secondary)" font-size="13">the inbox</text>
+
+          <line x1="192" y1="80" x2="266" y2="80" stroke="var(--color-text-secondary)" stroke-width="2" marker-end="url(#arrow)" />
+
+          <rect x="270" y="46" width="180" height="68" rx="12" fill="var(--color-surface)" stroke="var(--color-border)" />
+          <text x="360" y="72" text-anchor="middle" font-weight="700">Your rules</text>
+          <text x="360" y="94" text-anchor="middle" fill="var(--color-text-secondary)" font-size="13">first match wins</text>
+
+          <line x1="454" y1="80" x2="528" y2="80" stroke="var(--color-text-secondary)" stroke-width="2" marker-end="url(#arrow)" />
+
+          <rect x="532" y="46" width="180" height="68" rx="12" fill="var(--color-elevated)" stroke="var(--color-accent)" stroke-width="2" />
+          <text x="622" y="72" text-anchor="middle" font-weight="700" fill="var(--color-accent-text)">Your playlists</text>
+          <text x="622" y="94" text-anchor="middle" fill="var(--color-text-secondary)" font-size="13">already yours</text>
+        </g>
+      </svg>
+      <figcaption class="sr-only">Diagram: Liked Songs inbox flows into your rules, which route matches into your playlists.</figcaption>
+    </figure>
+  </section>
+
+  <section class="section container" aria-labelledby="features-heading">
+    <div class="section-head">
+      <h2 id="features-heading">Built to be trusted with your library</h2>
+    </div>
+    <div class="feature-grid">
+      <div class="card feature-card">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16M4 12h10M4 19h6" /></svg>
+        <h3>Language-first rules</h3>
+        <p class="muted small">Write rules around language, artist, release year or explicit content — not just genre.</p>
+      </div>
+      <div class="card feature-card">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 12l2 2 4-4" /><circle cx="12" cy="12" r="9" /></svg>
+        <h3>Safe by default</h3>
+        <p class="muted small">Every run previews a dry run first. A song is only removed from Liked Songs after it's confirmed in its new playlist.</p>
+      </div>
+      <div class="card feature-card">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18" /></svg>
+        <h3>Runs free on GitHub Actions</h3>
+        <p class="muted small">No server, no subscription. A scheduled workflow in your own fork does the sorting.</p>
+      </div>
+      <div class="card feature-card">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z" /></svg>
+        <h3>Your data stays in your fork</h3>
+        <p class="muted small">There is no shared backend. Your Spotify credentials and your run history live only in your own repository.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section container" aria-labelledby="dashboard-heading">
+    <div class="section-head">
+      <h2 id="dashboard-heading">See exactly what it will do</h2>
+      <p>The dashboard reads your own run logs — nothing is hidden, and nothing is guessed.</p>
+    </div>
+    <div class="device-frame">
+      <div class="device-frame-bar" aria-hidden="true"><span class="device-frame-dot"></span><span class="device-frame-dot"></span><span class="device-frame-dot"></span></div>
+      <img src="screenshots/dashboard-overview-1280.png" alt="SpotiSort dashboard overview showing last run status, pending songs, moves this week, and a safety verdict." width="1280" height="800" loading="lazy" />
+    </div>
+  </section>
+
+  <section class="section container" aria-labelledby="faq-heading">
+    <div class="section-head">
+      <h2 id="faq-heading">Frequently asked questions</h2>
+    </div>
+    <div class="faq-list stack-sm">
+      <details class="disclosure">
+        <summary>Do I need Spotify Premium?</summary>
+        <p>Yes. As of February 2026, Spotify requires Premium to create the developer app SpotiSort needs. This can't be checked automatically — it's a prerequisite, not a paywall on our side.</p>
+      </details>
+      <details class="disclosure">
+        <summary>Is it safe to run against my real library?</summary>
+        <p>Yes, by design. Nothing is removed from Liked Songs until it has been added to its target playlist and that add has been verified. Every removal is journaled first, so it can be restored. Dry runs never write anything.</p>
+      </details>
+      <details class="disclosure">
+        <summary>What is a dry run?</summary>
+        <p>A preview. SpotiSort fetches your library, evaluates every rule, and writes down exactly what it would move — without calling any endpoint that changes your account. You review it on the dashboard before ever going live.</p>
+      </details>
+      <details class="disclosure">
+        <summary>Why do I need to fork the repository?</summary>
+        <p>SpotiSort has no shared server. Each fork runs its own scheduled job against its own Spotify developer app and its own GitHub Actions secrets — nobody but you ever holds a token that can write to your account.</p>
+      </details>
+      <details class="disclosure">
+        <summary>What does it cost?</summary>
+        <p>Nothing beyond Spotify Premium. GitHub Actions and Pages are free for public repositories at this scale.</p>
+      </details>
+      <details class="disclosure">
+        <summary>Does it ever see my password?</summary>
+        <p>No. Login goes through Spotify's own OAuth screen. SpotiSort only ever holds a refresh token, stored as a GitHub Actions secret in your own fork, never in this website.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="section container" aria-labelledby="trust-heading">
+    <h2 id="trust-heading" class="sr-only">Trust signals</h2>
+    <div class="trust-bar">
+      <span class="trust-bar-item"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z" /></svg>Open source</span>
+      <span class="trust-bar-item"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" /></svg>MIT licence</span>
+      <span class="trust-bar-item"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M12 20V4M20 20v-7" /></svg>No servers</span>
+      <span class="trust-bar-item"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0z" /><path d="M3 12h18" /></svg>No tracking</span>
+    </div>
+  </section>
+</main>
+
+<script src="assets/ui.js" defer></script>
+<script src="assets/shell.js" defer data-active="home"></script>
+<script src="app.js" defer></script>
+</body>
 </html>

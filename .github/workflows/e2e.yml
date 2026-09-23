@@ -7,11 +7,19 @@ on:
 jobs:
   e2e:
     runs-on: ubuntu-latest
+    env:
+      SPOTISORT_BROWSERS: auto
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
       - run: python -m pip install -r requirements-dev.txt
-      - run: python -m playwright install --with-deps chromium
+      - run: python -m playwright install --with-deps chromium firefox webkit
       - run: python -m pytest tests/e2e -q -m e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: site-screenshots
+          path: docs/screenshots/site-*.png
+          if-no-files-found: ignore

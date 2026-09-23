@@ -94,8 +94,8 @@ def test_page_loads_without_external_requests_or_errors(make_page, site):
 def test_landing_page_links_to_builder(make_page, site):
     page, _ = make_page()
     page.goto(site)
-    link = page.get_by_role("link", name="Open the config builder")
-    assert link.get_attribute("href") == "builder/"
+    link = page.get_by_role("link", name="Configure", exact=True)
+    assert link.get_attribute("href").endswith("builder/")
     link.click()
     page.wait_for_url(site + "builder/")
 
@@ -573,8 +573,8 @@ def test_service_worker_and_offline_reload(make_page, site):
     page.reload()  # now controlled by the SW
     page.wait_for_function("navigator.serviceWorker.controller !== null")
     keys = page.evaluate("caches.keys()")
-    assert keys == ["spotisort-shell-v5"]
-    cached = page.evaluate("caches.open('spotisort-shell-v5').then(c => c.keys()).then(ks => ks.map(k => k.url))")
+    assert keys == ["spotisort-shell-v6"]
+    cached = page.evaluate("caches.open('spotisort-shell-v6').then(c => c.keys()).then(ks => ks.map(k => k.url))")
     for needed in ("builder/", "builder/app.js", "builder/languages.js", "builder/validate.js", "builder/builder.css",
                    "vendor/js-yaml.min.js", "manifest.webmanifest", "icons/icon-192.png", "style.css"):
         assert site + needed in cached, needed
@@ -588,7 +588,7 @@ def test_service_worker_and_offline_reload(make_page, site):
     assert validated(preview(page)).rules[0].name == "Offline"
     # landing page works offline too
     page.goto(site)
-    assert page.get_by_role("link", name="Open the config builder").is_visible()
+    assert page.get_by_role("link", name="Configure", exact=True).is_visible()
     ctx.set_offline(False)
 
 
