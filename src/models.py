@@ -76,6 +76,7 @@ class Config:
     language_playlists: dict[str, str] = field(default_factory=dict)  # playlist name -> canonical language
     musicbrainz: bool = True  # enrichment.musicbrainz
     english_default: bool = False  # enrichment.english_default (weak guess; off unless asked for)
+    include_track_names: bool = False  # logging.include_track_names: committed logs carry titles only if true
 
 
 @dataclass(frozen=True)

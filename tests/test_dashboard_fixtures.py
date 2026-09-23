@@ -35,7 +35,7 @@ RULE_KEYS = {"name", "enabled", "target_playlist", "target_position", "threshold
 SONG_KEYS = {"title", "artists", "uri", "added_at", "age_days", "decision", "reason", "rule", "target_playlist", "target_status",
              "eligible_on", "target_position", "language", "genres", "explain"}
 RUN_KEYS = {"run_id", "time", "mode", "what_if", "planned_moves", "moved", "too_young", "no_match", "blocked", "target_problems", "errors",
-            "warnings", "liked_before", "liked_after", "duration_seconds", "verdict", "rule_counts", "log"}
+            "warnings", "liked_before", "liked_after", "duration_seconds", "verdict", "rule_counts", "moves_by_playlist", "log"}
 LOG_KEYS = {"date", "run_id", "mode", "dry_run", "what_if", "evaluated", "moved", "skipped_no_match", "skipped_too_young",
             "skipped_playlist_missing", "errors", "warnings", "journal", "liked_before", "liked_after", "verdict", "rule_counts",
             "config_hash", "plan_counts", "http_audit", "runtime_seconds"}
@@ -68,7 +68,7 @@ def test_plan_matches_contract_and_covers_every_case():
 
 def test_runs_and_logs_match_contract():
     runs = load("runs.json")
-    assert set(runs) == {"version", "generated_at", "runs"} and len(runs["runs"]) >= 6
+    assert set(runs) == {"version", "generated_at", "schedule", "runs"} and len(runs["runs"]) >= 6
     assert [r["time"] for r in runs["runs"]] == sorted((r["time"] for r in runs["runs"]), reverse=True)
     assert {"mismatch", "error", "ok", "dry_run"} <= {r["verdict"] for r in runs["runs"]}
     assert sum(r["mode"] == "apply" for r in runs["runs"]) >= 2

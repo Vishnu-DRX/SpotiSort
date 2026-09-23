@@ -24,6 +24,7 @@ from .rules_engine import age_days, explain
 from .signals import gate
 
 VERSION = 1
+TITLE_CONDITION_KEYS = {"artist_in", "track_name_contains", "album_name_contains"}
 RUNS_KEPT = 90
 WEAK_SOURCES = ("hint", "country_default")
 
@@ -220,7 +221,7 @@ def build_latest_plan(
 def run_entry(
     *, run_id: str, now: datetime, mode: str, plan_counts: Mapping[str, int], moved: int, errors: int, warnings: int,
     liked_before: int, liked_after: int, duration_s: float, rule_counts: Mapping[str, int], log_file: str, what_if: bool = False,
-    reconcile_ok: bool | None = None,
+    reconcile_ok: bool | None = None, moves_by_playlist: Mapping[str, int] | None = None,
 ) -> dict[str, Any]:
     if reconcile_ok is False:
         verdict = "mismatch"
@@ -250,11 +251,12 @@ def run_entry(
         "duration_seconds": round(duration_s, 1),
         "verdict": verdict,
         "rule_counts": dict(rule_counts),
+        "moves_by_playlist": dict(moves_by_playlist or {}),
         "log": log_file,
     }
 
 
-def update_runs_index(path: str | Path, entry: dict[str, Any], now: datetime) -> dict[str, Any]:
+def update_runs_index(path: str | Path, entry: dict[str, Any], now: datetime, schedule: dict[str, Any] | None = None) -> dict[str, Any]:
     """Prepend ``entry`` (newest first), keep the last 90, write atomically."""
     path = Path(path)
     runs: list[dict[str, Any]] = []
@@ -265,6 +267,61 @@ def update_runs_index(path: str | Path, entry: dict[str, Any], now: datetime) ->
     except (OSError, ValueError):
         pass
     runs.insert(0, entry)
-    data = {"version": VERSION, "generated_at": iso(now), "runs": runs[:RUNS_KEPT]}
+    data = {"version": VERSION, "generated_at": iso(now), "schedule": schedule, "runs": runs[:RUNS_KEPT]}
     atomic_write_json(path, data)
     return data
+
+
+# ---------------------------------------------------------------- privacy (decision 32) and schedule
+
+
+def redact_plan(plan: dict[str, Any]) -> dict[str, Any]:
+    """Copy of a latest-plan snapshot with song titles/artists removed (URIs, counts, decisions and rules stay)."""
+    out = json.loads(json.dumps(plan))
+    out["titles_hidden"] = True
+    for s in out.get("songs", []):
+        s["title"], s["artists"] = None, []
+        for entry in (s.get("explain") or {}).get("trace", []):
+            for c in entry.get("conditions", []):
+                if c.get("key") in TITLE_CONDITION_KEYS:
+                    c["actual"] = None
+    return out
+
+
+def redact_log(log: dict[str, Any]) -> dict[str, Any]:
+    """Copy of a run log with song titles/artists removed (journal keeps URI, dates and playlist ids for --restore)."""
+    out = json.loads(json.dumps(log))
+    out["titles_hidden"] = True
+    for m in out.get("moved", []):
+        m["track"], m["artist"] = None, None
+    for key in ("skipped_too_young", "skipped_playlist_missing"):
+        for row in out.get(key, []):
+            row["track"] = None
+            if "artist" in row:
+                row["artist"] = None
+    for j in out.get("journal", []):
+        j["name"], j["artists"] = None, None
+    return out
+
+
+def schedule_info(cron: str | None, now: datetime) -> dict[str, Any] | None:
+    """Describe a simple cron ('M H * * *' daily, or 'M H * * D' weekly) for the Overview; None = not scheduled."""
+    if not cron or not cron.strip():
+        return None
+    parts = cron.split()
+    if len(parts) != 5 or parts[2] != "*" or parts[3] != "*" or not (parts[0].isdigit() and parts[1].isdigit()):
+        return {"cron": cron, "description": f"Scheduled ({cron})", "next_run": None}
+    minute, hour = int(parts[0]), int(parts[1])
+    dow = None if parts[4] == "*" else int(parts[4]) % 7 if parts[4].isdigit() else -1
+    if dow == -1 or not (0 <= minute < 60 and 0 <= hour < 24):
+        return {"cron": cron, "description": f"Scheduled ({cron})", "next_run": None}
+    nxt = now.astimezone(timezone.utc).replace(hour=hour, minute=minute, second=0, microsecond=0)
+    for _ in range(8):
+        # cron day-of-week: 0 = Sunday; python weekday(): 0 = Monday
+        if nxt > now and (dow is None or (nxt.weekday() + 1) % 7 == dow):
+            break
+        nxt += timedelta(days=1)
+    when = f"{hour:02d}:{minute:02d} UTC"
+    names = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    return {"cron": cron, "description": f"Every day at {when}" if dow is None else f"Every {names[dow]} at {when}",
+            "next_run": iso(nxt)}

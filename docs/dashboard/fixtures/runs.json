@@ -1,6 +1,7 @@
 {
  "version": 1,
  "generated_at": "2026-09-21T06:00:00+00:00",
+ "schedule": null,
  "runs": [
   {
    "run_id": "2026-09-21T06:00:00Z",
@@ -30,6 +31,7 @@
     "Old jazz": 2,
     "English pop": 7
    },
+   "moves_by_playlist": {},
    "log": "2026-09-21.json"
   },
   {
@@ -54,6 +56,7 @@
     "English pop": 5,
     "Hindi hits": 3
    },
+   "moves_by_playlist": {},
    "log": "2026-09-20.json"
   },
   {
@@ -77,6 +80,7 @@
     "Hindi hits": 2,
     "English pop": 3
    },
+   "moves_by_playlist": {},
    "log": "2026-09-19.json"
   },
   {
@@ -97,6 +101,7 @@
    "duration_seconds": 12.3,
    "verdict": "error",
    "rule_counts": {},
+   "moves_by_playlist": {},
    "log": "2026-09-18.json"
   },
   {
@@ -121,6 +126,7 @@
     "Lo-fi study": 1,
     "Rock legends": 1
    },
+   "moves_by_playlist": {},
    "log": "2026-09-17.json"
   },
   {
@@ -144,6 +150,7 @@
     "Lo-fi study": 1,
     "Spanish nights": 2
    },
+   "moves_by_playlist": {},
    "log": "2026-09-16.json"
   },
   {
@@ -168,6 +175,7 @@
     "English pop": 3,
     "Hindi hits": 1
    },
+   "moves_by_playlist": {},
    "log": "2026-09-15.json"
   },
   {
@@ -191,6 +199,7 @@
     "Lo-fi study": 3,
     "English pop": 4
    },
+   "moves_by_playlist": {},
    "log": "2026-09-14.json"
   }
  ]

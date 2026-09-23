@@ -16,8 +16,10 @@ TOP_LEVEL_KEYS = {
     "rules",
     "language_playlists",
     "enrichment",
+    "logging",
 }
 ENRICHMENT_KEYS = {"musicbrainz", "english_default"}
+LOGGING_KEYS = {"include_track_names"}
 RULE_KEYS = {
     "name",
     "enabled",
@@ -190,6 +192,22 @@ def parse_config(data: Any) -> Config:
             else:
                 english_default = raw_enrich["english_default"]
 
+    include_names = False
+    raw_logging = data.get("logging", {})
+    if raw_logging is None:
+        raw_logging = {}
+    if not isinstance(raw_logging, dict):
+        errors.append("'logging' must be a mapping")
+    else:
+        for key in raw_logging:
+            if key not in LOGGING_KEYS:
+                errors.append(f"unknown key 'logging.{key}'")
+        if "include_track_names" in raw_logging:
+            if not isinstance(raw_logging["include_track_names"], bool):
+                errors.append("'logging.include_track_names' must be true or false")
+            else:
+                include_names = raw_logging["include_track_names"]
+
     raw_rules = data.get("rules", [])
     rules: list[Rule] = []
     if not isinstance(raw_rules, list):
@@ -215,6 +233,7 @@ def parse_config(data: Any) -> Config:
         language_playlists=lang_playlists,
         musicbrainz=musicbrainz,
         english_default=english_default,
+        include_track_names=include_names,
     )
 
 

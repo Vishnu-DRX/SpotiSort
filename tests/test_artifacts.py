@@ -378,7 +378,7 @@ def e_(rid, **kw):
 def test_index_created_when_missing(tmp_path):
     f = tmp_path / "logs" / "runs.json"
     d = update_runs_index(f, e_("a"), NOW)
-    assert d == {"version": 1, "generated_at": iso(NOW), "runs": [e_("a")]}
+    assert d == {"version": 1, "generated_at": iso(NOW), "schedule": None, "runs": [e_("a")]}
     assert json.loads(f.read_text(encoding="utf-8")) == d
 
 

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from collections import Counter
@@ -68,6 +69,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     p.add_argument("--limit", type=int, default=None, help="plan at most N moves (oldest liked first)")
     p.add_argument("--since", default=None, help="only consider songs liked on/after YYYY-MM-DD")
     p.add_argument("--rule", default=None, help="only plan moves for the rule with this name")
+    p.add_argument("--titles", choices=("auto", "always", "never"), default="auto",
+                   help="song titles in written logs: auto = follow logging.include_track_names on GitHub Actions, always locally")
+    p.add_argument("--cron", default=os.environ.get("SPOTISORT_CRON"), help="cron of the schedule, shown on the dashboard Overview")
     p.add_argument("--what-if-enable-all", action="store_true", help="preview: treat disabled rules as enabled (dry-run only)")
     p.add_argument("--no-network", action="store_true", help="do not call MusicBrainz (cache + local signals only)")
     return p.parse_args(argv)
@@ -148,6 +152,15 @@ def check_apply_guards(args: argparse.Namespace) -> str | None:
     if args.newest is not None and args.newest < 1:
         return "--newest must be >= 1"
     return None
+
+
+def hide_titles(args: argparse.Namespace, config) -> bool:
+    """Committed logs stay private-by-default: on GitHub Actions titles are written only if the config opts in."""
+    if args.titles == "always":
+        return False
+    if args.titles == "never":
+        return True
+    return bool(os.environ.get("GITHUB_ACTIONS")) and not config.include_track_names
 
 
 def run(args: argparse.Namespace) -> int:
@@ -264,8 +277,9 @@ def run(args: argparse.Namespace) -> int:
             "restore_command": f"python -m src.sync --restore {out.as_posix()} --apply",
             "verdict": "ok" if result.ok else ("mismatch" if result.reconcile and not result.reconcile.get("ok") else "error"),
         })
-    artifacts.atomic_write_json(out, log)
-    artifacts.atomic_write_json(logs_dir / "latest-plan.json", snapshot)
+    hide = hide_titles(args, config)
+    artifacts.atomic_write_json(out, artifacts.redact_log(log) if hide else log)
+    artifacts.atomic_write_json(logs_dir / "latest-plan.json", artifacts.redact_plan(snapshot) if hide else snapshot)
     artifacts.update_runs_index(
         logs_dir / "runs.json",
         artifacts.run_entry(
@@ -273,8 +287,10 @@ def run(args: argparse.Namespace) -> int:
             warnings=len(log["warnings"]), liked_before=len(liked_uris_before), liked_after=liked_after,
             duration_s=duration, rule_counts=rule_counts, log_file=out.name, what_if=args.what_if_enable_all,
             reconcile_ok=(result.reconcile.get("ok") if result and result.reconcile else None),
+            moves_by_playlist=dict(Counter(m["playlist"] for m in plan.moves if m["uri"] in (set(result.removed) if result else {m["uri"] for m in plan.moves}))),
         ),
         now,
+        schedule=artifacts.schedule_info(args.cron, now),
     )
     print_summary(plan, out, applied=result)
     return exit_code
