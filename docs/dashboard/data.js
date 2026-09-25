@@ -1,4 +1,6 @@
-/* Dashboard data layer: sources, fetching, freshness. No external requests except the configured GitHub raw folder. */
+/* Dashboard data layer: sources, fetching, freshness. No external requests except the configured GitHub raw folder,
+   except for Repo mode. Demo mode reads bundled fixtures. "Open local files" (files) reads nothing over the network:
+   every byte comes from FileReader/File.text() on files the visitor picked or dropped, entirely in this browser. */
 (function () {
   'use strict';
 
@@ -22,7 +24,12 @@
     plan: 'Inbox snapshot', runs: 'Run history', coverage: 'Enrichment coverage',
     precision: 'Signal precision', backtest: 'Backtest', detail: 'Backtest detail'
   };
-  var SOURCES = ['local', 'repo', 'fixtures'];
+  // decision 31: three sources only. 'repo' reads the fork's committed logs; 'fixtures' is the bundled demo data;
+  // 'files' is "Open local files" — a drag-and-drop/file-picker source, parsed entirely client-side, never uploaded.
+  // The old 'local' source (python -m src.dashboard's /data/ reverse proxy) is no longer offered in the UI.
+  var SOURCES = ['repo', 'fixtures', 'files'];
+  var SOURCE_LABELS = { repo: 'Repo (your fork on GitHub)', fixtures: 'Demo data', files: 'Open local files' };
+  var FILES_MARKER = 'files:'; // sentinel "base" for the files source; never fetched as a URL
   var FIXTURE_NOW = '2026-09-21T07:00:00Z'; // fixtures are frozen in time; the demo must not look stale
   var STALE_MS = 2 * 24 * 3600 * 1000;
   var KEY = { source: 'spotisort.dashboard.source', repo: 'spotisort.dashboard.repo', theme: 'spotisort.theme' };
@@ -39,14 +46,16 @@
 
   function params() { return new URLSearchParams(location.search); }
 
-  function isLoopback() { return /^(127\.0\.0\.1|localhost|\[::1\])$/.test(location.hostname); }
+  function isGithubPages() { return /\.github\.io$/i.test(location.hostname); }
 
   function currentSource() {
     var q = params().get('source');
     if (q && SOURCES.indexOf(q) >= 0) return q;
     var saved = store('get', KEY.source);
     if (saved && SOURCES.indexOf(saved) >= 0) return saved;
-    return isLoopback() ? 'local' : 'repo';
+    // decision 31: Repo is the default once the site is actually published on GitHub Pages; everyone else
+    // (local dev, previews) lands on the visitor-safe Demo data by default.
+    return isGithubPages() ? 'repo' : 'fixtures';
   }
 
   function deriveRepoBase() {
@@ -71,7 +80,7 @@
 
   function baseFor(source) {
     if (source === 'fixtures') return new URL('fixtures/', document.baseURI).href;
-    if (source === 'local') return new URL('/data/', location.href).href;
+    if (source === 'files') return FILES_MARKER;
     return repoBase();
   }
 
@@ -96,18 +105,68 @@
     });
   }
 
+  // ------------------------------------------------------------------ Open local files (decision 31)
+  // Everything the visitor drops or picks is parsed here, in memory, and never leaves the page. Keyed by the
+  // file's own name (e.g. "latest-plan.json", "2026-09-21.json") so both the fixed files and per-run logs work.
+  var localFiles = {}; // name -> {data} | {error}
+
+  function readLocalFiles(fileList) {
+    var files = Array.prototype.slice.call(fileList).filter(function (f) { return /\.json$/i.test(f.name); });
+    return Promise.all(files.map(function (f) {
+      var reader = f.text ? f.text() : new Promise(function (resolve, reject) {
+        var fr = new FileReader();
+        fr.onload = function () { resolve(fr.result); };
+        fr.onerror = function () { reject(fr.error || new Error('read error')); };
+        fr.readAsText(f);
+      });
+      return reader.then(function (text) {
+        try {
+          localFiles[f.name] = { data: JSON.parse(text) };
+          return { name: f.name, ok: true };
+        } catch (e) {
+          localFiles[f.name] = { error: 'Not valid JSON (' + (e && e.message ? e.message : 'parse error') + ')' };
+          return { name: f.name, ok: false, message: localFiles[f.name].error };
+        }
+      }, function (e) {
+        localFiles[f.name] = { error: 'Could not read this file (' + (e && e.message ? e.message : 'error') + ')' };
+        return { name: f.name, ok: false, message: localFiles[f.name].error };
+      });
+    })).then(function (results) {
+      return {
+        loaded: results.filter(function (r) { return r.ok; }).map(function (r) { return r.name; }),
+        errors: results.filter(function (r) { return !r.ok; })
+      };
+    });
+  }
+  function clearLocalFiles() { localFiles = {}; }
+  function localFileNames() { return Object.keys(localFiles); }
+  function localFileStatus(name) {
+    if (Object.prototype.hasOwnProperty.call(localFiles, name)) {
+      var v = localFiles[name];
+      return v.error ? { status: 'error', message: v.error } : { status: 'ok', data: v.data };
+    }
+    return { status: 'missing' };
+  }
+
   function loadAll(source) {
-    var base = baseFor(source);
-    var keys = Object.keys(FILES);
-    return Promise.all(keys.map(function (k) { return fetchJson(base ? base + FILES[k] : ''); })).then(function (res) {
+    if (source === 'files') {
+      var keys = Object.keys(FILES);
       var files = {};
-      keys.forEach(function (k, i) { files[k] = res[i]; });
-      return { source: source, base: base, files: files };
+      keys.forEach(function (k) { files[k] = localFileStatus(FILES[k]); });
+      return Promise.resolve({ source: source, base: FILES_MARKER, files: files });
+    }
+    var base = baseFor(source);
+    var fkeys = Object.keys(FILES);
+    return Promise.all(fkeys.map(function (k) { return fetchJson(base ? base + FILES[k] : ''); })).then(function (res) {
+      var out = {};
+      fkeys.forEach(function (k, i) { out[k] = res[i]; });
+      return { source: source, base: base, files: out };
     });
   }
 
   var logCache = {};
   function fetchLog(base, name) {
+    if (base === FILES_MARKER) return Promise.resolve(localFileStatus(name));
     var url = base + name;
     if (!logCache[url]) logCache[url] = fetchJson(url);
     return logCache[url];
@@ -145,10 +204,13 @@
   function isStale(iso) { return now() - Date.parse(iso) > STALE_MS; }
 
   window.DashData = {
-    FILES: FILES, COMMANDS: COMMANDS, LABELS: LABELS, SOURCES: SOURCES, KEY: KEY,
-    store: store, params: params, currentSource: currentSource, deriveRepoBase: deriveRepoBase, repoBase: repoBase,
+    FILES: FILES, COMMANDS: COMMANDS, LABELS: LABELS, SOURCES: SOURCES, SOURCE_LABELS: SOURCE_LABELS, KEY: KEY,
+    FILES_MARKER: FILES_MARKER,
+    store: store, params: params, currentSource: currentSource, isGithubPages: isGithubPages,
+    deriveRepoBase: deriveRepoBase, repoBase: repoBase,
     normalizeRepoBase: normalizeRepoBase, validRepoBase: validRepoBase, baseFor: baseFor,
     now: now, loadAll: loadAll, fetchLog: fetchLog, clearLogCache: clearLogCache,
+    readLocalFiles: readLocalFiles, clearLocalFiles: clearLocalFiles, localFileNames: localFileNames,
     stampOf: stampOf, fmtTime: fmtTime, fmtDate: fmtDate, rel: rel, isStale: isStale
   };
 })();

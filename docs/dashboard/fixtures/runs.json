@@ -1,7 +1,11 @@
 {
  "version": 1,
  "generated_at": "2026-09-21T06:00:00+00:00",
- "schedule": null,
+ "schedule": {
+  "cron": "0 3 * * *",
+  "description": "Every day at 03:00 UTC",
+  "next_run": "2026-09-22T03:00:00+00:00"
+ },
  "runs": [
   {
    "run_id": "2026-09-21T06:00:00Z",

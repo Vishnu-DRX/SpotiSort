@@ -21,6 +21,7 @@ from src.artifacts import (  # noqa: E402
     build_latest_plan,
     config_hash,
     run_entry,
+    schedule_info,
     update_runs_index,
 )
 from src.models import Artist, Config, Enrichment, Playlist, Rule, Track  # noqa: E402
@@ -229,7 +230,10 @@ def build_runs(out: Path, plan: dict) -> dict:
                           liked_after=spec["after"], duration_s=spec["secs"], rule_counts=spec["rc"], log_file=log_file,
                           what_if=spec["what_if"])
         atomic_write_json(out / log_file, _run_log(spec, entry, plan))
-        index = update_runs_index(runs_path, entry, when)
+        # decision 34: the Overview reads a top-level `schedule` field from runs.json (built by
+        # src.artifacts.schedule_info from the workflow's SPOTISORT_CRON). The demo fixtures show a fixed
+        # example schedule so "Next scheduled run" has something real to display in Demo mode.
+        index = update_runs_index(runs_path, entry, when, schedule=schedule_info("0 3 * * *", NOW))
     return index
 
 

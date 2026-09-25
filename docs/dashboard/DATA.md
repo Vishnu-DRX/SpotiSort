@@ -1,9 +1,16 @@
 # Dashboard data contract (all files are JSON, `"version": 1`)
 
-The dashboard is static. It reads these files from a *source*: **Local** (`/data/<file>` served by `python -m src.dashboard`
-from the repo's `logs/` folder) or **Repo** (`https://raw.githubusercontent.com/<owner>/<repo>/main/logs/<file>`).
+The dashboard is static and part of the Pages site (decision 31: no localhost server in the product). It reads these
+files from one of three *sources*: **Repo** (`https://raw.githubusercontent.com/<owner>/<repo>/main/logs/<file>`,
+default once served from `*.github.io`), **Demo** (the bundled fixtures, for visitors), or **Open local files**
+(a drag-and-drop/file-picker area that reads the same file names straight off disk via the File API, entirely
+client-side — nothing is uploaded, and this is the only source that ever shows real song titles from a public fork,
+since committed logs may have them redacted, see `titles_hidden` below). `python -m src.dashboard` still exists as a
+niche developer convenience (serves the site plus `logs/` read-only on 127.0.0.1) but is not offered as a source in
+the dashboard UI.
 Every file carries `generated_at` (ISO-8601 UTC): show it as the **data-freshness stamp**; older than 2 days => warning banner.
-Missing file => empty state that says which command produces it. Song/playlist names appear in the plan/detail files.
+Missing file => empty state that says which command produces it. Song/playlist names appear in the plan/detail files,
+unless `titles_hidden` is set (see below).
 
 ## `runs.json` — rolling index (newest first, max 90)
 `{version, generated_at, schedule:{cron, description, next_run}|null, runs:[{run_id, time, mode ("dry_run"|"apply"), what_if, planned_moves, moved, too_young, no_match,

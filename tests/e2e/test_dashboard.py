@@ -69,7 +69,7 @@ def test_overview_answers_is_it_healthy(dash):
     last = RUNS[0]
     card = text(page, '[data-card="last-run"]')
     assert "Dry run" in card and "2026-09-21 06:00 UTC" in card
-    assert "Not scheduled" in text(page, '[data-card="next-run"]')
+    assert "2026-09-22 03:00 UTC" in text(page, '[data-card="next-run"]')  # from the demo fixture's schedule (decision 34)
     assert str(PLAN["liked_total"]) in text(page, '[data-card="liked"]')
     pending = text(page, '[data-card="pending"]')
     assert str(c["will_move"] + c["too_young"]) in pending and f"{c['will_move']} ready to move" in pending
@@ -164,6 +164,13 @@ def open_explain(page, title):
     return btn, dlg
 
 
+def open_technical_trace(dlg):
+    # decision 34: the rule-by-rule trace is a collapsed <details> under the sentence-first narrative. A closed
+    # <details>'s content has no innerText (browsers treat it like display:none), so tests that inspect the
+    # trace's text must open it first, same as a person would click "Technical details" to see it.
+    dlg.locator('details[data-testid="technical-trace"] summary').click()
+
+
 def test_explain_withheld_signal_and_trace(dash):
     page = dash("inbox")
     _, dlg = open_explain(page, "Fake Thendral")
@@ -172,6 +179,7 @@ def test_explain_withheld_signal_and_trace(dash):
     assert "Hint" in body and "58%" in body
     trace = dlg.locator('[data-testid="trace"] > li')
     expect(trace).to_have_count(len(PLAN["rules"]))
+    open_technical_trace(dlg)
     tamil = dlg.locator('li[data-rule="Tamil and Telugu"]')
     assert tamil.get_attribute("data-result") == "failed"
     assert tamil.locator("li[data-passed='false']").count() == 1 and "failed" in tamil.inner_text()
@@ -184,6 +192,7 @@ def test_explain_withheld_signal_and_trace(dash):
 def test_explain_matched_shadowed_and_signals(dash):
     page = dash("inbox")
     _, dlg = open_explain(page, "Fake Anthem (Live)")
+    open_technical_trace(dlg)
     assert dlg.locator('li[data-rule="Rock legends"]').get_attribute("data-result") == "matched"
     alpha = dlg.locator('li[data-rule="Alpha live cuts"]')
     assert alpha.get_attribute("data-result") == "not_reached_but_would_match"
@@ -404,7 +413,7 @@ def test_what_if_and_legacy_banners_on_every_view(dash):
 
 # ------------------------------------------------------------------ empty + error states
 def test_empty_states_name_the_command(dash):
-    page = dash("overview", source="local")  # the test server has no /data/, so every file is missing
+    page = dash("overview", source="files")  # nothing has been opened yet, so every file is missing
     expected = {
         "overview": ["python -m src.sync"],
         "inbox": ["python -m src.sync"],
@@ -489,24 +498,28 @@ def serve_data(page, prefix_pattern):
     page.route(prefix_pattern, handler)
 
 
-def test_source_switch_local_repo_fixtures(dash, site):
+def test_source_switch_repo_fixtures_files(dash, site):
     requests = []
 
     def setup(page):
         page.on("request", lambda r: requests.append(r.url))
-        serve_data(page, "**/data/*.json")
         serve_data(page, "https://raw.githubusercontent.com/**")
 
     page = dash("overview", setup=setup)
     sel = page.locator("#source-select")
     expect(sel).to_have_value("fixtures")
     assert "Demo data" in page.locator("#repo-hint").inner_text()
-    # -> local: fetches /data/
-    sel.select_option("local")
+    assert "Demo data" in page.locator("#source-current").inner_text()
+    # -> files: nothing chosen yet, reads nothing over the network
+    sel.select_option("files")
+    expect(page.locator("#files-field")).to_be_visible()
+    assert "Open local files" in page.locator("#source-current").inner_text()
+    assert "source=files" in page.url and page.evaluate("localStorage.getItem('spotisort.dashboard.source')") == "files"
+    requests.clear()  # only care about requests made from here on, once "files" is the active source
+    page.locator("#files-input").set_input_files([str(FIX / "latest-plan.json"), str(FIX / "runs.json")])
     page.wait_for_selector('#view-root[data-state="ready"] [data-card="liked"]')
-    assert any(u.endswith("/data/latest-plan.json") for u in requests)
-    assert "source=local" in page.url and page.evaluate("localStorage.getItem('spotisort.dashboard.source')") == "local"
-    assert "127.0.0.1" in page.locator("#repo-hint").inner_text()
+    assert "latest-plan.json" in page.locator("#files-status").inner_text()
+    assert not any(u.endswith("latest-plan.json") and u.startswith("http") for u in requests)  # never uploaded
     # -> repo: needs a configured GitHub raw folder; invalid ones are refused
     sel.select_option("repo")
     expect(page.locator("#repo-url")).to_be_visible()

@@ -12,6 +12,12 @@
   var repoSave = document.getElementById('repo-save');
   var repoHint = document.getElementById('repo-hint');
   var themeBtn = document.getElementById('theme-btn');
+  var sourceCurrent = document.getElementById('source-current');
+  var filesField = document.getElementById('files-field');
+  var filesDrop = document.getElementById('files-drop');
+  var filesInput = document.getElementById('files-input');
+  var filesStatus = document.getElementById('files-status');
+  var glossaryBody = document.getElementById('glossary-body');
 
   var data = null;          // {source, base, files}
   var state = {};           // per-view UI state that survives re-render
@@ -69,7 +75,7 @@
       return '<div class="errorbox" role="alert"><h3>This view failed to draw</h3><p>' + esc(e && e.message) + '</p></div>';
     }).then(function (html) {
       if (my !== token) return;
-      root.innerHTML = VW.viewHead(ctx, view) + html;
+      root.innerHTML = VW.viewHead(ctx, view, route.name) + html;
       root.setAttribute('data-view', route.name);
       root.setAttribute('data-state', 'ready');
       root.removeAttribute('aria-busy');
@@ -82,17 +88,28 @@
 
   // ------------------------------------------------------------------ data + source bar
   function hintText(source) {
-    if (source === 'local') return 'Reads your logs folder through python -m src.dashboard (http://127.0.0.1). Nothing leaves this computer.';
+    if (source === 'files') return 'Read entirely in this browser from files you choose or drop below. Nothing is uploaded anywhere, including to us. This is the only source that shows real song titles on a public site, because it never leaves your computer.';
     if (source === 'fixtures') return 'Demo data bundled with this site. Nothing is fetched from your computer or GitHub.';
     return 'Reads the JSON files from your fork on raw.githubusercontent.com. Only that address is contacted.';
+  }
+  function filesStatusText() {
+    var names = D.localFileNames();
+    if (!names.length) return 'No files chosen yet.';
+    return 'Loaded: ' + names.join(', ') + '.';
   }
   function syncBar(source) {
     srcSel.value = source;
     var isRepo = source === 'repo';
+    var isFiles = source === 'files';
     repoField.hidden = !isRepo;
     repoSave.hidden = !isRepo;
+    filesField.hidden = !isFiles;
     if (isRepo) repoUrl.value = D.repoBase();
+    if (isFiles) filesStatus.textContent = filesStatusText();
     repoHint.textContent = hintText(source) + (isRepo && !D.repoBase() ? ' Enter the raw URL of your logs folder, for example https://raw.githubusercontent.com/OWNER/REPO/main/logs/' : '');
+    // decision 31: a persistent, unmissable label of which source is showing (not just the dropdown's own value,
+    // which can scroll out of view or be easy to skim past).
+    sourceCurrent.textContent = 'Showing: ' + D.SOURCE_LABELS[source];
     window.__dash.source = source;
   }
 
@@ -133,6 +150,53 @@
   repoSave.addEventListener('click', saveRepo);
   repoUrl.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); saveRepo(); } });
 
+  // ------------------------------------------------------------------ Open local files (decision 31)
+  function handleFiles(fileList) {
+    if (!fileList || !fileList.length) return;
+    filesStatus.textContent = 'Reading ' + fileList.length + ' file(s)…';
+    D.readLocalFiles(fileList).then(function (result) {
+      var msg = filesStatusText();
+      if (result.errors.length) msg += ' Could not read: ' + result.errors.map(function (e) { return e.name; }).join(', ') + '.';
+      filesStatus.textContent = msg;
+      if (D.currentSource() === 'files') load();
+    });
+  }
+  filesInput.addEventListener('change', function () { handleFiles(filesInput.files); });
+  filesDrop.addEventListener('click', function () { filesInput.click(); });
+  filesDrop.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); filesInput.click(); } });
+  ['dragenter', 'dragover'].forEach(function (evt) {
+    filesDrop.addEventListener(evt, function (e) { e.preventDefault(); e.stopPropagation(); filesDrop.classList.add('is-drag'); });
+  });
+  ['dragleave', 'dragend'].forEach(function (evt) {
+    filesDrop.addEventListener(evt, function (e) { e.preventDefault(); filesDrop.classList.remove('is-drag'); });
+  });
+  filesDrop.addEventListener('drop', function (e) {
+    e.preventDefault(); e.stopPropagation();
+    filesDrop.classList.remove('is-drag');
+    var dt = e.dataTransfer;
+    if (dt && dt.files && dt.files.length) handleFiles(dt.files);
+  });
+
+  // ------------------------------------------------------------------ glossary drawer (decision 34)
+  var GLOSSARY = [
+    ['Inbox', 'The songs currently sitting in Liked Songs, waiting to be evaluated or moved.'],
+    ['Eligible', 'A song has waited long enough (its rule’s threshold) and can move on the next run.'],
+    ['Shadowed rule', 'A rule that songs would match, but an earlier rule in the list always takes them first, so this one never wins.'],
+    ['Dead rule', 'A rule that no song in the current inbox matches at all.'],
+    ['Signal tier', 'How a song’s language was worked out: your own playlists, the title’s script, a weaker hint, or a country default — in that order of trust.'],
+    ['Confidence', 'How sure SpotiSort is about a signal such as language, shown as a percentage.'],
+    ['Precision', 'Of the songs a signal or rule sent somewhere, the share that were actually right.'],
+    ['Recall', 'Of all the songs that truly belong somewhere, the share that were actually found and routed there.'],
+    ['Reconcile', 'The safety check after a real run: before minus removed should equal after. A mismatch means something needs attention.'],
+    ['Journal', 'The record of every song removed from Liked Songs during a run, kept so it can be restored.'],
+    ['What-if', 'A preview mode that treats disabled rules as if they were enabled, so you can see what they would do before switching them on.']
+  ];
+  if (glossaryBody) {
+    glossaryBody.innerHTML = '<dl class="kv">' + GLOSSARY.map(function (g) {
+      return '<dt>' + g[0] + '</dt><dd>' + g[1] + '</dd>';
+    }).join('') + '</dl>';
+  }
+
   // ------------------------------------------------------------------ explain drawer
   function focusables(el) {
     return Array.prototype.slice.call(el.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')).filter(function (n) { return !n.disabled && n.offsetParent !== null; });
@@ -148,8 +212,10 @@
     if (!song) return;
     drawer.open = true;
     drawer.trigger = trigger || null;
+    var titlesHidden = !!p.titles_hidden;
+    var heading = titlesHidden ? 'Title hidden — open local files to see titles' : song.title;
     drawerRoot.innerHTML = '<div class="scrim" data-close="1"></div><aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-title">' +
-      '<div class="drawer-head"><h2 id="drawer-title">' + esc(song.title) + '<span class="sub">' + esc((song.artists || []).join(', ')) + '</span></h2>' +
+      '<div class="drawer-head"><h2 id="drawer-title">' + esc(heading) + '<span class="sub">' + (titlesHidden ? '' : esc((song.artists || []).join(', '))) + '</span></h2>' +
       '<button type="button" class="icon-btn" data-close="1" aria-label="Close explanation">✕</button></div>' +
       '<div class="drawer-body" data-testid="explain-body">' + VW.explainHtml(song, p) + '</div></aside>';
     setInert(true);

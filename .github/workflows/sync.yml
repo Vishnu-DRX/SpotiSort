@@ -2,6 +2,11 @@ name: Sync
 
 # Manual only until the owner has reviewed the dashboard and confirmed the schedule (Phase 4, gate G2).
 # To schedule later, add:   schedule: [{cron: "0 3 * * *"}]   and set the repository variable SPOTISORT_SCHEDULED_APPLY=true.
+#
+# `vars.SPOTISORT_CRON` (a repository *variable*, not a secret) is informational only right now: this workflow
+# has no `schedule:` trigger yet, so nothing runs automatically. Setting it lets `src.sync --cron` describe the
+# intended schedule on the dashboard Overview ("Next scheduled run: ..."). Add the real `schedule:` trigger above
+# once the owner confirms the cron time (decision 34/master decision 5).
 on:
   workflow_dispatch:
     inputs:
@@ -35,6 +40,7 @@ jobs:
       DRY_RUN: ${{ inputs.dry_run }}
       NEWEST: ${{ inputs.newest }}
       MAX_MOVES: ${{ inputs.max_moves }}
+      SPOTISORT_CRON: ${{ vars.SPOTISORT_CRON }}
     steps:
       - uses: actions/checkout@v4
 
@@ -68,12 +74,45 @@ jobs:
         run: |
           set -euo pipefail
           args=(--config config.yaml --max-moves "${MAX_MOVES:-50}")
+          if [ -n "${SPOTISORT_CRON:-}" ]; then
+            args+=(--cron "${SPOTISORT_CRON}")
+          fi
           if [ "${DRY_RUN:-true}" != "true" ]; then
             args+=(--apply)
             [ -n "${NEWEST:-}" ] || { echo "A live run needs the 'newest' input (it never touches your whole library)."; exit 2; }
             args+=(--newest "$NEWEST")
           fi
           python -m src.sync "${args[@]}"
+
+      - name: Extract journal for artifact upload
+        # Journal durability (decision 33): the run's journal (list of removals, needed for --restore) is also
+        # inside the committed logs/YYYY-MM-DD*.json log. We extract it into its own small file here and upload
+        # THAT as a private Actions artifact, rather than uploading the whole log file, so the artifact stays
+        # small and focused on the one thing it exists to protect (the restore journal), independent of whether
+        # the log commit-back step below succeeds.
+        if: always()
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          logs=(logs/20*.json)
+          mkdir -p logs/journal-artifact
+          if [ "${#logs[@]}" -gt 0 ]; then
+            latest="$(ls -t logs/20*.json | head -n1)"
+            SPOTISORT_LATEST_LOG="$latest" python -c "import json, os; log = json.load(open(os.environ['SPOTISORT_LATEST_LOG'], encoding='utf-8')); journal = {'date': log.get('date'), 'run_id': log.get('run_id'), 'mode': log.get('mode'), 'restore_command': log.get('restore_command'), 'journal': log.get('journal', [])}; json.dump(journal, open('logs/journal-artifact/journal.json', 'w', encoding='utf-8'), indent=1)"
+          else
+            echo '{"journal": [], "note": "no run log was produced this run"}' > logs/journal-artifact/journal.json
+          fi
+
+      - name: Upload journal artifact
+        # Uploading a workflow artifact only needs the default GITHUB_TOKEN read/write-artifacts permission,
+        # which every run has automatically; it does not need `contents: write` the way the git push below
+        # does, so this step can never conflict with (or depend on) the "Commit run logs" step succeeding.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: journal-${{ github.run_id }}
+          path: logs/journal-artifact/journal.json
+          retention-days: 90
 
       - name: Commit run logs
         if: always()

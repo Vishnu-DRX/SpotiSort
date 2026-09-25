@@ -1,7 +1,7 @@
 // SpotiSort service worker: cache-first for the app shell so the builder works offline.
 // Bump CACHE_VERSION whenever any cached file changes. All URLs are relative to this file
 // (works under the /SpotiSort/ GitHub Pages base path).
-const CACHE_VERSION = 'v6';
+const CACHE_VERSION = 'v8';
 const CACHE_NAME = 'spotisort-shell-' + CACHE_VERSION;
 const SHELL = [
   './',
@@ -19,6 +19,7 @@ const SHELL = [
   'builder/app.js',
   'builder/validate.js',
   'builder/languages.js',
+  'builder/schema.js',
   'vendor/js-yaml.min.js',
   'icons/favicon-32.png',
   'icons/icon-180.png',

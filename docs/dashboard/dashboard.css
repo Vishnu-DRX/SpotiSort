@@ -33,11 +33,20 @@ code, .mono { font: 0.9em var(--font-mono); background: var(--color-elevated); p
 .page-title h1 { font-size: var(--text-2xl); }
 .page-title p { color: var(--color-text-secondary); margin: var(--space-1) 0 0; }
 
+/* decision 31: a persistent, unmissable label of the active data source (not just the dropdown's value). */
+.source-current { font-size: var(--text-sm); font-weight: var(--weight-bold); color: var(--color-text); background: var(--color-elevated); display: inline-block; padding: var(--space-1) var(--space-3); border-radius: var(--radius-pill); margin: 0 0 var(--space-2); }
+
 .source-bar { display: flex; flex-wrap: wrap; gap: var(--space-3) var(--space-4); align-items: flex-end; padding: var(--space-3) var(--space-4); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); margin: var(--space-3) 0; }
 .source-bar .field { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
 .source-bar .grow { flex: 1 1 18rem; }
 .source-bar label { font-size: var(--text-sm); color: var(--color-text-secondary); font-weight: var(--weight-medium); }
 .source-note { font-size: var(--text-sm); color: var(--color-text-secondary); margin: 0; flex-basis: 100%; }
+
+/* Open local files (decision 31): a drop zone that also works as a plain file picker and with the keyboard. */
+.files-drop { border: 2px dashed var(--color-muted); border-radius: var(--radius-lg); padding: var(--space-4); text-align: center; cursor: pointer; background: var(--color-bg); }
+.files-drop:hover, .files-drop:focus-visible { border-color: var(--color-accent); outline: none; }
+.files-drop.is-drag { border-color: var(--color-accent); background: var(--color-hover); }
+.files-drop input[type="file"] { pointer-events: none; }
 
 .tabs { position: sticky; top: 0; z-index: 20; background: var(--color-bg); border-bottom: 1px solid var(--color-border); margin: var(--space-3) 0 0; }
 .tabs ul { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--space-1); overflow-x: auto; }
@@ -194,6 +203,23 @@ details > summary { cursor: pointer; font-weight: var(--weight-medium); padding:
 .copy-row code { flex: 1 1 14rem; overflow-x: auto; white-space: nowrap; padding: var(--space-2) var(--space-3); }
 .delta-up { color: var(--color-accent-text); }
 .delta-down { color: var(--color-danger-text); }
+
+/* ------------------------------------------------------------ tooltip, popover, glossary overlay (ui.js) */
+.overlay { position: fixed; inset: 0; z-index: 50; }
+.tooltip { position: fixed; z-index: 70; max-width: min(20rem, calc(100vw - 16px)); padding: var(--space-2) var(--space-3); border-radius: var(--radius-md); background: var(--color-elevated); color: var(--color-text); border: 1px solid var(--color-border); box-shadow: var(--shadow-lg); font-size: var(--text-sm); }
+.popover { position: fixed; z-index: 70; max-width: min(22rem, calc(100vw - 16px)); padding: var(--space-3) var(--space-4); border-radius: var(--radius-md); background: var(--color-elevated); color: var(--color-text); border: 1px solid var(--color-border); box-shadow: var(--shadow-lg); font-size: var(--text-sm); }
+.popover > :last-child { margin-bottom: 0; }
+.help-btn { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--color-text-secondary); background: transparent; color: var(--color-text-secondary); font-size: var(--text-sm); font-weight: var(--weight-bold); cursor: pointer; margin-left: var(--space-2); vertical-align: middle; }
+.help-btn:hover, .help-btn[aria-expanded="true"] { color: var(--color-text); border-color: var(--color-text); }
+
+/* ------------------------------------------------------------ inbox toolbar extras */
+.filter-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0 0 var(--space-3); padding: 0; list-style: none; }
+.filter-chips button.chip { min-height: 30px; padding: 0 var(--space-3); border-radius: var(--radius-pill); border: 1px solid var(--color-border); background: var(--color-elevated); color: var(--color-text); font-size: var(--text-sm); cursor: pointer; }
+.filter-chips button.chip[aria-pressed="true"] { background: var(--color-accent); color: var(--color-on-accent); border-color: var(--color-accent); }
+.density-toggle { display: inline-flex; gap: 2px; background: var(--color-elevated); border-radius: var(--radius-pill); padding: 2px; }
+.density-toggle button { border: 0; background: transparent; color: var(--color-text-secondary); padding: 4px var(--space-3); border-radius: var(--radius-pill); font-size: var(--text-sm); cursor: pointer; }
+.density-toggle button[aria-pressed="true"] { background: var(--color-surface); color: var(--color-text); font-weight: var(--weight-bold); }
+[data-density="compact"] td, [data-density="compact"] th { padding: 2px var(--space-2); }
 
 /* ------------------------------------------------------------ explain drawer */
 .scrim { position: fixed; inset: 0; background: var(--color-scrim); z-index: 50; }

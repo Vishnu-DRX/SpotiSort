@@ -3,8 +3,9 @@
 (function (root) {
   'use strict';
 
-  var TOP_LEVEL_KEYS = ['default_days_threshold', 'fallback_playlist', 'rules', 'language_playlists', 'enrichment'];
+  var TOP_LEVEL_KEYS = ['default_days_threshold', 'fallback_playlist', 'rules', 'language_playlists', 'enrichment', 'logging'];
   var ENRICHMENT_KEYS = ['musicbrainz', 'english_default'];
+  var LOGGING_KEYS = ['include_track_names'];
   var RULE_KEYS = ['name', 'enabled', 'match', 'target_playlist', 'days_threshold', 'create_missing_playlists', 'target_position'];
   var LIST_MATCH_KEYS = ['artist_in', 'genre_contains', 'language_in'];
   var INT_MATCH_KEYS = ['release_year_before', 'release_year_after'];
@@ -150,6 +151,19 @@
       }
     }
 
+    var logging = 'logging' in data ? data.logging : {};
+    if (logging === null) logging = {};
+    if (!isMap(logging)) {
+      top('logging', "'logging' must be a mapping");
+    } else {
+      Object.keys(logging).forEach(function (key) {
+        if (!has(LOGGING_KEYS, key)) top('logging', "unknown key 'logging." + key + "'");
+      });
+      if ('include_track_names' in logging && typeof logging.include_track_names !== 'boolean') {
+        top('logging.include_track_names', "'logging.include_track_names' must be true or false");
+      }
+    }
+
     var rawRules = 'rules' in data ? data.rules : [];
     if (!Array.isArray(rawRules)) {
       top('rules', "'rules' must be a list");
@@ -175,6 +189,7 @@
     LIST_MATCH_KEYS: LIST_MATCH_KEYS,
     INT_MATCH_KEYS: INT_MATCH_KEYS,
     STR_MATCH_KEYS: STR_MATCH_KEYS,
-    BOOL_MATCH_KEYS: BOOL_MATCH_KEYS
+    BOOL_MATCH_KEYS: BOOL_MATCH_KEYS,
+    LOGGING_KEYS: LOGGING_KEYS
   };
 })(typeof window !== 'undefined' ? window : globalThis);

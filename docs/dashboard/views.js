@@ -39,6 +39,12 @@
   var TIERS = { playlist: ['ok', 'Playlist'], script: ['ok', 'Script'], hint: ['warn', 'Hint'], country_default: ['warn', 'Country default'] };
   function tierBadge(s) { if (!s) return ''; var m = TIERS[s] || ['neutral', s]; return badge(m[0], m[1]); }
   function posText(p) { return p === 'top' ? 'top of playlist' : 'bottom of playlist'; }
+  // decision 31/32: whenever a plan/log has titles_hidden, a public Repo-mode log has song titles/artists
+  // redacted (logging.include_track_names: false). Show a plain explanation instead of blank/null text.
+  var TITLE_HIDDEN_MSG = 'Title hidden — open local files to see titles';
+  function titleOrHidden(name, hidden) {
+    return hidden ? '<span class="muted" data-testid="title-hidden">' + esc(TITLE_HIDDEN_MSG) + '</span>' : esc(name);
+  }
 
   function ok(f) { return f && f.status === 'ok'; }
   function plan(ctx) { return ok(ctx.files.plan) ? ctx.files.plan.data : null; }
@@ -71,8 +77,23 @@
     return '<div class="banner banner-' + kind + '" ' + (attrs || '') + '><span class="ico" aria-hidden="true">' + icon + '</span><div>' + html + '</div></div>';
   }
 
-  function viewHead(ctx, view) {
-    var out = '<div class="view-head"><h2 id="view-title" tabindex="-1">' + esc(view.label) + '</h2><p class="question">' + esc(view.question) + '</p>';
+  // ------------------------------------------------------------------ plain-language "what does this mean?" per view
+  var VIEW_EXPLAIN = {
+    overview: 'A health check for the whole sorter: is it running, is anything waiting, and did the last run go cleanly.',
+    inbox: 'Every song currently in Liked Songs, and what SpotiSort has decided (or will decide) to do with each one, and why.',
+    rules: 'Your rules, in the order they run. The first rule a song matches wins; later rules never see it. A rule can be "shadowed" (an earlier rule always takes its songs first) or "dead" (nothing matches it).',
+    playlists: 'Every playlist a rule sends songs to, whether SpotiSort can actually write to it, and how many songs are queued for it.',
+    runs: 'The history of every time the sorter has run, dry or real, with a detailed breakdown of each one.',
+    safety: 'Whether any song has ever been at risk, and the exact command to bring one back if something needs undoing.',
+    signals: 'How SpotiSort works out a song’s language, and how much each method (playlist, script, hint, country) can be trusted before it is allowed to drive a decision.',
+    backtest: 'A dry run of your rules against playlists you already sorted by hand, to see how often they would have gotten it right.'
+  };
+  function helpBtn(text) {
+    return '<button type="button" class="help-btn" data-tip="' + esc(text) + '" aria-label="What does this mean?">?</button>';
+  }
+
+  function viewHead(ctx, view, key) {
+    var out = '<div class="view-head"><h2 id="view-title" tabindex="-1">' + esc(view.label) + '</h2><p class="question">' + esc(view.question) + ' ' + helpBtn(VIEW_EXPLAIN[key] || view.question) + '</p>';
     var stamps = [], stale = [];
     view.files.forEach(function (k) {
       var iso = D.stampOf(ctx.files[k]);
@@ -118,9 +139,42 @@
     skipped_empty: ['neutral', 'Skipped: rule has no conditions']
   };
 
+  var TIER_PLAIN = { playlist: 'learned from your own playlists', script: "the title's script", hint: 'a weaker hint', country_default: "a country default" };
+  function confWord(c) { return c == null ? '' : (c >= 0.85 ? 'high confidence' : (c >= 0.6 ? 'medium confidence' : 'low confidence')); }
+  // decision 34: the Explain drawer opens with a sentence-first plain narrative, built from the same trace data
+  // as the technical accordion below it, before any internal identifiers or rule-by-rule detail.
+  function narrativeSentence(song) {
+    var lang = song.language || {};
+    var base;
+    if (song.decision === 'will_move') {
+      base = 'Matched ' + (song.rule ? '“' + esc(song.rule) + '”' : 'a rule') + (song.target_playlist ? ' → ' + esc(song.target_playlist) : '') +
+        '. It is old enough now, so the next run will move it' + (song.target_playlist ? ' into ' + esc(song.target_playlist) : '') + '.';
+    } else if (song.decision === 'too_young') {
+      base = (song.rule ? '“' + esc(song.rule) + '” matched' : 'A rule matched') + ', but the song is too new' +
+        (song.eligible_on ? ' — it becomes eligible on ' + esc(D.fmtDate(song.eligible_on)) : '') + '.';
+    } else if (song.decision === 'target_problem') {
+      base = 'A rule matched and wanted to send this to “' + esc(song.target_playlist || '') + '”, but that playlist is ' +
+        esc((song.target_status || 'unavailable').replace(/_/g, ' ')) + '.';
+    } else if (song.decision === 'blocked') {
+      base = 'A rule would otherwise match on ' + esc(lang.value || 'a language') + ', but that signal is not trusted enough yet to act on — it is only shown, not used.';
+    } else {
+      base = 'No enabled rule matched this song.';
+    }
+    if (lang.value && song.decision !== 'blocked') {
+      base += ' The language is ' + esc(lang.value) + ' (' + esc(TIER_PLAIN[lang.source] || lang.source || 'an unknown signal') + (lang.confidence != null ? ', ' + confWord(lang.confidence) : '') + ').';
+    }
+    var trace = (song.explain && song.explain.trace) || [];
+    var shadow = trace.filter(function (e) { return e.result === 'not_reached_but_would_match'; }).map(function (e) { return e.rule; });
+    var tooYoungEarlier = trace.filter(function (e) { return e.result === 'matched_too_young' && e.rule !== song.rule; }).map(function (e) { return e.rule; });
+    if (shadow.length) base += ' It would also match ' + shadow.map(esc).join(', ') + ', but ' + (shadow.length > 1 ? 'those rules run' : 'that rule runs') + ' later and never get' + (shadow.length > 1 ? '' : 's') + ' the chance.';
+    if (tooYoungEarlier.length) base += ' It was too new for ' + tooYoungEarlier.map(esc).join(', ') + '.';
+    return base;
+  }
+
   function explainHtml(song, p) {
     var out = '';
     var lang = song.language || {};
+    out += '<h3>What happened</h3><p class="callout" data-testid="explain-narrative">' + narrativeSentence(song) + '</p>';
     out += '<h3>Decision</h3><p>' + decisionBadge(song.decision) + '</p><p>' + esc(song.reason) + '</p>';
     var bits = [];
     if (song.rule) bits.push('Rule: <strong>' + esc(song.rule) + '</strong>');
@@ -129,7 +183,7 @@
     if (song.eligible_on) bits.push('Eligible on: ' + esc(D.fmtDate(song.eligible_on)));
     if (bits.length) out += '<p class="small muted">' + bits.join(' &middot; ') + '</p>';
 
-    out += '<h3>Rule-by-rule trace</h3>';
+    out += '<details data-testid="technical-trace"><summary>Technical details: rule-by-rule trace</summary>';
     var tr = (song.explain && song.explain.trace) || [];
     if (song.explain && song.explain.decided_by) out += '<p class="small">Decided by <strong>' + esc(song.explain.decided_by) + '</strong>. Rules run top to bottom and the first match wins.</p>';
     else out += '<p class="small">No rule decided this song. Rules run top to bottom and the first match wins.</p>';
@@ -147,7 +201,7 @@
       }
       out += '</li>';
     });
-    out += '</ol>';
+    out += '</ol></details>';
 
     out += '<h3>Signals</h3><h4 class="small">Language</h4>';
     if (lang.value) {
@@ -183,6 +237,16 @@
     label: 'Overview', question: 'Is it healthy?', files: ['plan', 'runs'],
     render: function (ctx) {
       var p = plan(ctx), runs = runsOf(ctx), now = D.now();
+      // decision 34: a brand-new fork with zero runs gets a short guided tour instead of two separate
+      // "file not found" empty states, so the very first thing a new user sees is what to do next.
+      if (ctx.files.plan.status === 'missing' && ctx.files.runs.status === 'missing' && ctx.source !== 'files') {
+        return '<section class="empty" data-empty="first-run" data-testid="first-run-tour"><h3>Nothing here yet — let’s get your first data</h3>' +
+          '<p>This fork has not produced any run data yet. Three steps get you your first Overview:</p>' +
+          '<ol><li><strong>Configure</strong> — open <a href="../builder/">Configure</a> and set up your rules for at least one language or playlist.</li>' +
+          '<li><strong>Save configuration</strong> — on the Review step, save it, then commit the downloaded <code>config.yaml</code> to your fork’s repository root.</li>' +
+          '<li><strong>Run the Sync workflow</strong> — in your fork on GitHub, open the <strong>Actions</strong> tab, choose <strong>Sync</strong>, and run it once (leave “Dry run” ticked). It will commit <code>logs/</code> files back to your repo.</li></ol>' +
+          '<p>Once that run finishes, reload this page (or wait for GitHub Pages to redeploy) and this Overview will show your real data.</p></section>';
+      }
       var html = problems(ctx, ['plan', 'runs']);
       var last = runs[0];
       var weekAgo = now - 7 * 86400000;
@@ -211,10 +275,19 @@
       if (typeof sched === 'string' && sched) schedText = sched;
       else if (sched && typeof sched === 'object') schedText = sched.next_run ? D.fmtTime(sched.next_run) : (sched.description || sched.cron || schedText);
       html += card('Next scheduled run', esc(schedText), sched ? '' : 'Runs only happen when you start them.', ' data-card="next-run"');
-      html += card('Liked songs', p ? esc(p.liked_total) : '—', p ? 'Currently in the inbox' : '', ' data-card="liked"');
+      // decision 34: KPI cards show a delta vs. the previous run, where one is meaningful (needs 2+ runs).
+      function delta(cur, prev, goodDown) {
+        if (prev == null || cur == null) return '';
+        var d = cur - prev;
+        if (d === 0) return ' &middot; no change since the previous run';
+        var good = goodDown ? d < 0 : d > 0;
+        return ' &middot; <span class="' + (good ? 'delta-up' : 'delta-down') + '">' + (d > 0 ? '+' : '') + d + ' since the previous run</span>';
+      }
+      var prevRun = runs[1];
+      html += card('Liked songs', p ? esc(p.liked_total) : '—', (p ? 'Currently in the inbox' : '') + (prevRun ? delta(last.liked_after, prevRun.liked_after) : ''), ' data-card="liked"');
       html += card('Pending', p ? esc(p.counts.will_move + p.counts.too_young) : '—', p ? esc(p.counts.will_move) + ' ready to move, ' + esc(p.counts.too_young) + ' too young' : '', ' data-card="pending"');
-      html += card('Moves this week', last ? esc(movesWeek) : '—', 'Songs actually moved by apply runs in the last 7 days', ' data-card="moves"');
-      html += card('Errors and warnings', last ? esc(last.errors) + ' / ' + esc(last.warnings) : '—', 'Last run. Past 7 days: ' + esc(errWeek) + ' errors, ' + esc(warnWeek) + ' warnings', ' data-card="errors"');
+      html += card('Moves this week', last ? esc(movesWeek) : '—', 'Songs actually moved by apply runs in the last 7 days' + (prevRun ? delta(last.moved, prevRun.moved) : ''), ' data-card="moves"');
+      html += card('Errors and warnings', last ? esc(last.errors) + ' / ' + esc(last.warnings) : '—', 'Last run. Past 7 days: ' + esc(errWeek) + ' errors, ' + esc(warnWeek) + ' warnings' + (prevRun ? delta(last.errors + last.warnings, prevRun.errors + prevRun.warnings, true) : ''), ' data-card="errors"');
       var safety;
       if (lastApply) {
         safety = lastApply.verdict === 'ok' ? badge('ok', 'Reconcile OK') : (lastApply.verdict === 'mismatch' ? badge('bad', 'Mismatch') : verdictBadge(lastApply.verdict));
@@ -260,7 +333,8 @@
       return '<div class="toolbar" role="search">' +
         '<div class="field grow"><label for="inbox-q">Search title, artist, rule, playlist</label><input id="inbox-q" type="search" value="' + esc(st.q) + '" autocomplete="off" /></div>' +
         '<div class="field"><label for="inbox-decision">Decision</label><select id="inbox-decision">' + opts + '</select></div>' +
-        '<div class="field"><label for="inbox-rule">Rule</label><select id="inbox-rule">' + ropts + '</select></div></div>' +
+        '<div class="field"><label for="inbox-rule">Rule</label><select id="inbox-rule">' + ropts + '</select></div>' +
+        '<button type="button" class="btn secondary small" id="inbox-csv" data-testid="inbox-csv">Export CSV</button></div>' +
         '<div id="inbox-results"></div>';
     },
     bind: function (root, ctx) {
@@ -312,9 +386,10 @@
             h += '<th scope="col" class="' + (c[2] || '') + '" aria-sort="' + (active ? (st.dir === 'asc' ? 'ascending' : 'descending') : 'none') + '"><button type="button" class="sort-btn" data-sort="' + c[0] + '">' + esc(c[1]) + '<span aria-hidden="true">' + (active ? (st.dir === 'asc' ? '▲' : '▼') : '') + '</span></button></th>';
           });
           h += '</tr></thead><tbody>';
+          var hidden = !!p.titles_hidden;
           shown.forEach(function (r) {
             var s = r.s, l = s.language || {};
-            h += '<tr data-decision="' + esc(s.decision) + '"><td class="cell-main"><button type="button" class="link-btn" data-explain="' + r.i + '" aria-haspopup="dialog">' + esc(s.title) + '</button><div class="small muted">' + esc((s.artists || []).join(', ')) + '</div></td>' +
+            h += '<tr data-decision="' + esc(s.decision) + '"><td class="cell-main"><button type="button" class="link-btn" data-explain="' + r.i + '" aria-haspopup="dialog">' + titleOrHidden(s.title, hidden) + '</button><div class="small muted">' + (hidden ? '' : esc((s.artists || []).join(', '))) + '</div></td>' +
               '<td class="num" data-label="Age (days)">' + esc(num(s.age_days)) + '</td>' +
               '<td data-label="Decision">' + decisionBadge(s.decision) + '</td>' +
               '<td data-label="Rule">' + (s.rule ? esc(s.rule) : '<span class="muted">—</span>') + '</td>' +
@@ -326,11 +401,39 @@
           if (rows.length > shown.length) h += '<p><button type="button" class="btn secondary" data-more="1">Show ' + Math.min(100, rows.length - shown.length) + ' more</button></p>';
         }
         root.querySelector('#inbox-results').innerHTML = h;
+        lastRows = rows;
+      }
+      var lastRows = [];
+      function csvCell(v) { return '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"'; }
+      function exportCsv() {
+        var hidden = !!p.titles_hidden;
+        var head = ['Song', 'Artists', 'Age (days)', 'Decision', 'Rule', 'Target playlist', 'Eligible on', 'Language'];
+        var lines = [head.map(csvCell).join(',')];
+        lastRows.forEach(function (r) {
+          var s = r.s;
+          lines.push([
+            hidden ? TITLE_HIDDEN_MSG : (s.title || ''),
+            hidden ? '' : (s.artists || []).join('; '),
+            s.age_days == null ? '' : s.age_days,
+            (DECISIONS[s.decision] || [null, s.decision])[1],
+            s.rule || '', s.target_playlist || '',
+            s.decision === 'will_move' ? 'Ready now' : (s.eligible_on || ''),
+            (s.language && s.language.value) || ''
+          ].map(csvCell).join(','));
+        });
+        var blob = new Blob([lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = 'spotisort-inbox.csv';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
       }
       paint();
       root.querySelector('#inbox-q').addEventListener('input', function (e) { st.q = e.target.value; st.shown = 100; paint(); });
       root.querySelector('#inbox-decision').addEventListener('change', function (e) { st.decision = e.target.value; st.shown = 100; paint(); });
       root.querySelector('#inbox-rule').addEventListener('change', function (e) { st.rule = e.target.value; st.shown = 100; paint(); });
+      var csvBtn = root.querySelector('#inbox-csv');
+      if (csvBtn) csvBtn.addEventListener('click', exportCsv);
       root.querySelector('#inbox-results').addEventListener('click', function (e) {
         var b = e.target.closest('[data-sort]');
         if (b) {
@@ -408,11 +511,14 @@
       var p = plan(ctx);
       var okCount = p.playlists.filter(function (x) { return x.status === 'resolved'; }).length;
       var html = '<p class="small muted">' + esc(okCount + ' of ' + p.playlists.length) + ' target playlists are ready. Every move takes a song out of Liked Songs and into one of these; "Planned in" is how many the next run would add.</p>';
-      html += '<div class="table-wrap cards"><table class="stack" data-testid="playlists-table"><thead><tr><th scope="col">Playlist</th><th scope="col">Status</th><th scope="col" class="num">Size</th><th scope="col" class="num">Planned in</th><th scope="col">Rules that send here</th></tr></thead><tbody>';
+      html += '<div class="table-wrap cards"><table class="stack" data-testid="playlists-table"><thead><tr><th scope="col">Playlist</th><th scope="col">Status</th><th scope="col" class="num">Size</th><th scope="col" class="num">Planned in</th>' +
+        '<th scope="col" class="num">Moves out<button type="button" class="help-btn" data-tip="Always 0 for now: playlists are never a source for the sorter. Songs only ever move INTO a playlist, out of Liked Songs — a playlist itself is never sorted from." aria-label="What does moves out mean?">?</button></th>' +
+        '<th scope="col">Rules that send here</th></tr></thead><tbody>';
       p.playlists.forEach(function (x) {
         var cls = x.status === 'resolved' ? '' : (x.status === 'ambiguous' ? 'row-warn' : 'row-bad');
         html += '<tr class="' + cls + '" data-status="' + esc(x.status) + '"><td class="cell-main"><strong>' + esc(x.name) + '</strong></td><td data-label="Status">' + targetBadge(x.status) + '</td>' +
           '<td class="num" data-label="Size">' + num(x.size) + '</td><td class="num" data-label="Planned in">' + esc(x.planned_in) + '</td>' +
+          '<td class="num" data-label="Moves out"><span data-tip="Playlists are never a source for the sorter in this design, so this is structurally always 0.">0</span></td>' +
           '<td data-label="Rules">' + (x.rules || []).map(esc).join(', ') + '</td></tr>';
       });
       html += '</tbody></table></div>';
@@ -431,19 +537,19 @@
     if (!items || !items.length) return '<h4>' + esc(title) + '</h4><p class="muted small">' + esc(empty) + '</p>';
     return '<h4>' + esc(title) + ' (' + items.length + ')</h4><ul>' + items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
   }
-  function movedTable(moved) {
+  function movedTable(moved, hidden) {
     if (!moved || !moved.length) return '<p class="muted small">No songs moved or planned to move in this run.</p>';
     var h = '<div class="table-wrap cards"><table class="stack"><thead><tr><th scope="col">Song</th><th scope="col">Playlist</th><th scope="col">Rule</th><th scope="col">Position</th><th scope="col" class="num">Age / threshold</th><th scope="col">Already there</th></tr></thead><tbody>';
     moved.forEach(function (m) {
-      h += '<tr><td class="cell-main"><strong>' + esc(m.track) + '</strong><div class="small muted">' + esc(m.artist) + '</div></td><td data-label="Playlist">' + esc(m.playlist) + '</td><td data-label="Rule">' + esc(m.rule) + '</td><td data-label="Position">' + esc(m.target_position) + '</td><td class="num" data-label="Age / threshold">' + esc(num(m.age_days)) + ' / ' + esc(num(m.threshold_days)) + '</td><td data-label="Already there">' + (m.already_in_target ? 'yes' : 'no') + '</td></tr>';
+      h += '<tr><td class="cell-main"><strong>' + titleOrHidden(m.track, hidden) + '</strong><div class="small muted">' + (hidden ? '' : esc(m.artist)) + '</div></td><td data-label="Playlist">' + esc(m.playlist) + '</td><td data-label="Rule">' + esc(m.rule) + '</td><td data-label="Position">' + esc(m.target_position) + '</td><td class="num" data-label="Age / threshold">' + esc(num(m.age_days)) + ' / ' + esc(num(m.threshold_days)) + '</td><td data-label="Already there">' + (m.already_in_target ? 'yes' : 'no') + '</td></tr>';
     });
     return h + '</tbody></table></div>';
   }
-  function journalTable(j) {
+  function journalTable(j, hidden) {
     if (!j || !j.length) return '<p class="muted small">No journal entries (a dry run removes nothing).</p>';
     var h = '<div class="table-wrap cards"><table class="stack" data-testid="journal"><thead><tr><th scope="col">Song</th><th scope="col">Originally liked</th><th scope="col">Target playlist id</th><th scope="col">URI</th></tr></thead><tbody>';
     j.forEach(function (e) {
-      h += '<tr><td class="cell-main"><strong>' + esc(e.name) + '</strong><div class="small muted">' + esc((e.artists || []).join(', ')) + '</div></td><td data-label="Originally liked">' + esc(D.fmtDate(e.original_added_at)) + '</td><td data-label="Target playlist id"><code>' + esc(e.target_playlist_id) + '</code></td><td data-label="URI"><code>' + esc(e.uri) + '</code></td></tr>';
+      h += '<tr><td class="cell-main"><strong>' + titleOrHidden(e.name, hidden) + '</strong><div class="small muted">' + (hidden ? '' : esc((e.artists || []).join(', '))) + '</div></td><td data-label="Originally liked">' + esc(D.fmtDate(e.original_added_at)) + '</td><td data-label="Target playlist id"><code>' + esc(e.target_playlist_id) + '</code></td><td data-label="URI"><code>' + esc(e.uri) + '</code></td></tr>';
     });
     return h + '</tbody></table></div>';
   }
@@ -471,13 +577,14 @@
     }
     if (l.restore_command) h += '<h4>Restore</h4><div class="copy-row"><code>' + esc(l.restore_command) + '</code><button type="button" class="btn secondary small" data-copy="' + esc(l.restore_command) + '">Copy</button></div>';
     h += '</div>';
+    var hidden = !!l.titles_hidden;
     h += listBlock('Errors', l.errors, 'No errors.') + listBlock('Warnings', l.warnings, 'No warnings.');
-    h += '<h4>' + (l.dry_run ? 'Planned moves' : 'Moved') + ' (' + (l.moved || []).length + ')</h4>' + movedTable(l.moved);
+    h += '<h4>' + (l.dry_run ? 'Planned moves' : 'Moved') + ' (' + (l.moved || []).length + ')</h4>' + movedTable(l.moved, hidden);
     var ty = l.skipped_too_young || [];
-    h += '<h4>Too young (' + ty.length + ')</h4>' + (ty.length ? '<ul>' + ty.map(function (t) { return '<li>' + esc(t.track) + ' &mdash; ' + esc(t.artist) + ' (' + esc(t.age_days) + ' of ' + esc(t.threshold_days) + ' days, rule ' + esc(t.rule) + ')</li>'; }).join('') + '</ul>' : '<p class="muted small">None.</p>');
+    h += '<h4>Too young (' + ty.length + ')</h4>' + (ty.length ? '<ul>' + ty.map(function (t) { return '<li>' + titleOrHidden(t.track, hidden) + ' &mdash; ' + (hidden ? '' : esc(t.artist)) + ' (' + esc(t.age_days) + ' of ' + esc(t.threshold_days) + ' days, rule ' + esc(t.rule) + ')</li>'; }).join('') + '</ul>' : '<p class="muted small">None.</p>');
     var pm = l.skipped_playlist_missing || [];
-    h += '<h4>Skipped: target problem (' + pm.length + ')</h4>' + (pm.length ? '<ul>' + pm.map(function (t) { return '<li>' + esc(t.track) + ' &rarr; ' + esc(t.target_playlist) + ' (' + esc(t.reason) + ')</li>'; }).join('') + '</ul>' : '<p class="muted small">None.</p>');
-    h += '<details><summary>Journal (' + (l.journal || []).length + ' removals recorded)</summary>' + journalTable(l.journal) + '</details>';
+    h += '<h4>Skipped: target problem (' + pm.length + ')</h4>' + (pm.length ? '<ul>' + pm.map(function (t) { return '<li>' + titleOrHidden(t.track, hidden) + ' &rarr; ' + esc(t.target_playlist) + ' (' + esc(t.reason) + ')</li>'; }).join('') + '</ul>' : '<p class="muted small">None.</p>');
+    h += '<details><summary>Journal (' + (l.journal || []).length + ' removals recorded)</summary>' + journalTable(l.journal, hidden) + '</details>';
     if (l.batches) h += '<details><summary>Batches (' + l.batches.length + ')</summary><ul>' + l.batches.map(function (b) { return '<li><code>' + esc(b.playlist_id) + '</code>: ' + esc(b.size) + ' songs, ' + (b.committed ? 'committed' : 'NOT committed') + '</li>'; }).join('') + '</ul></details>';
     h += '<details><summary>HTTP audit</summary><dl class="kv">' + Object.keys(l.http_audit || {}).map(function (k) { return '<dt>' + esc(k) + '</dt><dd>' + esc(l.http_audit[k]) + '</dd>'; }).join('') + '</dl></details>';
     return h;
@@ -504,8 +611,9 @@
       var setA = {}, setB = {};
       (la.data.moved || []).forEach(function (m) { setA[m.uri + '|' + m.playlist] = m; });
       (lb.data.moved || []).forEach(function (m) { setB[m.uri + '|' + m.playlist] = m; });
-      var onlyA = Object.keys(setA).filter(function (k) { return !setB[k]; }).map(function (k) { return setA[k].track + ' → ' + setA[k].playlist; });
-      var onlyB = Object.keys(setB).filter(function (k) { return !setA[k]; }).map(function (k) { return setB[k].track + ' → ' + setB[k].playlist; });
+      var hiddenA = !!la.data.titles_hidden, hiddenB = !!lb.data.titles_hidden;
+      var onlyA = Object.keys(setA).filter(function (k) { return !setB[k]; }).map(function (k) { return (hiddenA ? TITLE_HIDDEN_MSG : setA[k].track) + ' → ' + setA[k].playlist; });
+      var onlyB = Object.keys(setB).filter(function (k) { return !setA[k]; }).map(function (k) { return (hiddenB ? TITLE_HIDDEN_MSG : setB[k].track) + ' → ' + setB[k].playlist; });
       var both = Object.keys(setA).filter(function (k) { return setB[k]; }).length;
       h += '<h4>Songs</h4><p class="small">' + both + ' in both runs.</p>' + listBlock('Only in the older run', onlyA, 'None.') + listBlock('Only in the newer run', onlyB, 'None.');
     } else {
@@ -627,7 +735,7 @@
           if (d.reconcile) h += '<p><strong>Reconcile:</strong> ' + (d.reconcile.ok ? badge('ok', 'OK') : badge('bad', 'Mismatch')) + ' expected ' + esc(d.reconcile.expected_after) + ', found ' + esc(d.reconcile.actual_after) + '.</p>';
           if (d.restore_command) h += '<p class="small" style="margin-bottom:4px">Restore command</p><div class="copy-row"><code>' + esc(d.restore_command) + '</code><button type="button" class="btn secondary small" data-copy="' + esc(d.restore_command) + '">Copy</button></div>';
           (d.warnings || []).forEach(function (w) { h += '<p class="small">' + badge('warn', 'Warning') + ' ' + esc(w) + '</p>'; });
-          h += '<details><summary>Journal of removals (' + (d.journal || []).length + ')</summary>' + journalTable(d.journal) + '</details>';
+          h += '<details><summary>Journal of removals (' + (d.journal || []).length + ')</summary>' + journalTable(d.journal, !!d.titles_hidden) + '</details>';
           h += '<p class="small"><a href="#/runs/' + encodeURIComponent(r.run_id) + '">Full run detail</a></p></section>';
         });
         h += '<h3>Vanished-song warnings</h3><div class="card" data-testid="vanished"><p>' + badge('neutral', 'Not available yet') + '</p><p class="small">Spotify has been seen silently dropping liked songs. A future guardian will remember which songs were liked at each run and warn here when one disappears without SpotiSort removing it. Nothing is monitored yet, so an empty list would not mean everything is fine.</p></div>';

@@ -21,6 +21,7 @@
           <a href="../builder/">Configure</a>
           <a href="./" aria-current="page">Dashboard</a>
           <a href="https://github.com/Vishnu-DRX/SpotiSort">GitHub</a>
+          <button type="button" class="icon-btn" id="glossary-btn" data-open="glossary-drawer" aria-label="Open glossary of terms" title="Glossary">&#9432;</button>
           <button type="button" class="icon-btn" id="theme-btn" aria-label="Colour theme: auto. Activate to change." title="Colour theme">&#9680;</button>
         </nav>
       </div>
@@ -32,13 +33,15 @@
         <p>Read-only. Nothing here can change your Spotify library.</p>
       </div>
 
+      <p class="source-current" id="source-current" data-testid="source-current" role="status"></p>
+
       <form class="source-bar" id="source-bar" aria-label="Data source" onsubmit="return false">
         <div class="field">
           <label for="source-select">Data source</label>
           <select id="source-select">
-            <option value="local">Local (this computer)</option>
-            <option value="repo">Repo (GitHub)</option>
-            <option value="fixtures">Demo data (fixtures)</option>
+            <option value="repo">Repo (your fork on GitHub)</option>
+            <option value="fixtures">Demo data</option>
+            <option value="files">Open local files</option>
           </select>
         </div>
         <div class="field grow" id="repo-field" hidden>
@@ -48,6 +51,16 @@
         <button type="button" class="btn secondary small" id="repo-save" hidden>Save URL</button>
         <button type="button" class="btn secondary small" id="reload-btn">Reload data</button>
         <p class="source-note" id="repo-hint" role="status"></p>
+        <div class="field grow" id="files-field" hidden>
+          <label id="files-drop-label" for="files-input">
+            Drop your <code>logs</code> folder's files here, or choose files. Nothing is uploaded — everything is read in this browser only.
+            This is the only source that ever shows real song titles from a public fork.
+          </label>
+          <div id="files-drop" class="files-drop" tabindex="0" role="button" aria-labelledby="files-drop-label">
+            <input id="files-input" type="file" accept="application/json,.json" multiple />
+          </div>
+          <p class="source-note" id="files-status" role="status" data-testid="files-status"></p>
+        </div>
       </form>
 
       <nav class="tabs" aria-label="Dashboard views"><ul id="tabs"></ul></nav>
@@ -57,10 +70,22 @@
 
     <div id="drawer-root"></div>
 
+    <div class="overlay" id="glossary-drawer" hidden>
+      <div class="scrim" data-close></div>
+      <aside class="drawer" role="dialog" aria-modal="true" aria-labelledby="glossary-title">
+        <div class="drawer-head">
+          <h2 id="glossary-title">Glossary</h2>
+          <button type="button" class="icon-btn" data-close aria-label="Close glossary">&#10005;</button>
+        </div>
+        <div class="drawer-body" id="glossary-body"></div>
+      </aside>
+    </div>
+
     <footer class="site-foot">
       <div class="wrap"><p>SpotiSort is an independent open-source project, not affiliated with or endorsed by Spotify.</p></div>
     </footer>
 
+    <script src="../assets/ui.js"></script>
     <script src="data.js"></script>
     <script src="views.js"></script>
     <script src="app.js"></script>

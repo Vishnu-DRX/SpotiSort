@@ -40,11 +40,19 @@ Spotify no longer provides genres or language. In Phase 2 these come from MusicB
 - `python -m src.sync` previews what would move (dry-run; writes nothing, logs to `logs/`). `--apply` is not available yet.
 - `python -m src.analyze` drafts `config.draft.yaml` from your existing playlists (all rules disabled; review, then copy into `config.yaml`).
 - `python -m src.enrich --report` measures genre/language coverage of your Liked Songs.
-- `python -m src.dashboard` opens the read-only dashboard on your own logs (see How to read the dashboard).
+- **See your own data:** commit `config.yaml`, then in your fork on GitHub open **Actions -> Sync -> Run workflow** (leave "Dry run" ticked). Once it finishes it commits `logs/*.json` back to your fork; open your Pages site's Dashboard and it will read them straight from your fork in **Repo** mode. If you would rather not commit logs to a public repo, or want to see them immediately, use the Dashboard's **Open local files** source and drag your `logs/` folder in — nothing is uploaded, it never leaves your browser.
 
 ## How to read the dashboard
 
-The dashboard is read-only: it cannot change Spotify. Launch it locally with `python -m src.dashboard` (add `--port 8787`, `--logs logs`, `--no-browser` if you like). It listens on 127.0.0.1 only and opens `/dashboard/?source=local`. On the website you can instead pick **Repo** (reads your fork's `logs/` folder from raw.githubusercontent.com) or **Demo data**. Every view shows when its data was made; a yellow banner appears if it is more than 2 days old.
+The dashboard is read-only: it cannot change Spotify, and it is part of the Pages site (there is no separate local server to run for normal use). It has three data sources, and it always shows which one is active in a label above the source picker:
+
+- **Repo** (the default once the site is published on `*.github.io`) reads your fork's `logs/` folder straight from `raw.githubusercontent.com`. This needs `logs/*.json` to actually be committed, which the Sync workflow does for you (see "Try it" above).
+- **Demo data** is the fixture data bundled with the site, for visitors who have not forked yet. It is the default everywhere else (e.g. running the site locally).
+- **Open local files** is a drag-and-drop/file-picker area that reads `logs/*.json` files entirely in your browser via the File API — nothing is uploaded anywhere. If your config sets `logging.include_track_names: false` (the default for public forks), committed logs never carry song titles; Open local files is the only source that can show you real titles, since the files never leave your computer.
+
+The source picker remembers your last choice. Every view shows when its data was made; a yellow banner appears if it is more than 2 days old. Wherever a title/artist would show but has been redacted from a public log, the dashboard says "Title hidden — open local files to see titles" instead of leaving it blank.
+
+`python -m src.dashboard` still exists as a niche developer convenience (it serves the site plus your local `logs/` folder read-only on `127.0.0.1`) but is no longer the documented way to see your data, and is not offered as a source in the dashboard UI itself.
 
 - **Overview** asks "is it healthy?": last run and its verdict, next scheduled run (or "Not scheduled"), liked songs, how many are pending, moves this week, errors and warnings, the safety verdict, and one sentence on what the next run would do.
 - **Inbox** asks "what is waiting, and why?": every liked song with its decision. Search, filter and sort it, then click a title to open the **Explain** drawer: each rule in order with passed and failed conditions, and the language and genre signals behind the decision.

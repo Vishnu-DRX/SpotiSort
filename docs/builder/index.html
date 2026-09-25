@@ -2,111 +2,255 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <script>try{var t=localStorage.getItem('spotisort-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Build and validate a SpotiSort config.yaml with a form. Works offline; nothing leaves your browser." />
-    <meta name="theme-color" content="#157a3c" />
-    <title>SpotiSort config builder</title>
+    <meta name="description" content="Configure SpotiSort's rules with a guided, step-by-step form. Works offline; nothing leaves your browser." />
+    <meta name="theme-color" content="#121212" />
+    <title>Configure — SpotiSort</title>
     <link rel="manifest" href="../manifest.webmanifest" />
+    <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml" />
     <link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png" />
     <link rel="apple-touch-icon" href="../icons/icon-192.png" />
-    <link rel="stylesheet" href="../style.css" />
+    <link rel="stylesheet" href="../assets/tokens.css" />
+    <link rel="stylesheet" href="../assets/components.css" />
+    <link rel="stylesheet" href="../assets/site.css" />
     <link rel="stylesheet" href="builder.css" />
   </head>
   <body>
-    <div class="wrap wide">
-      <header class="top">
-        <p class="crumb"><a href="../">&larr; SpotiSort</a> &middot; <a href="../dashboard/">Dashboard</a></p>
-        <h1>Config builder</h1>
-        <p class="tagline">Build your <code>config.yaml</code> with a form. It is checked against the same rules as the sorter, and nothing leaves your browser.</p>
+    <div id="site-shell">
+      <noscript>
+        <p><a href="../index.html">SpotiSort</a> ·
+           <a href="./">Configure</a> ·
+           <a href="../dashboard/">Dashboard</a> ·
+           <a href="../setup/">Setup guide</a> ·
+           <a href="https://github.com/Vishnu-DRX/SpotiSort">GitHub</a></p>
+      </noscript>
+    </div>
+
+    <main id="main" class="container configure">
+      <header class="configure-top">
+        <h1>Configure</h1>
+        <p class="configure-tagline">Build your <code>config.yaml</code> with a guided form. It's checked against the same rules as the sorter, and nothing leaves your browser.</p>
+        <div class="configure-modebar">
+          <label class="switch">
+            <input type="checkbox" class="switch-input" id="advanced-toggle" role="switch" aria-checked="false" />
+            <span class="switch-ui" aria-hidden="true"></span>
+            <span class="switch-label">Advanced mode</span>
+          </label>
+          <button type="button" class="btn btn-secondary btn-sm" id="versions-open" data-open="versions-drawer">Versions</button>
+        </div>
       </header>
 
-      <div class="layout">
-        <main id="main" class="editor">
-          <details class="card import" id="import">
-            <summary>Import an existing config.yaml</summary>
-            <p class="hint">Loading replaces everything in the form.</p>
-            <div class="field">
-              <label for="import-file">Choose a file</label>
-              <input id="import-file" type="file" accept=".yaml,.yml,text/yaml,text/plain" />
-            </div>
-            <div class="field">
-              <label for="import-text">Or paste YAML</label>
-              <textarea id="import-text" rows="6" spellcheck="false" autocomplete="off"></textarea>
-            </div>
-            <button type="button" class="btn" id="import-btn">Load into form</button>
-            <div id="import-status" class="notice" role="status" aria-live="polite"></div>
-          </details>
-
-          <fieldset class="card" id="global">
-            <legend>Global settings</legend>
-            <div class="field">
-              <label for="g-days">Default days threshold</label>
-              <input id="g-days" type="text" inputmode="numeric" autocomplete="off" aria-describedby="g-days-hint err-g-days" />
-              <p class="hint" id="g-days-hint">Whole days a song stays in Liked Songs before rules apply. Leave blank for 14.</p>
-              <p class="err" id="err-g-days"></p>
-            </div>
-            <div class="field">
-              <label for="g-fallback">Fallback playlist</label>
-              <input id="g-fallback" type="text" autocomplete="off" aria-describedby="g-fallback-hint err-g-fallback" />
-              <p class="hint" id="g-fallback-hint">Name of an existing playlist for unmatched songs. Blank leaves them alone (null).</p>
-              <p class="err" id="err-g-fallback"></p>
-            </div>
-            <div class="field check">
-              <input id="g-mb" type="checkbox" checked aria-describedby="g-mb-hint" />
-              <label for="g-mb">Look up genre and language on MusicBrainz</label>
-              <p class="hint" id="g-mb-hint"><code>enrichment.musicbrainz</code>: free, limited to 1 request per second.</p>
-            </div>
-            <div class="field check">
-              <input id="g-en" type="checkbox" aria-describedby="g-en-hint" />
-              <label for="g-en">Assume English for Latin-script songs by US/GB/AU/CA/IE/NZ artists (weak default)</label>
-              <p class="hint" id="g-en-hint"><code>enrichment.english_default</code>: Weak guess. Off by default; only signals measured at &gt;= 90% precision may drive rules.</p>
-            </div>
-          </fieldset>
-
-          <fieldset class="card" id="langpl">
-            <legend>Language playlists</legend>
-            <p class="hint">Tell SpotiSort which of your playlists hold one language (playlist name to language). Names, ISO codes and native names all work and are stored as the English name.</p>
-            <ul class="rows" id="lp-list"></ul>
-            <button type="button" class="btn secondary" id="lp-add">Add language playlist</button>
-          </fieldset>
-
-          <section class="rules-section" aria-labelledby="rules-h">
-            <div class="section-head">
-              <h2 id="rules-h">Rules</h2>
-              <button type="button" class="btn" id="rule-add">Add rule</button>
-            </div>
-            <p class="hint">Rules run top to bottom and the first match wins, so put specific rules above broad ones. All conditions within a rule must match.</p>
-            <div id="rule-notice" class="notice" role="status" aria-live="polite"></div>
-            <p id="rules-empty" class="empty">No rules yet. Add one to get started.</p>
-            <ol id="rules" class="rules"></ol>
-          </section>
-        </main>
-
-        <aside class="output" aria-labelledby="out-h">
-          <div class="card sticky">
-            <h2 id="out-h">config.yaml</h2>
-            <div id="error-summary" class="summary" tabindex="-1" hidden></div>
-            <p id="status" class="status" role="status" aria-live="polite"></p>
-            <pre id="yaml-out" class="yaml" tabindex="0" aria-label="YAML preview"><code></code></pre>
-            <div class="actions">
-              <button type="button" class="btn" id="copy-btn">Copy</button>
-              <button type="button" class="btn" id="download-btn">Download config.yaml</button>
-            </div>
-            <p id="action-status" class="status" role="status" aria-live="polite"></p>
-            <p class="hint">Save the file as <code>config.yaml</code> in the root of your fork and commit it.</p>
-          </div>
-        </aside>
+      <div id="storage-banner" class="banner banner-warning" role="status" hidden>
+        <div class="banner-body"><strong>Your browser is blocking local storage.</strong> Drafts and versions will only last until you close this tab. Use Download or Copy to keep your config.yaml safe.</div>
       </div>
 
-      <footer>
-        <p>Runs entirely in your browser and works offline once loaded.</p>
-      </footer>
+      <!-- ============================================================ TEMPLATES (first visit only) -->
+      <section id="templates" class="card" aria-labelledby="templates-h" hidden>
+        <h2 id="templates-h">Start from a template</h2>
+        <p class="hint">Pick a starting point — you can change everything afterwards.</p>
+        <div class="template-grid">
+          <button type="button" class="card card-interactive template-card" id="tpl-language">
+            <h3>Sort by language</h3>
+            <p>Map a couple of your playlists to languages and route songs by language.</p>
+          </button>
+          <button type="button" class="card card-interactive template-card" id="tpl-artist">
+            <h3>Sort by artist</h3>
+            <p>Start with a rule that routes a few favourite artists into one playlist.</p>
+          </button>
+          <button type="button" class="card card-interactive template-card" id="tpl-blank">
+            <h3>Start blank</h3>
+            <p>No rules yet — build everything from scratch.</p>
+          </button>
+        </div>
+      </section>
+
+      <!-- ============================================================ STEPPER -->
+      <div id="wizard" class="wizard" hidden>
+        <nav aria-label="Configure steps">
+          <ol class="stepper" id="stepper">
+            <li id="step-tab-1" data-step="1">Basics</li>
+            <li id="step-tab-2" data-step="2">Languages</li>
+            <li id="step-tab-3" data-step="3">Rules</li>
+            <li id="step-tab-4" data-step="4">Review &amp; save</li>
+          </ol>
+        </nav>
+
+        <div class="wizard-body">
+          <div class="wizard-main">
+
+            <!-- STEP 1: BASICS -->
+            <section id="step-1" class="wizard-step card" aria-labelledby="step-1-h">
+              <h2 id="step-1-h">1. Basics</h2>
+              <p>Choose how many days a song waits in Liked Songs before rules apply, and where unmatched songs should end up (if anywhere).</p>
+              <div class="example-box"><strong>Example:</strong> a threshold of 14 means a song liked today is left alone until it has sat in Liked Songs for two weeks.</div>
+              <div class="field">
+                <label class="label" for="g-days">Default days threshold
+                  <button class="help" data-tip="Whole days a song stays in Liked Songs before any rule can match it. Rule-level overrides exist in Advanced mode." aria-label="Why does this matter?">?</button>
+                </label>
+                <input id="g-days" class="input" type="text" inputmode="numeric" autocomplete="off" aria-describedby="g-days-hint err-g-days" />
+                <p class="hint" id="g-days-hint">Leave blank for 14.</p>
+                <p class="err" id="err-g-days"></p>
+              </div>
+              <div class="field">
+                <label class="label" for="g-fallback">Fallback playlist
+                  <button class="help" data-tip="Name of an existing playlist for songs that don't match any rule. Leave blank to leave them in Liked Songs untouched." aria-label="Why does this matter?">?</button>
+                </label>
+                <input id="g-fallback" class="input" type="text" autocomplete="off" aria-describedby="g-fallback-hint err-g-fallback" />
+                <p class="hint" id="g-fallback-hint">e.g. Inbox Overflow. Blank leaves unmatched songs alone.</p>
+                <p class="err" id="err-g-fallback"></p>
+              </div>
+              <div class="wizard-nav"><span></span><button type="button" class="btn btn-primary" data-next>Next: Languages</button></div>
+            </section>
+
+            <!-- STEP 2: LANGUAGES -->
+            <section id="step-2" class="wizard-step card" aria-labelledby="step-2-h" hidden>
+              <h2 id="step-2-h">2. Languages</h2>
+              <p>Tell SpotiSort which of your existing playlists already hold one language — it learns that language for every artist in that playlist.</p>
+              <div class="example-box"><strong>Example:</strong> mapping "Chill Hindi" → Hindi means every artist who appears in that playlist is now recognised as Hindi elsewhere too.</div>
+              <ul class="rows" id="lp-list"></ul>
+              <button type="button" class="btn btn-secondary" id="lp-add">Add language playlist</button>
+
+              <div class="field check-row-field">
+                <label class="check-row"><input id="g-mb" type="checkbox" class="check" checked /> Look up genre and language on MusicBrainz
+                  <button class="help" data-tip="enrichment.musicbrainz: free lookup service, limited to 1 request per second." aria-label="Why does this matter?">?</button>
+                </label>
+              </div>
+              <div class="field check-row-field" data-advanced-only>
+                <label class="check-row"><input id="g-en" type="checkbox" class="check" /> Assume English for Latin-script songs by US/GB/AU/CA/IE/NZ artists
+                  <button class="help" data-tip="enrichment.english_default: a weak guess, off by default. Only turn this on if you're fine with occasional mislabeling." aria-label="Why does this matter?">?</button>
+                </label>
+                <p class="hint" id="g-en-hint">Off by default — a weak guess.</p>
+              </div>
+              <div class="field check-row-field">
+                <label class="switch">
+                  <input id="g-log" type="checkbox" class="switch-input" role="switch" aria-checked="false" />
+                  <span class="switch-ui" aria-hidden="true"></span>
+                  <span class="switch-label">Include song titles in committed run logs</span>
+                </label>
+                <button class="help" data-tip="Off by default: your committed logs on GitHub only show counts and links, not song titles. Turn on if you're fine with that being public in your fork." aria-label="Why does this matter?">?</button>
+                <p class="hint">logging.include_track_names — off means public logs show counts and links only, not titles.</p>
+              </div>
+
+              <div class="wizard-nav"><button type="button" class="btn btn-secondary" data-back>Back</button><button type="button" class="btn btn-primary" data-next>Next: Rules</button></div>
+            </section>
+
+            <!-- STEP 3: RULES -->
+            <section id="step-3" class="wizard-step card" aria-labelledby="step-3-h" hidden>
+              <h2 id="step-3-h">3. Rules</h2>
+              <p>Rules run top to bottom and the <strong>first match wins</strong> — order is priority. Put specific rules above broad ones.</p>
+              <div class="example-box"><strong>Example:</strong> a rule matching "language is Hindi" placed above a catch-all rule means Hindi songs go to your Hindi playlist even though the catch-all would also match them.</div>
+              <p class="reorder-help hint">Reorder: drag a rule by its handle, or focus the handle and use the Up/Down buttons or <kbd>Alt</kbd>+<kbd>↑</kbd>/<kbd>↓</kbd>.</p>
+              <div id="rule-notice" class="notice" role="status" aria-live="polite"></div>
+              <p id="rules-empty" class="empty">No rules yet. Add one to get started.</p>
+              <ol id="rules" class="rules"></ol>
+              <button type="button" class="btn btn-primary" id="rule-add">Add rule</button>
+              <div class="wizard-nav"><button type="button" class="btn btn-secondary" data-back>Back</button><button type="button" class="btn btn-primary" data-next>Next: Review</button></div>
+            </section>
+
+            <!-- STEP 4: REVIEW -->
+            <section id="step-4" class="wizard-step card" aria-labelledby="step-4-h" hidden>
+              <h2 id="step-4-h">4. Review &amp; save</h2>
+              <p>Check the summary below, fix anything flagged, then save a local version and download or copy the file into your fork.</p>
+              <div id="error-summary" class="summary" tabindex="-1" hidden></div>
+              <p id="status" class="status" role="status" aria-live="polite"></p>
+              <h3>Plain-English summary</h3>
+              <ul id="plain-summary" class="plain-summary"></ul>
+
+              <div data-advanced-only class="card" id="advanced-panel">
+                <h3>Advanced: raw YAML, import &amp; schema</h3>
+                <div class="field">
+                  <label class="label" for="yaml-edit">Edit config.yaml directly</label>
+                  <textarea id="yaml-edit" class="textarea yaml-edit" rows="14" spellcheck="false" autocomplete="off" aria-describedby="yaml-edit-err"></textarea>
+                  <p class="err" id="yaml-edit-err"></p>
+                </div>
+                <details class="disclosure" id="import">
+                  <summary>Import an existing config.yaml</summary>
+                  <p class="hint">Loading replaces everything in the form. Drag a file onto this box, choose one, or paste text.</p>
+                  <div class="field">
+                    <label class="label" for="import-file">Choose a file</label>
+                    <input id="import-file" class="input" type="file" accept=".yaml,.yml,text/yaml,text/plain" />
+                  </div>
+                  <div class="field" id="import-drop">
+                    <label class="label" for="import-text">Or paste / drop YAML</label>
+                    <textarea id="import-text" class="textarea" rows="6" spellcheck="false" autocomplete="off"></textarea>
+                  </div>
+                  <button type="button" class="btn btn-secondary" id="import-btn">Load into form</button>
+                  <div id="import-status" class="notice" role="status" aria-live="polite"></div>
+                </details>
+                <button type="button" class="btn btn-secondary" data-open="schema-drawer">Schema reference</button>
+              </div>
+
+              <div class="code" data-copyable>
+                <div class="code-head"><span>config.yaml</span></div>
+                <pre id="yaml-out" class="yaml" tabindex="0" aria-label="YAML preview"><code></code></pre>
+              </div>
+              <p id="action-status" class="status" role="status" aria-live="polite"></p>
+              <div class="actions">
+                <button type="button" class="btn btn-primary" id="save-btn">Save configuration</button>
+                <button type="button" class="btn btn-secondary" id="download-btn" data-advanced-only>Download config.yaml</button>
+              </div>
+              <p class="hint">Until GitHub write-back ships, <strong>Save configuration</strong> only saves a version locally in this browser. Use Copy (above) or Download to actually get the file into your fork — commit it as <code>config.yaml</code> at the root.</p>
+              <div class="wizard-nav"><button type="button" class="btn btn-secondary" data-back>Back</button><span></span></div>
+            </section>
+          </div>
+
+          <aside class="wizard-side">
+            <div class="card sticky">
+              <h2>Live preview</h2>
+              <div class="code" data-copyable>
+                <pre id="yaml-preview" class="yaml" tabindex="0" aria-label="Live YAML preview"><code></code></pre>
+              </div>
+              <h3>In plain English</h3>
+              <ul id="plain-summary-side" class="plain-summary"></ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </main>
+
+    <!-- Versions drawer -->
+    <div class="overlay overlay-side" id="versions-drawer" hidden>
+      <div class="drawer" role="dialog" aria-labelledby="versions-drawer-title">
+        <div class="dialog-head"><h2 id="versions-drawer-title">Versions</h2><button class="btn btn-icon" data-close aria-label="Close">×</button></div>
+        <div class="dialog-body">
+          <p class="hint">The last 5 saved versions, kept in this browser only.</p>
+          <ul id="versions-list" class="versions-list"></ul>
+          <p id="versions-empty" class="empty">No saved versions yet. Use "Save configuration" on the Review step.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compare modal -->
+    <div class="overlay" id="compare-modal" hidden>
+      <div class="dialog dialog-wide" role="dialog" aria-labelledby="compare-title">
+        <div class="dialog-head"><h2 id="compare-title">Compare with current</h2><button class="btn btn-icon" data-close aria-label="Close">×</button></div>
+        <div class="dialog-body">
+          <h3>Rules</h3>
+          <div class="table-wrap"><table class="table" id="compare-rules-table"><thead><tr><th>Rule</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+          <h3>YAML</h3>
+          <pre class="yaml" id="compare-yaml-diff"></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schema reference drawer -->
+    <div class="overlay overlay-side" id="schema-drawer" hidden>
+      <div class="drawer" role="dialog" aria-labelledby="schema-drawer-title">
+        <div class="dialog-head"><h2 id="schema-drawer-title">Schema reference</h2><button class="btn btn-icon" data-close aria-label="Close">×</button></div>
+        <div class="dialog-body">
+          <div class="table-wrap"><table class="table" id="schema-table"><thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Constraint</th></tr></thead><tbody></tbody></table></div>
+        </div>
+      </div>
     </div>
 
     <datalist id="lang-options"></datalist>
     <script src="../vendor/js-yaml.min.js"></script>
     <script src="languages.js"></script>
     <script src="validate.js"></script>
-    <script src="app.js"></script>
+    <script src="schema.js"></script>
+    <script src="../assets/ui.js" defer></script>
+    <script src="../assets/shell.js" defer data-active="configure"></script>
+    <script src="app.js" defer></script>
   </body>
 </html>
