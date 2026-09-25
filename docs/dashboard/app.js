@@ -113,12 +113,23 @@
     window.__dash.source = source;
   }
 
+  // A skeleton shaped like the Overview view (the default route): one lead line, a 7-card KPI grid, two more lines
+  // below. Reserving roughly the real content's shape and height here — rather than a single line of text — is
+  // what keeps the swap to real content from shifting the footer/page down once data.js's fetch resolves (CLS).
+  function skeletonCard() {
+    return '<div class="card"><span class="skeleton-line short"></span><span class="skeleton-line" style="height:1.75rem;width:60%"></span><span class="skeleton-line"></span></div>';
+  }
+  var LOADING_SKELETON = '<p class="sr-only" role="status">Loading data…</p><div aria-hidden="true">' +
+    '<span class="skeleton-line short"></span>' +
+    '<div class="grid">' + skeletonCard() + skeletonCard() + skeletonCard() + skeletonCard() + skeletonCard() + skeletonCard() + skeletonCard() + '</div>' +
+    '<span class="skeleton-line"></span><span class="skeleton-line short"></span></div>';
+
   function load() {
     var source = D.currentSource();
     syncBar(source);
     root.setAttribute('data-state', 'loading');
     root.setAttribute('aria-busy', 'true');
-    root.innerHTML = '<p class="loading" role="status">Loading data…</p>';
+    root.innerHTML = LOADING_SKELETON;
     D.clearLogCache();
     return D.loadAll(source).then(function (d) { data = d; return render(false); });
   }

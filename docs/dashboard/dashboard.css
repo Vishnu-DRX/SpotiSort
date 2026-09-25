@@ -48,7 +48,9 @@ code, .mono { font: 0.9em var(--font-mono); background: var(--color-elevated); p
 .files-drop.is-drag { border-color: var(--color-accent); background: var(--color-hover); }
 .files-drop input[type="file"] { pointer-events: none; }
 
-.tabs { position: sticky; top: 0; z-index: 20; background: var(--color-bg); border-bottom: 1px solid var(--color-border); margin: var(--space-3) 0 0; }
+/* min-height reserves the tab bar's real height (matches .tabs a's touch-target) before JS populates <ul id="tabs">,
+   so the initial empty bar doesn't grow once data.js/views.js fill it in — avoids a layout shift on first load. */
+.tabs { position: sticky; top: 0; z-index: 20; background: var(--color-bg); border-bottom: 1px solid var(--color-border); margin: var(--space-3) 0 0; min-height: var(--touch-target); }
 .tabs ul { list-style: none; margin: 0; padding: 0; display: flex; gap: var(--space-1); overflow-x: auto; }
 .tabs a {
   display: inline-flex; align-items: center; min-height: var(--touch-target); padding: 0 var(--space-4); white-space: nowrap;
