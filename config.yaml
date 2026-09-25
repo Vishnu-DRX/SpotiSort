@@ -1,0 +1,41 @@
+# SpotiSort live config.
+# Only "Malayalam -> NewAgeMadrasMail" is enabled right now, as a one-off live-read test
+# (days_threshold: 0 is test-only, so a freshly liked song shows up immediately instead of after 14 days).
+# Everything else stays disabled until reviewed.
+default_days_threshold: 14
+language_playlists:
+  "Dil": hindi
+  "The Simulation Archives": english
+  "NewAgeMadrasMail": malayalam
+  "nani mo wakaranai": japanese
+enrichment:
+  musicbrainz: true
+  english_default: false
+rules:
+  - name: "Hindi -> Dil (draft)"
+    enabled: false
+    match:
+      language_in: [hindi]
+    target_playlist: "Dil"
+  - name: "Malayalam -> NewAgeMadrasMail (draft)"
+    enabled: true
+    days_threshold: 0   # test-only: see it move immediately instead of waiting 14 days
+    match:
+      language_in: [malayalam]
+    target_playlist: "NewAgeMadrasMail"
+  - name: "Japanese -> nani mo wakaranai (draft)"
+    enabled: false
+    match:
+      language_in: [japanese]
+    target_playlist: "nani mo wakaranai"
+  - name: "English -> The Simulation Archives (draft, weak signal)"
+    enabled: false
+    match:
+      language_in: [english]
+    target_playlist: "The Simulation Archives"
+  - name: "Vault catch-all (draft, top)"
+    enabled: false
+    match:
+      release_year_after: 1900     # catch-all: any song with a release date
+    target_playlist: "Vault_drx"
+    target_position: top
