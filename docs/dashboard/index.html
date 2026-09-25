@@ -63,9 +63,39 @@
         </div>
       </form>
 
-      <nav class="tabs" aria-label="Dashboard views"><ul id="tabs"></ul></nav>
+      <!-- Tabs and the view-root skeleton below are pre-rendered here (not just injected by app.js) so the very
+           first paint already has them at roughly their final size. app.js overwrites both with equivalent,
+           data-driven markup once it runs; without this static version, the elements start at zero height and
+           only reach full size after JS executes, which is a large, measured layout shift (CLS) on first load. -->
+      <nav class="tabs" aria-label="Dashboard views">
+        <ul id="tabs">
+          <li><a href="#/overview" aria-current="page">Overview</a></li>
+          <li><a href="#/inbox">Inbox</a></li>
+          <li><a href="#/rules">Rules</a></li>
+          <li><a href="#/playlists">Playlists</a></li>
+          <li><a href="#/runs">Runs</a></li>
+          <li><a href="#/safety">Safety</a></li>
+          <li><a href="#/signals">Signals</a></li>
+          <li><a href="#/backtest">Backtest</a></li>
+        </ul>
+      </nav>
 
-      <main id="view-root" tabindex="-1"></main>
+      <main id="view-root" tabindex="-1" aria-busy="true">
+        <p class="sr-only" role="status">Loading data…</p>
+        <div aria-hidden="true">
+          <span class="skeleton-line short"></span>
+          <div class="grid">
+            <div class="card"><span class="skeleton-line short"></span><span class="skeleton-line" style="height:1.75rem;width:60%"></span><span class="skeleton-line"></span></div>
+            <div class="card"><span class="skeleton-line short"></span><span class="skeleton-line" style="height:1.75rem;width:60%"></span><span class="skeleton-line"></span></div>
+            <div class="card"><span class="skeleton-line short"></span><span class="skeleton-line" style="height:1.75rem;width:60%"></span><span class="skeleton-line"></span></div>
+            <div class="card"><span class="skeleton-line short"></span><span class="skeleton-line" style="height:1.75rem;width:60%"></span><span class="skeleton-line"></span></div>
+            <div class="card"><span class="skeleton-line short"></span><span class="skeleton-line" style="height:1.75rem;width:60%"></span><span class="skeleton-line"></span></div>
+            <div class="card"><span class="skeleton-line short"></span><span class="skeleton-line" style="height:1.75rem;width:60%"></span><span class="skeleton-line"></span></div>
+            <div class="card"><span class="skeleton-line short"></span><span class="skeleton-line" style="height:1.75rem;width:60%"></span><span class="skeleton-line"></span></div>
+          </div>
+          <span class="skeleton-line"></span><span class="skeleton-line short"></span>
+        </div>
+      </main>
     </div>
 
     <div id="drawer-root"></div>
