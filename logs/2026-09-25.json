@@ -1,0 +1,64 @@
+{
+ "date": "2026-09-25",
+ "dry_run": true,
+ "evaluated": 774,
+ "moved": [
+  {
+   "track": null,
+   "artist": null,
+   "uri": "spotify:track:1wGXtNK9M8hvPHdyIm9WE9",
+   "playlist": "NewAgeMadrasMail",
+   "playlist_id": "2G10NJhvQdiU4DA2Hgbw35",
+   "rule": "Malayalam -> NewAgeMadrasMail (draft)",
+   "matched": {
+    "language_in": "malayalam"
+   },
+   "age_days": 0.0,
+   "threshold_days": 0,
+   "already_in_target": false,
+   "original_added_at": "2026-09-25T17:34:03+00:00",
+   "target_position": "bottom"
+  }
+ ],
+ "skipped_no_match": 773,
+ "skipped_too_young": [],
+ "skipped_playlist_missing": [],
+ "errors": [],
+ "warnings": [],
+ "journal": [
+  {
+   "uri": "spotify:track:1wGXtNK9M8hvPHdyIm9WE9",
+   "name": null,
+   "artists": null,
+   "original_added_at": "2026-09-25T17:34:03+00:00",
+   "target_playlist_id": "2G10NJhvQdiU4DA2Hgbw35"
+  }
+ ],
+ "http_audit": {
+  "POST accounts.spotify.com": 1,
+  "GET api.spotify.com": 28
+ },
+ "runtime_seconds": 1034.3,
+ "run_id": "20260925T173532Z",
+ "mode": "dry_run",
+ "what_if": false,
+ "liked_before": 774,
+ "liked_after": 774,
+ "verdict": "dry_run",
+ "rule_counts": {
+  "Hindi -> Dil (draft)": 0,
+  "Malayalam -> NewAgeMadrasMail (draft)": 1,
+  "Japanese -> nani mo wakaranai (draft)": 0,
+  "English -> The Simulation Archives (draft, weak signal)": 0,
+  "Vault catch-all (draft, top)": 0
+ },
+ "config_hash": "30c68436e46a",
+ "plan_counts": {
+  "will_move": 1,
+  "too_young": 0,
+  "no_match": 773,
+  "target_problem": 0,
+  "blocked": 0
+ },
+ "titles_hidden": true
+}
