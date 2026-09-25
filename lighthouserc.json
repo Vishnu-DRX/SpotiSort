@@ -8,7 +8,6 @@
         "http://localhost/dashboard/?source=demo"
       ],
       "settings": {
-        "preset": "mobile",
         "throttlingMethod": "simulate"
       }
     },
